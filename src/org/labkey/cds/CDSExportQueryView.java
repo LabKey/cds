@@ -73,7 +73,7 @@ public class CDSExportQueryView extends QueryView
     private static final String FILTERS_FOOTER = "For a list of studies and assays included in this data file, please refer to the Studies and Assays tabs.";
     private static final String FILTERS_FOOTER_TXT = "For a list of studies and assays included in the export, please refer to Studies and Assays files.";
 
-    private static final String CAVD_LINK = "https://dataspace.cavd.org/cds/CAVD/app.view?";
+    private static final String CAVD_LINK = "https://dataspace.cavd.org/CAVD/cds-app.view";
     private static final String TOC_TITLE = "IMPORTANT INFORMATION ABOUT THIS DATA:";
     private static final List<String> TOC_1 = Arrays.asList("", "By exporting data from the CAVD DataSpace, you agree to be bound by the Terms of Use available on the CAVD DataSpace sign-in page at " + CAVD_LINK + " .");
     private static final List<String> TOC_2 = Arrays.asList("", "Data included may have additional sharing restrictions; please refer to the Studies tab for details.");

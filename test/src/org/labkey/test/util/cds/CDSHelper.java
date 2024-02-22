@@ -25,6 +25,7 @@ import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
 import org.labkey.test.pages.cds.DataGridVariableSelector;
+import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
@@ -920,15 +921,14 @@ public class CDSHelper
         return true;
     }
 
-    public void goToGroup(String groupName)
+    public GroupDetailsPage goToGroup(String groupName)
     {
         Locator groupLabelLocator = Locator.xpath("//div[contains(@class, 'grouprow')]/div[contains(@class,'grouplabel')]").withText(groupName);
 
         goToAppHome();
         _test.waitForElementToBeVisible(groupLabelLocator);
         _test.click(groupLabelLocator);
-        _test.waitForText("Edit details");
-
+        return new GroupDetailsPage(_test.getDriver());
     }
 
     public void logOutFromApplication()
@@ -991,41 +991,22 @@ public class CDSHelper
         _test.createUserWithPermissions(userName, projectName, permissions);
     }
 
-    public void saveOverGroup(String name)
-    {
-        _test.click(Locators.cdsButtonLocator("save", "filtersave"));
-        _test.click(Locators.cdsButtonLocator("replace an existing group"));
-        _test.waitAndClick(Locator.tagWithClass("div", "save-label").withText(name));
-        _test.click(Locators.cdsButtonLocator("Save", "groupupdatesave"));
-    }
-
     public void ensureGroupsDeleted(List<String> groups)
     {
-        boolean isVisible;
-
         List<String> deletable = new ArrayList<>();
+        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
+        LearnGrid learnGrid = new LearnGrid(_test);
         for (String group : groups)
         {
             String subName = group.substring(0, 10);
-
-            // Adding this test for the scenario of a test failure and this is called after the page has been removed.
-            try
+            if(learnGrid.setSearch(subName).getRowCount() > 0 )
             {
-                isVisible = _test.isElementVisible(Locator.tagWithClass("div", "grouplabel").containing(subName));
-            }
-            catch (org.openqa.selenium.NoSuchElementException nse)
-            {
-                isVisible = false;
-            }
-
-            if (_test.isTextPresent(subName) && isVisible)
                 deletable.add(subName);
+            }
         }
-
+        learnGrid.clearSearch();
         if (deletable.size() > 0)
-        {
             deletable.forEach(this::deleteGroupFromSummaryPage);
-        }
     }
 
     @LogMethod
@@ -1372,35 +1353,23 @@ public class CDSHelper
     @LogMethod (quiet = true)
     public void deleteGroupFromSummaryPage(@LoggedParam String name)
     {
-        BaseWebDriverTest.sleep(500);
-        goToLearnGroupsPage();
-        goToGroupFromLearnGrid(name);
-        _test.waitForElement(Locators.cdsButtonLocator("Delete"));
-        Locators.cdsButtonLocator("Delete").findElement(_test.getWrappedDriver()).click();
-        _test.waitForText("Are you sure you want to delete");
-        Locators.cdsButtonLocator("Delete", "x-toolbar-item").notHidden().findElement(_test.getWrappedDriver()).click();
-        _test.waitForText(HOME_PAGE_HEADER);
-        goToLearnGroupsPage();
+        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
+        GroupDetailsPage groupDetailsPage = goToGroupFromLearnGrid(name);
+        groupDetailsPage.deleteGroup("Delete");
+
         _test.refresh();
-        BaseWebDriverTest.sleep(1000);
+        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
         LearnGrid learnGrid = new LearnGrid(_test);
         int rowCount = learnGrid.setSearch(name).getRowCount();
         assertTrue("Group '" + name + "' was not deleted.", rowCount == 0);
-
-        BaseWebDriverTest.sleep(1000);
+        learnGrid.clearSearch();
         _test._ext4Helper.waitForMaskToDisappear();
     }
-
-    private void goToLearnGroupsPage()
-    {
-        CDSHelper.NavigationLink.LEARN.makeNavigationSelection(_test);
-        viewLearnAboutPage("Groups");
-    }
-
-    private void goToGroupFromLearnGrid(String groupName)
+    private GroupDetailsPage goToGroupFromLearnGrid(String groupName)
     {
         LearnGrid learnGrid = new LearnGrid(_test);
         learnGrid.setSearch(groupName).clickFirstItem();
+        return new GroupDetailsPage(_test.getDriver());
     }
 
     public void toggleExplorerBar(String largeBarText)

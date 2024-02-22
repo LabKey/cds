@@ -71,7 +71,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Deleting user email accounts that may be left over from a previous run.");
         _userHelper.deleteUsers(false, _newUserAccounts);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
     }
 
     @Override
@@ -109,7 +109,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         List<String> studies = Arrays.asList("ZAP 119");
         _asserts.verifyLearnAboutPage(studies);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -123,7 +123,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.enterApplication();
         _asserts.assertFilterStatusCounts(270, 2, 1, 1, 6);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -153,7 +153,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         List<String> allProducts = Arrays.asList(CDSHelper.PRODUCTS);
         _asserts.verifyLearnAboutPage(allProducts);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -198,7 +198,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         waitForElement(cds.getDataRowXPath("ILLUMINA 454-X").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]"));
         assertElementPresent(Locator.xpath("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]"));
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         stopImpersonating();
         assertSignedInNotImpersonating();
 
@@ -242,7 +242,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         validatePublicationStudyList();
         validatePublicationDetailDataAvailability(false);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -265,7 +265,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         validatePublicationStudyList();
         validatePublicationDetailDataAvailability(true);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -425,7 +425,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Studies");
         validateStudyDocumentForR2("ADCC Data Summary", "cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf", false);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -441,7 +441,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.viewLearnAboutPage("Studies");
         validateStudyDocumentForR2("ELISpot Results Summary", "cvd256_EV03 ELISpot data.pdf", true);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -851,7 +851,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         composeGroup(SHARED_GROUP_NAME, SHARED_GROUP_NAME_DESCRIPTION, true);
         verifyGroupWarningMessage(SHARED_GROUP_LOC, true, true);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
 
         impersonate(LIMITED_USER_ACCOUNT);
@@ -866,7 +866,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         CDSHelper.NavigationLink.HOME.makeNavigationSelection(this);
         cds.deleteGroupFromSummaryPage(PRIVATE_GROUP_NAME); //clean up
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         _userHelper.deleteUser(LIMITED_USER_ACCOUNT);
@@ -928,7 +928,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Verify users with no study permission sees data only for studies z120 and z121 in find subject.");
         verifyFindSubjectWithLimitedAccess(false);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -947,7 +947,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Verify user with limited study permissions only sees a subset of find subject entries.");
         verifyFindSubjectWithLimitedAccess(true);
 
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
         stopImpersonating();
         assertSignedInNotImpersonating();
@@ -1065,7 +1065,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Refreshing the browser.");
         refresh();
         sleep(1000);
-        beginAt("project/" + getProjectName() + "/begin.view?");
+        beginAt(getProjectName() + "/project-begin.view");
         ensureAdminMode();
         Ext4Helper.resetCssPrefix();
 
