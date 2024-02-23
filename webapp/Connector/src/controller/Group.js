@@ -385,6 +385,10 @@ Ext.define('Connector.controller.Group', {
                     me.displayEditBtn();
 
                     Connector.getApplication().fireEvent('groupsaved', group, state.getFilters(true));
+                    // add a single listener to update the filter label after the store has reloaded
+                    me.getGroupStore().on('dataloaded', function(){
+                        this.updateFilterLabel(group.category.label);
+                    }, me, {single : true});
                     me.getGroupStore().refreshData();
                 };
 
@@ -402,6 +406,19 @@ Ext.define('Connector.controller.Group', {
                     }
                 });
             }, this);
+        }
+    },
+
+    // update the filter label after insert or update
+    updateFilterLabel: function(label) {
+        var groupLabel = Ext.getCmp('savedgroupname-id');
+        if (groupLabel && groupLabel.items) {
+            // find the record to update the group name
+            let rec = this.getGroupStore().findRecord('label', label);
+            if (rec){
+                groupLabel.items.get(0).update({savedGroupName: rec.get('label'), groupId: rec.get('id')});
+                groupLabel.show();
+            }
         }
     },
 
@@ -447,6 +464,10 @@ Ext.define('Connector.controller.Group', {
                     groupLabel.show();
 
                     Connector.getApplication().fireEvent('groupsaved', grp, state.getFilters(true));
+                    // add a single listener to update the filter label after the store has reloaded
+                    me.getGroupStore().on('dataloaded', function(){
+                        this.updateFilterLabel(grp.label);
+                    }, me, {single : true});
                     me.getGroupStore().refreshData();
                 };
 

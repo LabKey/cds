@@ -266,7 +266,7 @@ Ext.define('Connector.app.store.Group', {
         }, this);
     },
 
-    refreshData: function(cb, cbScope) {
+    refreshData: function() {
         this.loadSlice();
     }
 });
