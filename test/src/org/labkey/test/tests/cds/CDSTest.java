@@ -47,7 +47,7 @@ public class CDSTest extends CDSReadOnlyTest
     private final CDSHelpCenterUtil _helpCenterUtil = new CDSHelpCenterUtil(this);
 
 
-    private static final String HOME_PAGE_GROUP = "A Plotted Group For Home Page Verification and Testing.";
+    private static final String HOME_PAGE_GROUP = "Home Page Verification and Testing.";
     private static final String GROUP_NAME = "A Plottable group";
 
     public static final String WHAT_YOU_NEED_TO_KNOW_WIKI_TITLE = "What you need to know";
