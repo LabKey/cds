@@ -56,6 +56,7 @@ Ext.define('Connector.app.store.Group', {
     },
 
     loadSlice: function () {
+        this.dataLoaded = false;
         this.mabGroups = undefined;
         this.subjectGroups = undefined;
         this.studiesForGroups = undefined;

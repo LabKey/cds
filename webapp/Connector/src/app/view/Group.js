@@ -306,6 +306,7 @@ Ext.define('Connector.app.view.Group', {
             if (this.reloadStoreOnShow){
                 //console.log('reloading group slice');
                 this.getStore().loadSlice();
+                this.renderLoadingMask();
                 this.reloadStoreOnShow = false;
             }
         }, this);
