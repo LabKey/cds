@@ -152,13 +152,13 @@ Ext.define('Connector.app.store.Group', {
 
                     Ext.each(Connector.model.Filter.fromJSON(group.filters), function(filter)
                     {
-                        let members = undefined;
+                        let colMap = undefined;
 
                         switch (filter.hierarchy)
                         {
                             // species
                             case '[Subject.Species]':
-                                members = species;
+                                colMap = {1 : species};
                                 break;
 
                             // products uncomment to collect additional categories
@@ -166,22 +166,28 @@ Ext.define('Connector.app.store.Group', {
                             //case '[Study Product.Product Type]':
                             //case '[Study Product.Developer]':
                             //case '[Study Product.Product Class]':
-                                members = products;
+                                colMap = {1 : products};
                                 break;
 
                             // treatment groups and studies via assay
                             case '[Study.Treatment]':
+                                colMap = {1 : studies};
+                                break;
+
                             case '[Assay.Study]':
-                                members = studies;
+                                colMap = {
+                                    1 : assays,
+                                    2 : studies
+                                }
                                 break;
 
                             // assay types
                             case '[Assay.Name]':
-                                members = assays;
+                                colMap = {1 : assays};
                                 break;
                         }
-                        if (members)
-                            this.parseLevelMembers(filter.hierarchy, filter.members, members);
+                        if (colMap)
+                            this.parseLevelMembers(filter.hierarchy, filter.members, colMap);
 
                     }, this);
 
@@ -254,15 +260,23 @@ Ext.define('Connector.app.store.Group', {
         }
     },
 
-    parseLevelMembers : function(hierarchy, members, collection) {
+    parseLevelMembers : function(hierarchy, members, colMap) {
         Ext.each(members, function(member){
             var memberName = member.uniqueName;
-            var parts = memberName.split('.');
+            var parts = memberName.split('].[');
 
             if (memberName.startsWith(hierarchy) && parts.length > 1) {
-                let val = parts[parts.length - 1];
-                val = val.replace('[', '').replace(']', '');
-                collection.push(val);
+                // The member values can encode multiple levels of information eg: [Assay.Study].[ICS].[RED 4] which
+                // contains both assay and study information. The colMap can specify what level to extract per
+                // each category of information.
+                for (const idx in colMap) {
+                    if (idx < parts.length) {
+                        let val = parts[idx];
+                        val = val.replace('[', '').replace(']', '');
+
+                        colMap[idx].push(val);
+                    }
+                }
             }
         }, this);
     },
