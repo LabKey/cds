@@ -183,7 +183,8 @@ Ext.define('Connector.view.GroupListView', {
 
         this.selectedItemCls = 'grouplist-label-selected '+ this.arrow;
 
-        this.store = Connector.model.Group.getGroupStore();
+        this.store = StoreCache.getStore('Connector.app.store.Group');
+        this.store.load();
 
         this.on('beforerefresh', function(){
             // reset template state variables before the template refreshes

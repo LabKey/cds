@@ -81,33 +81,28 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
         getWrapper().waitForElement(Locator.linkWithText(getGroupName()));
     }
 
-    public ActiveFilterDialog saveExpectingError(String errorMsg)
+    public ActiveFilterDialog saveExpectingError(String expectedMsg)
     {
         final int RETRY_LIMIT = 5;
-        boolean worked = false;
+        boolean done = false;
         int count = 0;
-        String errMsg = "";
+        String msg = "";
         getWrapper().shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
-        while (!worked)
+        while (!done && (count++ <= RETRY_LIMIT))
         {
-            count++;
             try
             {
                 elementCache().saveGroup.click();
-                errMsg = elementCache().errorMsg.findElement(_activeFilterDialogEl).getText();
-                worked = true;
+                msg = elementCache().errorMsg.findElement(_activeFilterDialogEl).getText();
+                done = expectedMsg.equals(msg);
             }
             catch (NoSuchElementException ex)
             {
-                if (count > RETRY_LIMIT)
-                    throw ex;
-
                 BaseWebDriverTest.sleep(500);
-                worked = false;
             }
         }
 
-        Assert.assertEquals("Error message is not as expected", errorMsg, errMsg);
+        Assert.assertEquals("Error message is not as expected", expectedMsg, msg);
         return this;
     }
 
