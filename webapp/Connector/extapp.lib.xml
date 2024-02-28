@@ -27,7 +27,6 @@
         <script path="Connector/src/model/InfoPaneMember.js"/>
         <script path="Connector/src/model/TimepointPane.js"/>
         <script path="Connector/src/model/Summary.js"/>
-        <script path="Connector/src/model/Group.js"/>
         <script path="Connector/src/model/Grid.js"/>
         <script path="Connector/src/model/MabDetail.js"/>
         <script path="Connector/src/model/MabGrid.js"/>

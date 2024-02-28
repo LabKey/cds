@@ -2,6 +2,7 @@ package org.labkey.test.components.cds;
 
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
+import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.components.Component;
 import org.labkey.test.components.WebDriverComponent;
@@ -80,20 +81,28 @@ public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.El
         getWrapper().waitForElement(Locator.linkWithText(getGroupName()));
     }
 
-    public ActiveFilterDialog saveExpectingError(String errorMsg)
+    public ActiveFilterDialog saveExpectingError(String expectedMsg)
     {
+        final int RETRY_LIMIT = 5;
+        boolean done = false;
+        int count = 0;
+        String msg = "";
         getWrapper().shortWait().until(ExpectedConditions.elementToBeClickable(elementCache().saveGroup));
-        elementCache().saveGroup.click();
-        try
+        while (!done && (count++ <= RETRY_LIMIT))
         {
-            getWrapper().waitForElement(elementCache().errorMsg);
+            try
+            {
+                elementCache().saveGroup.click();
+                msg = elementCache().errorMsg.findElement(_activeFilterDialogEl).getText();
+                done = expectedMsg.equals(msg);
+            }
+            catch (NoSuchElementException ex)
+            {
+                BaseWebDriverTest.sleep(500);
+            }
         }
-        catch (NoSuchElementException e)
-        {
-            elementCache().saveGroup.click();
-        }
-        getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(elementCache().errorMsg));
-        Assert.assertEquals("Error message is not as expected", errorMsg, elementCache().errorMsg.findElement(_activeFilterDialogEl).getText());
+
+        Assert.assertEquals("Error message is not as expected", expectedMsg, msg);
         return this;
     }
 

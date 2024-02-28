@@ -120,7 +120,10 @@ Ext.define('Connector.app.view.LearnSummary', {
         }
 
         this.callParent(arguments);
+        this.renderLoadingMask();
+    },
 
+    renderLoadingMask : function() {
         // display a loading mask initially, stores must fire the dataloaded event to hide the mask
         if (this.showLoadingMask && !this.getStore().dataLoaded) {
             var me = this;

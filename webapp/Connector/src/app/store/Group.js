@@ -9,7 +9,39 @@ Ext.define('Connector.app.store.Group', {
 
     model: 'Connector.app.model.Group',
 
-    groupField: 'group_type',
+    groupField: 'shared',
+
+    sorters : [{
+        sorterFn: function (group1, group2) {
+            var g1shared = group1.get('shared');
+            var g2shared = group2.get('shared');
+            if(g1shared !== g2shared) {  // all non-shared items come before all shared items
+                if (g1shared === true) {
+                    return 1;
+                }
+                else {
+                    return -1;
+                }
+            }
+            if(g1shared === false) {  // both unshared, sort alphabetically
+                return group1.get('label').localeCompare(group2.get('label'));
+            }
+            else {  // both shared, sort by modified date descending
+                var g1modified = group1.get('modified');
+                var g2modified = group2.get('modified');
+
+                if(g1modified < g2modified) {
+                    return 1;
+                }
+                if(g1modified === g2modified) {
+                    return 0;
+                }
+                else {
+                    return -1;
+                }
+            }
+        }
+    }],
 
     constructor: function (config) {
         Ext.applyIf(config, {
@@ -18,18 +50,23 @@ Ext.define('Connector.app.store.Group', {
         this.callParent([config]);
     },
 
-    loadSlice: function () {
+    load: function() {
+        if (this.getCount() === 0)
+            this.loadSlice();
+    },
 
-        this.groupsData = undefined;
-        this.groupDetails = undefined;
+    loadSlice: function () {
+        this.dataLoaded = false;
         this.mabGroups = undefined;
+        this.subjectGroups = undefined;
+        this.studiesForGroups = undefined;
 
         var me = this;
 
         LABKEY.Query.selectRows({
             schemaName: 'cds',
-            queryName: 'learn_groups',
-            success: this.onLoadLearnGroups,
+            queryName: 'learn_studiesforgroups',
+            success: this.onLoadStudiesForGroups,
             scope: this
         });
 
@@ -41,12 +78,18 @@ Ext.define('Connector.app.store.Group', {
                 this.mabGroups = [];
                 Ext.each(mabGroupData.rows, function (row) {
                     this.mabGroups.push({
-                        group_id: row.RowId,
-                        group_name: row.Label,
+                        id : row.RowId,
+                        rowid : row.RowId,
+                        label: row.Label,
+                        filters: row.Filters,
+                        modified: row.Modified,
+                        type: row.Type,
+                        containsPlot: false,
                         description: row.Description,
                         shared: row.Shared
                     })
                 }, this);
+                this._onLoadComplete();
             }
         });
 
@@ -57,148 +100,188 @@ Ext.define('Connector.app.store.Group', {
             }),
             method: 'GET',
             success: LABKEY.Utils.getCallbackWrapper(function (response) {
-                me.groupDetails = response.groups.filter(function (grp) {
-                    return grp.id !== -1
-                });
-                me._onLoadComplete();
+                me.onLoadParticipantGroups(response);
             }, me)
         });
     },
 
-    onLoadLearnGroups: function (groupsInfo) {
-        this.groupsData = groupsInfo.rows;
+    onLoadParticipantGroups : function(response) {
+        this.subjectGroups = [];
+        Ext.each(response.groups, function(group) {
+            if (group.id !== -1) {
+                this.subjectGroups.push(group);
+            }
+        }, this);
+
+        this._onLoadComplete();
+    },
+
+    onLoadStudiesForGroups: function(studies){
+        // create a map of study name to information that the data availability module needs
+        this.studiesForGroups = {};
+        Ext.each(studies.rows, function(study) {
+            this.studiesForGroups[study.study_label] = study;
+        }, this);
+
         this._onLoadComplete();
     },
 
     _onLoadComplete: function () {
 
-        if (Ext.isDefined(this.groupsData) && Ext.isDefined(this.groupDetails) && Ext.isDefined(this.mabGroups)) {
+        if (Ext.isDefined(this.mabGroups) && Ext.isDefined(this.subjectGroups) && Ext.isDefined(this.studiesForGroups)) {
 
-            var learnGroups = [];
+            let learnGroups = [];
 
-            var uniqueGroupNames = this.groupsData.map(function (grp) {
-                return grp.group_name;
-            }).filter(function (value, index, self) {
-                return self.indexOf(value) === index;
+            Ext.each(this.mabGroups, function (mab) {
+                // id needs to be unique in order to avoid collision
+                // ex. in the case where id=19, i.e it's the same rowid for both for participant and mab group
+                // it only shows one group in the list, so below is the way to make id unique.
+                mab.id = mab.id + "-" + mab.type;
+
+                learnGroups.push(mab);
             });
 
-            Ext.each(uniqueGroupNames, function (grpName) {
+            Ext.each(this.subjectGroups, function(group) {
+                // parse the filters to add category information to the learn grid
+                if (Ext.isString(group.filters))
+                {
+                    let studies = [];
+                    let assays = [];
+                    let species = [];
+                    let products = [];
 
-                var groupDetail = this.groupDetails.filter(function (grp) {
-                    return grp.label === grpName;
-                });
+                    Ext.each(Connector.model.Filter.fromJSON(group.filters), function(filter)
+                    {
+                        let colMap = undefined;
 
-                var studiesPerGrp = this.groupsData.filter(function (grp) {
-                    return grp.group_name === grpName;
-                }).map(function (grp) {
-                    return {
-                        group_type: grp.group_type,
-                        study_label: grp.study_label,
-                        species: grp.species,
-                        product_name: grp.product_name,
-                        assay: grp.assay_identifier
-                    };
-                });
+                        switch (filter.hierarchy)
+                        {
+                            // species
+                            case '[Subject.Species]':
+                                colMap = {1 : species};
+                                break;
 
-                //groupTypes are "My Saved Groups" and "Curated Groups"
-                var groupTypes = studiesPerGrp.map(function (study) {
-                    return study.group_type;
-                }).filter(function (value, index, self) {
-                    return self.indexOf(value) === index;
-                });
+                            // products uncomment to collect additional categories
+                            case '[Study Product.Product Name]':
+                            //case '[Study Product.Product Type]':
+                            //case '[Study Product.Developer]':
+                            //case '[Study Product.Product Class]':
+                                colMap = {1 : products};
+                                break;
 
-                var studies = studiesPerGrp.map(function (study) {
-                    return study.study_label;
-                }).filter(function (value, index, self) {
-                    return self.indexOf(value) === index;
-                });
-                studies.sort(function (p1, p2) {
-                    return p1.toLowerCase().localeCompare(p2.toLowerCase())
-                });
-                var study_to_sort_on = studies[0] ? studies[0].toLowerCase() : '';
+                            // treatment groups and studies via assay
+                            case '[Study.Treatment]':
+                                colMap = {1 : studies};
+                                break;
 
-                var species = studiesPerGrp.map(function (study) {
-                    return study.species;
-                }).filter(function (value, index, self) {
-                    return null !== value && self.indexOf(value) === index;
-                });
-                species.sort(function (p1, p2) {
-                    return p1.toLowerCase().localeCompare(p2.toLowerCase())
-                });
-                var species_to_sort_on = species[0] ? species[0].toLowerCase() : '';
+                            case '[Assay.Study]':
+                                colMap = {
+                                    1 : assays,
+                                    2 : studies
+                                }
+                                break;
 
-                var products = studiesPerGrp.map(function (study) {
-                    return study.product_name;
-                }).filter(function (value, index, self) {
-                    return null !== value && self.indexOf(value) === index;
-                });
+                            // assay types
+                            case '[Assay.Name]':
+                                colMap = {1 : assays};
+                                break;
+                        }
+                        if (colMap)
+                            this.parseLevelMembers(filter.hierarchy, filter.members, colMap);
 
-                products.sort(function (p1, p2) {
-                    return p1.toLowerCase().localeCompare(p2.toLowerCase())
-                });
-                var product_to_sort_on = products[0] ? products[0].toLowerCase() : '';
+                    }, this);
 
-                var assays = studiesPerGrp.map(function (study) {
-                    return study.assay;
-                }).filter(function (value, index, self) {
-                    return null !== value && self.indexOf(value) === index;
-                });
+                    studies.sort(function (p1, p2) {
+                        return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                    });
+                    group.study_names_to_sort_on = studies[0] ? studies[0].toLowerCase() : '';
+                    group.study_names = studies;
+                    group.studies = studies.map(function(name, index, arr) {
 
-                assays.sort(function (p1, p2) {
-                    return p1.toLowerCase().localeCompare(p2.toLowerCase())
-                });
-                var assay_to_sort_on = assays[0] ? assays[0].toLowerCase() : '';
+                        let study = this.studiesForGroups[name];
+                        if (study){
+                            return {
+                                study_label: name,
+                                data_label: study.study_label,
+                                data_id: study.study_name,
+                                data_link_id: study.study_name,
+                                has_data: study.has_data,
+                                data_index: index,
+                                data_show: index < 10,
+                                has_access: true,
+                                data_description: study.description ? study.description : "No description given."
+                            };
+                        } else {
+                            // shouldn't really happen
+                            return {
+                                study_label: name,
+                                data_label: name
+                            };
+                        }
+                    }, this);
 
-                if (studiesPerGrp.length > 0) {
-                    learnGroups.push({
-                        group_type: groupTypes[0],
-                        group_name: grpName,
-                        studies: studies.map(function (study) {
-                            return { study_label: study }
-                        }, this),
-                        study_names: studies,
-                        study_names_to_sort_on: study_to_sort_on,
-                        studySpecies: species.map(function (s) {
-                            return { species: s }
-                        }, this),
-                        species_names: species,
-                        species_to_sort_on: species_to_sort_on,
-                        products: products.map(function (p) {
-                            return { product_name: p }
-                        }, this),
-                        product_names: products,
-                        product_to_sort_on: product_to_sort_on,
-                        assays: assays.map(function (a) {
-                            return { assay_identifier: a }
-                        }, this),
-                        assay_to_sort_on: assay_to_sort_on,
-                        assay_names: assays,
-                        description: groupDetail.length > 0 && groupDetail[0].description ? groupDetail[0].description : "No description given.",
-                        group_id: groupDetail[0].id,
-                        isMab: false
+                    species.sort(function (p1, p2) {
+                        return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                    });
+                    group.species_to_sort_on = species[0] ? species[0].toLowerCase() : '';
+                    group.species_names = species;
+                    group.studySpecies = species.map(function(s) {
+                        return {species: s}
+                    });
+
+                    products.sort(function (p1, p2) {
+                        return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                    });
+                    group.product_to_sort_on = products[0] ? products[0].toLowerCase() : '';
+                    group.product_names = products;
+                    group.products = products.map(function(p) {
+                        return {product_name : p}
+                    });
+
+                    assays.sort(function (p1, p2) {
+                        return p1.toLowerCase().localeCompare(p2.toLowerCase())
+                    });
+                    group.assay_to_sort_on = assays[0] ? assays[0].toLowerCase() : '';
+                    group.assay_names = assays;
+                    group.assays = assays.map(function (a) {
+                        return {assay_identifier: a}
                     });
                 }
-
+                learnGroups.push(group);
             }, this);
 
-            Ext.each(this.mabGroups, function (mabGrp) {
-                // note 1_my_saved_groups & 2_curated_groups below, so that it displays in the
-                // "Ext template grouping" order we want. It's the same for subject groups (in learn_groups.sql)
-                learnGroups.push({
-                    group_id: mabGrp.group_id,
-                    group_type: mabGrp.shared ? '2_curated_groups' : '1_my_saved_groups',
-                    group_name: mabGrp.group_name,
-                    description: !mabGrp.description ? "No description given." : mabGrp.description,
-                    isMab: true
-                });
-            });
-
-            this.groupsData = undefined;
             this.mabGroups = undefined;
+            this.subjectGroups = undefined;
+            this.studiesForGroups = undefined;
 
             this.loadRawData(learnGroups);
             this.dataLoaded = true;
             this.fireEvent('dataloaded');
         }
+    },
+
+    parseLevelMembers : function(hierarchy, members, colMap) {
+        Ext.each(members, function(member){
+            var memberName = member.uniqueName;
+            var parts = memberName.split('].[');
+
+            if (memberName.startsWith(hierarchy) && parts.length > 1) {
+                // The member values can encode multiple levels of information eg: [Assay.Study].[ICS].[RED 4] which
+                // contains both assay and study information. The colMap can specify what level to extract per
+                // each category of information.
+                for (const idx in colMap) {
+                    if (idx < parts.length) {
+                        let val = parts[idx];
+                        val = val.replace('[', '').replace(']', '');
+
+                        colMap[idx].push(val);
+                    }
+                }
+            }
+        }, this);
+    },
+
+    refreshData: function() {
+        this.loadSlice();
     }
 });

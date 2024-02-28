@@ -9,8 +9,6 @@ Ext.define('Connector.view.GroupSummary', {
 
     alias : 'widget.groupsummary',
 
-    requires: ['Connector.model.Group'],
-
     group: undefined,
 
     groupId: undefined,
@@ -39,7 +37,8 @@ Ext.define('Connector.view.GroupSummary', {
         }
         else
         {
-            this.store.on('load', this.loadGroup, this);
+            this.store.load();
+            this.store.on('dataloaded', this.loadGroup, this);
         }
     },
 

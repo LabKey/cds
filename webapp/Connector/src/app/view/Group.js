@@ -20,13 +20,8 @@ Ext.define('Connector.app.view.Group', {
         groupHeaderTpl: [
             '<div id={name}>{name:this.formatName}</div>',
             {
-                formatName: function(name) {
-                    if (name.indexOf('1_my_saved_groups') > -1) {
-                        return 'My saved groups';
-                    }
-                    else if (name.indexOf('2_curated_groups') > -1) {
-                        return 'Curated groups';
-                    }
+                formatName: function(shared) {
+                    return shared ? 'Curated groups' : 'My saved groups';
                 }
             }
         ],
@@ -60,13 +55,13 @@ Ext.define('Connector.app.view.Group', {
                             '{%',
                                 'var groupTitleStyle = (!values.view.lockingPartner || (values.view.ownerCt === values.view.ownerCt.ownerLockable.lockedGrid) || (values.view.lockingPartner.headerCt.getVisibleGridColumns().length === 0)) ? "" : "visibility:hidden";',
                             '%}',
-                            '<tpl if="groupId.indexOf(\'saved_groups\') !== -1">',
-                                '<div id="{groupId}" class="learn-grid-group-hd learn-grid-group-hd-collapsible" tabIndex="0">',
+                            '<tpl if="!groupId">',
+                                '<div id="{groupId}}" class="learn-grid-group-hd learn-grid-group-hd-collapsible" tabIndex="0">',
                                     '<div class="learn-grid-group-title" style="{[groupTitleStyle]} background-position: 140px center">',
                                         '{[values.groupHeaderTpl.apply(values.groupInfo, parent) || "&#160;"]}',
                                     '</div>',
                                 '</div>',
-                            '<tpl elseif="groupId.indexOf(\'curated_groups\') !== -1">',
+                            '<tpl elseif="groupId">',
                                 '<div id="{groupId}" class="learn-grid-group-hd learn-grid-group-hd-collapsible" tabIndex="0">',
                                     '<div class="learn-grid-group-title" style="{[groupTitleStyle]}; background-position: 130px center">',
                                         '{[values.groupHeaderTpl.apply(values.groupInfo, parent) || "&#160;"]}',
@@ -152,11 +147,11 @@ Ext.define('Connector.app.view.Group', {
                     }
                 }
             }
-        ],
+        ]
     }],
 
     statics: {
-        searchFields: ['group_name', 'description',
+        searchFields: ['label', 'description',
             {field: 'studies', value: 'study_label', emptyText: 'No related products'},
             {field: 'species', value: 'species', emptyText: 'No related species'},
             {field: 'products', value: 'product_name', emptyText: 'No related products'},
@@ -170,15 +165,15 @@ Ext.define('Connector.app.view.Group', {
         minWidth: 150,
         flex: 15/100,
         resizable: false,
-        dataIndex: 'group_name',
+        dataIndex: 'label',
         filterConfigSet: [{
-            filterField: 'group_name',
+            filterField: 'label',
             valueType: 'string',
             title: 'Group Name'
         }],
         tpl: new Ext.XTemplate(
                 '<div class="detail-description">',
-                    '<h2>{group_name:htmlEncode}</h2>',
+                    '<h2>{label:htmlEncode}</h2>',
                     '<div class="detail-description-text">',
                     '<p class="block-with-text">{description:htmlEncode}</p>',
                 '</div>',
@@ -294,5 +289,28 @@ Ext.define('Connector.app.view.Group', {
                         '</tpl>',
                     '</ul>',
                 '</div>')
-    }]
+    }],
+
+    initComponent : function() {
+        // The group store can be mutated in the app. If the store is reloaded when the Ext grid is not visible
+        // then the component doesn't lay out correctly. Force a reload when the tab is re-shown to keep
+        // the grid in sync.
+        this.getStore().on('load', function(){
+            if (!this.ownerCt.isVisible()) {
+                //console.log('group not visible');
+                this.reloadStoreOnShow = true;
+            }
+        }, this);
+
+        this.on('show', function(){
+            if (this.reloadStoreOnShow){
+                //console.log('reloading group slice');
+                this.getStore().loadSlice();
+                this.renderLoadingMask();
+                this.reloadStoreOnShow = false;
+            }
+        }, this);
+
+        this.callParent(arguments);
+    }
 });

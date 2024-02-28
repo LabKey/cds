@@ -931,7 +931,7 @@ Ext.define('Connector.view.GroupSaveList', {
 
     initComponent : function() {
 
-        this.store = this.cloneGroupStore(Connector.model.Group.getGroupStore());
+        this.store = this.cloneGroupStore(StoreCache.getStore('Connector.app.store.Group'));
         this.filterGroups();
         this.callParent();
     },
@@ -947,9 +947,8 @@ Ext.define('Connector.view.GroupSaveList', {
     },
 
     cloneGroupStore: function(source) {
-
         var clone = Ext.create('Ext.data.Store', {
-            model : 'Connector.model.Group'
+            model : 'Connector.app.model.Group'
         });
         Ext.each(source.getRange(), function(record) {
             clone.add(Ext.clone(record.copy()));

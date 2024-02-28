@@ -188,6 +188,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         log("Verify group description is updated");
         detailsPage = cds.goToGroup(STUDY_GROUP);
+        detailsPage.waitForPage();
         Assert.assertEquals("Group Name is incorrect", STUDY_GROUP, detailsPage.getGroupName());
         Assert.assertEquals("Group description is incorrect", studyGroupDescModified, detailsPage.getGroupDescription());
 
