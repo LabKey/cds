@@ -20,6 +20,7 @@
 <!-- <div><a href="#" class="tour_view_data_grid">View data grid</a></div> -->
 <!-- <div><a href="#" class="tour_monoclonal_antibodies">Monoclonal antibodies</a></div> -->
 
+<!-- Used as HTML wiki source, so nonce is NOT required -->
 <script type="text/javascript">
     LABKEY.Utils.onReady(function(){
         $('a.tour_get_oriented').click(function(){hopscotch.startTour(tour_get_oriented);});
