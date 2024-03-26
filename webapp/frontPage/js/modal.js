@@ -594,7 +594,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
     self.initPasswordGauge = function() {
       var $pw_gauge = self.$modal.find('#password-gauge');
       if ($pw_gauge.length > 0) {
-        LABKEY.login.PasswordGauge.createComponent('password-gauge', 'password1', null, null);
+        LABKEY.PasswordGauge.createComponent('password-gauge', 'password1', null, null);
 
         // the elements in the magnific modals are sized relatively, and the password gauge expects absolute sizing,
         // work around this by setting the gauge size after we know what the password elements have been computed.
