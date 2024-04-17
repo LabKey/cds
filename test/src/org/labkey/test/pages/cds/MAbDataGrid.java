@@ -15,13 +15,12 @@
  */
 package org.labkey.test.pages.cds;
 
-import com.google.common.collect.ImmutableList;
-import org.labkey.remoteapi.collections.CaseInsensitiveHashMap;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.components.Component;
 import org.labkey.test.components.WebDriverComponent;
+import org.labkey.test.components.cds.CdsGrid;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -30,9 +29,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.labkey.test.WebDriverWrapper.WAIT_FOR_PAGE;
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
@@ -76,15 +73,12 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     private final List<String> _columnLabels = new ArrayList<>();
 
     private final WebDriverWrapper _webDriverWrapper;
-    private final DataGrid _gridHelper;
-
-    private final WebElement _gridEl;
+    private final WebElement _panelEl;
 
     public MAbDataGrid(BaseWebDriverTest test)
     {
         _webDriverWrapper = test;
-        _gridHelper = new DataGrid(test);
-        _gridEl = Locator.tagWithClass("div", "mab-connector-grid").findElement(_webDriverWrapper.getDriver());
+        _panelEl = Locator.id("connector-view-mabgrid").findElement(_webDriverWrapper.getDriver());
     }
 
     public void setFacet(String columnName, boolean check, String... values)
@@ -95,7 +89,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public void setFacet(String columnName, boolean check, boolean skipCheckAll, boolean skipOpenDialog, boolean skipDone, String... values)
     {
         if (!skipOpenDialog)
-            _gridHelper.openFilterPanel(columnName);
+            elementCache().mabGrid.openFilterPanel(columnName);
 
         Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
 
@@ -130,7 +124,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public void setFilterSearch(String columnName, String searchValue, boolean skipOpenDialog)
     {
         if (!skipOpenDialog)
-            _gridHelper.openFilterPanel(columnName);
+            elementCache().mabGrid.openFilterPanel(columnName);
         Locator.XPathLocator searchBoxLoc = Locator.tagWithClass("table", "mab-facet-search").append(Locator.tag("input"));
         getWrapper().waitForElement(searchBoxLoc);
         WebElement searchBox = searchBoxLoc.findElement(getWrapper().getDriver());
@@ -140,7 +134,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public AntigenFilterPanel openVirusPanel(String columnName)
     {
-        _gridHelper.openFilterPanel(columnName == null ? VIRUSES_COL : columnName);
+        elementCache().mabGrid.openFilterPanel(columnName == null ? VIRUSES_COL : columnName);
         return new AntigenFilterPanel(getWrapper());
     }
 
@@ -170,7 +164,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         String[] uniqueFacetFilterColumns = {MAB_COL, SPECIES_COL, ISOTYPE_COL, HXB2_COL, GEOMETRIC_MEAN_IC50_COL, STUDIES_COL, VIRUSES_COL};
         for (String column : uniqueFacetFilterColumns)
         {
-            if (_gridHelper.isColumnFiltered(column))
+            if (elementCache().mabGrid.isColumnFiltered(column))
                 return true;
         }
         return false;
@@ -178,7 +172,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public boolean isColumnFiltered(String column)
     {
-        return _gridHelper.isColumnFiltered(column);
+        return elementCache().mabGrid.isColumnFiltered(column);
     }
 
     public void clearAllColumnFilters()
@@ -193,10 +187,10 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void clearFacetFilter(String columnName)
     {
-        if (!_gridHelper.isColumnFiltered(columnName))
+        if (!elementCache().mabGrid.isColumnFiltered(columnName))
             return;
 
-        _gridHelper.openFilterPanel(columnName);
+        elementCache().mabGrid.openFilterPanel(columnName);
         checkAll(true);
         applyFilter();
     }
@@ -206,7 +200,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         List<String> filteredColumns = new ArrayList<>();
         for (String column : ColumnLabels)
         {
-            if (_gridHelper.isColumnFiltered(column))
+            if (elementCache().mabGrid.isColumnFiltered(column))
                 filteredColumns.add(column);
         }
         return filteredColumns;
@@ -214,9 +208,9 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void clearVirusFilter()
     {
-        if (!_gridHelper.isColumnFiltered(VIRUSES_COL))
+        if (!elementCache().mabGrid.isColumnFiltered(VIRUSES_COL))
             return;
-        _gridHelper.openFilterPanel(VIRUSES_COL);
+        elementCache().mabGrid.openFilterPanel(VIRUSES_COL);
         AntigenFilterPanel virusPanel = new AntigenFilterPanel(getWrapper());
         virusPanel.checkAll(false);
         virusPanel.checkAll(true);
@@ -241,7 +235,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
         final WebElement button = CDSHelper.Locators.cdsButtonLocator(buttonText).findElement(getDriver());
 
-        _gridHelper.applyAndWaitForGrid(() -> {
+        elementCache().mabGrid.applyAndWaitForGrid(() -> {
             button.click();
             getWrapper().shortWait().until(ExpectedConditions.stalenessOf(button));
             getWrapper()._ext4Helper.waitForMaskToDisappear();
@@ -257,18 +251,12 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public int getMabCounts()
     {
-        return elementCache().getDataRows().size();
+        return elementCache().mabGrid.getDataRows().size();
     }
 
     public List<String> getColumnLabels()
     {
-        if (_columnLabels.isEmpty())
-        {
-            _columnLabels.addAll(getWrapper().getTexts(elementCache().getColumnHeaders()));
-            _columnLabels.remove(0); // remove selector column
-        }
-
-        return ImmutableList.copyOf(_columnLabels);
+        return elementCache().mabGrid.getColumnNames();
     }
 
     public String getMabCellValue(String mabName, String columnLabel)
@@ -360,18 +348,18 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void verifyCDSExcel(CDSExport expected, boolean countOnly)
     {
-        _gridHelper.verifyCDSExcel(expected, countOnly);
+        new DataGrid(_webDriverWrapper).verifyCDSExcel(expected, countOnly);
     }
 
     public void verifyCDSCSV(CDSExport expected) throws IOException
     {
-        _gridHelper.verifyCDSCSV(expected);
+        new DataGrid(_webDriverWrapper).verifyCDSCSV(expected);
     }
 
     @Override
     public WebElement getComponentElement()
     {
-        return _gridEl;
+        return _panelEl;
     }
 
     @Override
@@ -395,8 +383,6 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public static class Locators
     {
-        public static Locator.XPathLocator columnHeader = Locator.tagWithClass("div", "x-column-header-align-left");
-        public static Locator.XPathLocator rowCheckBoxLoc = Locator.tagWithClass("td", "x-grid-cell-row-checker");
         public static Locator.XPathLocator filterCheckAllLoc = Locator.tagWithClass("div", "x-box-target").withChild(Locator.tagWithClass("div", "x-column-header-last").withText("All"));
         public static Locator.XPathLocator headerCheckboxLoc = Locator.tagWithClass("div", "x-column-header-checkbox");
         public static Locator.XPathLocator reportBtn = Locator.tagWithClass("a", "mabgridcolumnsbtn");
@@ -411,12 +397,12 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
         public static Locator.XPathLocator getRowCheckbox(int rowInd)
         {
-            return Locators.rowCheckBoxLoc.index(rowInd);
+            return CdsGrid.Locators.rowCheckBoxLoc.index(rowInd);
         }
 
         public static Locator.XPathLocator getMabCheckbox(String mAbName)
         {
-            return Locators.getRowLocByMabName(mAbName).append(Locators.rowCheckBoxLoc);
+            return Locators.getRowLocByMabName(mAbName).append(CdsGrid.Locators.rowCheckBoxLoc);
         }
 
         public static Locator.XPathLocator getSelectedRowLocByMabName(String mAbName)
@@ -442,37 +428,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public class ElementCache extends Component<?>.ElementCache
     {
-        private final WebElement mabGrid = Locator.tagWithClass("div", "mab-connector-grid").findWhenNeeded(this);
-        private List<WebElement> columnHeaders;
-        private final Map<String, WebElement> columnHeadersByName = new CaseInsensitiveHashMap<>();
-
-        protected List<WebElement> getDataRows()
-        {
-            return Locator.tagWithAttribute("tr", "role", "row").findElements(this);
-        }
-
-        protected WebElement getDataRow(int row)
-        {
-            return getDataRows().get(row);
-        }
-
-        protected WebElement getColumnHeader(String colName)
-        {
-            if (!columnHeadersByName.containsKey(colName))
-            {
-                columnHeadersByName.put(colName, Locator.findAnyElement("Column header named " + colName, this,
-                        Locators.columnHeader.withText(colName),
-                        Locators.columnHeader.withText(colName.toLowerCase())));
-            }
-            return columnHeadersByName.get(colName);
-        }
-
-        protected List<WebElement> getColumnHeaders()
-        {
-            if (columnHeaders == null)
-                columnHeaders = Collections.unmodifiableList(Locators.columnHeader.findElements(mabGrid));
-            return columnHeaders;
-        }
+        private final CdsGrid mabGrid = new CdsGrid("mab-connector-grid", MAbDataGrid.this);
     }
 
 }

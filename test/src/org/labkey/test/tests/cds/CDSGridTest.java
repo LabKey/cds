@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.components.cds.CdsGrid;
 import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
@@ -163,7 +164,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(10783); // TODO Test data dependent.
-            assertElementPresent(DataGrid.Locators.cellLocator("q2-003")); // TODO Test data dependent.
+            assertElementPresent(CdsGrid.Locators.cellLocator("q2-003")); // TODO Test data dependent.
         }
 
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
@@ -577,25 +578,25 @@ public class CDSGridTest extends CDSReadOnlyTest
         gridColumnSelector.addGridColumn(CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.DEMO_NETWORK, true, true);
         gridColumnSelector.confirmSelection();
         sleep(2000);
-        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT)));
+        assertEquals("Grid tabs are not as expected", Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT), grid.getDataTabs());
         grid.ensureColumnsPresent(CDSHelper.DEMO_NETWORK);
 
         log("Verify grid with added assay columns");
         gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
         gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
-        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_NAB)));
+        assertEquals("Grid tabs are not as expected", Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_NAB), grid.getDataTabs());
         grid.goToDataTab(GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
 
         log("Verify grid with subject characteristics and time point columns");
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_RACE, false, true);
-        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB)));
+        assertEquals("Grid tabs are not as expected", Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB), grid.getDataTabs());
         gridColumnSelector.addGridColumn(CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_MONTHS, true, true);
         gridColumnSelector.confirmSelection();
         sleep(2000);
 
-        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB)));
+        assertEquals("Grid tabs are not as expected", Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB), grid.getDataTabs());
 
         // go to another page and come back to grid
         cds.goToSummary();

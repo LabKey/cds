@@ -4,29 +4,22 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.components.Component;
-import org.labkey.test.components.WebDriverComponent;
 import org.labkey.test.components.ext4.Checkbox;
 import org.labkey.test.components.html.Input;
 import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class ActiveFilterDialog extends WebDriverComponent<ActiveFilterDialog.ElementCache>
+public class ActiveFilterDialog extends BaseCdsComponent<ActiveFilterDialog.ElementCache>
 {
     private final WebElement _activeFilterDialogEl;
-    private final WebDriver _driver;
 
-    public ActiveFilterDialog(WebDriver driver)
+    public ActiveFilterDialog(WebDriverWrapper driver)
     {
-        _driver = driver;
+        super(driver);
         _activeFilterDialogEl = Locator.tagWithId("div", "filterstatus-id").findElement(this.getDriver());
-    }
-    @Override
-    protected WebDriver getDriver()
-    {
-        return _driver;
     }
 
     public String getGroupName()

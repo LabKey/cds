@@ -170,7 +170,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup().setGroupName(STUDY_GROUP).setGroupDescription(studyGroupDesc).saveGroup();
 
         log("Verify group details from learn about --> group page");
@@ -183,7 +183,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Assert.assertEquals("Incorrect items in the group", Arrays.asList(CDSHelper.STUDIES[0] + "\n" + CDSHelper.STUDIES[1]), detailsPage.getGroupList());
 
         log("Update the group workflow");
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.editGroup("Update this group", null, studyGroupDescModified, false);
 
         log("Verify group description is updated");
@@ -197,7 +197,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[3]);
         cds.useSelectionAsSubjectFilter();
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(STUDY_GROUP)
                 .setGroupDescription(studyGroupDesc)
@@ -213,7 +213,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup().setGroupName(ASSAY_GROUP_NAME).setGroupDescription(desc).saveGroup();
 
         log("Verify navigation from learn about page");
@@ -224,7 +224,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Assert.assertEquals("Group Name is incorrect", ASSAY_GROUP_NAME, detailsPage.getGroupName());
         Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
 
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.editGroup("Save as new group", ASSAY_GROUP_NAME_UPDATED, null, false);
 
         log("Verify updated group details");
@@ -259,7 +259,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Assays");
         cds.selectBars("ICS");
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(singleFilterGroup)
                 .setGroupDescription(singleFilterGroup)
@@ -276,7 +276,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         assertEquals("Number of active filters not as. expected.", 1, activeFilters.size());
 
         log("Clear the previous filter");
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.clear();
 
         log("Compose a group that consist of 4 filter");
@@ -291,7 +291,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.selectBars("RED 4", "RED 5");
         cds.useSelectionAsSubjectFilter();
 
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(multiFilterGroup)
                 .setGroupDescription(multiFilterGroup)

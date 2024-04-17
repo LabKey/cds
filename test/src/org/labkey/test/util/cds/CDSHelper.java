@@ -24,7 +24,6 @@ import org.labkey.test.Locator;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
-import org.labkey.test.pages.cds.DataGridVariableSelector;
 import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.util.ApiPermissionsHelper;
@@ -1642,11 +1641,11 @@ public class CDSHelper
 
     public enum NavigationLink
     {
-        HOME("Home", Locator.tagContainingText("h1", HOME_PAGE_HEADER)),
-        LEARN("Learn about", Locator.tagWithClass("div", "titlepanel").withText("Learn about...")),
-        SUMMARY("Find subjects", Locator.tag("h1").containing("Find subjects of interest with assay data in DataSpace.")),
-        PLOT("Plot data", Locator.tagWithClass("a", "colorbtn")),
-        GRID("View data grid", DataGridVariableSelector.titleLocator),
+        HOME("Home", Locator.id("homecontrollerview")),
+        LEARN("Learn about", Locator.byClass("learnview")),
+        SUMMARY("Find subjects", Locator.byClass("summaryview")),
+        PLOT("Plot data", Locator.byClass("chartview")),
+        GRID("View data grid", Locator.byClass("connector-grid")),
         MABGRID("Monoclonal antibodies", Locator.tagWithClass("div", "mab-connector-grid"));
 
         private final String _linkText;
@@ -1658,9 +1657,9 @@ public class CDSHelper
             _waitForReady = waitForReady;
         }
 
-        NavigationLink(String linkText, Locator.XPathLocator expectedElement)
+        NavigationLink(String linkText, Locator expectedElement)
         {
-            this(linkText, wdw -> expectedElement.notHidden().waitForElement(wdw.getDriver(), 10000));
+            this(linkText, wdw -> wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(expectedElement)));
         }
 
         public String getLinkText()
