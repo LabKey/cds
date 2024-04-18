@@ -432,6 +432,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         log("Verify Grid with filters.");
         setUpGridStep1();
 
+        grid = new DataGrid(this);
         log("Validate expected columns are present.");
         grid.goToDataTab(CDSHelper.TITLE_ICS);
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
@@ -443,6 +444,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         setUpGridStep2(true);
 
         _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
+        grid = new DataGrid(this);
         grid.assertPageTotal(1);
         grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
@@ -514,8 +516,8 @@ public class CDSGridTest extends CDSReadOnlyTest
         }
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
-        // Can't use CDSHelper.NavigationLink.Grid.makeNavigationSelection. It expects that it will be going to a blank plot.
-        click(CDSHelper.NavigationLink.PLOT.getLinkLocator());
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
 

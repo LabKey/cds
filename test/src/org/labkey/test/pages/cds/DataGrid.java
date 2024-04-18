@@ -116,7 +116,6 @@ public class DataGrid extends BaseCdsComponent<DataGrid.ElementCache>
     {
         List<String> expectedColumns = new ArrayList<>(List.of(columns));
         expectedColumns.addAll(List.of(getDefaultColumns(isSubjectCharacteristics)));
-//        expectedColumns = expectedColumns.stream().map(WordUtils::capitalize).toList();
 
         Assertions.assertThat(elementCache().grid.getColumnNames()).containsAll(expectedColumns);
     }
