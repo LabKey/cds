@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.labkey.test.WebDriverWrapper.WAIT_FOR_PAGE;
 import static org.labkey.test.util.cds.CDSHelper.NAB_MAB_DILUTION_REPORT;
@@ -153,10 +154,10 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
     public void clearAllFilters()
     {
-        Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
-        if (getWrapper().isElementPresent(clearAllFilterBtn))
-            getWrapper().click(clearAllFilterBtn);
-        getWrapper().waitForElementToDisappear(Locator.tagWithClass("div", "filtered-column"), WAIT_FOR_PAGE);
+        Optional<WebElement> clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear").findOptionalElement(getDriver());
+        clearAllFilterBtn.ifPresent(webElement ->
+                elementCache().mabGrid.applyAndWaitForGrid(webElement::click));
+        Locator.tagWithClass("div", "filtered-column").waitForElementToDisappear(this, WAIT_FOR_PAGE);
     }
 
     public boolean hasGridColumnFilters()

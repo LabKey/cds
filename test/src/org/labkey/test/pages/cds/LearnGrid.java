@@ -25,6 +25,7 @@ import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,13 +78,10 @@ public class LearnGrid
     @LogMethod
     public LearnGrid setSearch(@LoggedParam String searchQuery)
     {
-        List<WebElement> possibleSearchBoxes = Locators.searchBox.findElements(_test.getDriver());
-        WebElement searchBox = possibleSearchBoxes.stream()
-                .filter(WebElement::isDisplayed)
-                .findFirst().get();
+        WebElement searchBox = _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locators.searchBox));
 
         _test.setFormElement(searchBox, searchQuery);
-        _test.sleep(CDSHelper.CDS_WAIT_LEARN);
+        WebDriverWrapper.sleep(CDSHelper.CDS_WAIT_LEARN);
 
         return this;
     }
@@ -105,7 +103,7 @@ public class LearnGrid
         _test.waitForElement(filterIcon);
         _test.scrollIntoView(filterIcon);
         _test.mouseOver(filterIcon);
-        Locator.XPathLocator hoveredColumn = columnHeader.append("[contains(concat(' ',normalize-space(@class),' '), ' x-column-header-over ')]");
+        Locator.XPathLocator hoveredColumn = columnHeader.withClass("x-column-header-over");
         _test.waitForElement(hoveredColumn);
         _test.click(filterIcon);
         _test._ext4Helper.waitForMask();

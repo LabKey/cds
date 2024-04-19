@@ -49,12 +49,6 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
         getWrapper()._ext4Helper.waitForMaskToDisappear();
     }
 
-    public void waitForGrid()
-    {
-        Locator.css("table.x-grid-table").waitForElement(this, CDS_WAIT);
-        getWrapper()._ext4Helper.waitForMaskToDisappear();
-    }
-
     @LogMethod
     public void sort(@LoggedParam final String columnName)
     {

@@ -1645,7 +1645,7 @@ public class CDSHelper
         LEARN("Learn about", Locator.byClass("learnview")),
         SUMMARY("Find subjects", Locator.byClass("summaryview")),
         PLOT("Plot data", Locator.byClass("chartview")),
-        GRID("View data grid", Locator.byClass("connector-grid")),
+        GRID("View data grid", Locator.byClass("connector-grid").withoutClass("mab-connector-grid")),
         MABGRID("Monoclonal antibodies", Locator.tagWithClass("div", "mab-connector-grid"));
 
         private final String _linkText;
