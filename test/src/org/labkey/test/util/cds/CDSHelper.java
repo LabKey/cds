@@ -53,7 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -1314,10 +1314,18 @@ public class CDSHelper
         _test.waitForElement(Locator.css(".savetitle").withText(barLabel), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
     }
 
-    @LogMethod
-    public LearnGrid viewLearnAboutPage(@LoggedParam LearnTab learnTab)
+    public LearnGrid viewLearnAboutPage(LearnTab learnTab)
     {
-        NavigationLink.LEARN.makeNavigationSelection(_test);
+        return viewLearnAboutPage(learnTab, true);
+    }
+
+    @LogMethod
+    public LearnGrid viewLearnAboutPage(@LoggedParam LearnTab learnTab, boolean forceClickLearnFirst)
+    {
+        if (forceClickLearnFirst || !Locator.byClass("learnview").isDisplayed(_test.getDriver()))
+        {
+            NavigationLink.LEARN.makeNavigationSelection(_test);
+        }
 
         Locator.XPathLocator rowLoc = Locator.xpath("//table[@role='presentation']//tr[@role='row']").withDescendant(Locator.byClass("detail-description")).notHidden();
         WebElement initialRow = rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
@@ -1647,30 +1655,36 @@ public class CDSHelper
     public enum NavigationLink
     {
         HOME("Home", Locator.id("homecontrollerview")),
-        LEARN("Learn about", (wdw, runnable) -> {
-            Optional<WebElement> searchInput = Locator.css(".learn-search-input input").findOptionalElement(wdw.getDriver());
-            String searchValue = searchInput.map(el -> el.getAttribute("value")).orElse("");
-            if (!searchValue.isEmpty())
+        LEARN("Learn about", Locator.byClass("learnview")) {
+            @Override
+            public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
             {
-                String activeAxisName = searchInput.get().getDomAttribute("placeholder").replace("Search ", "");
-                LearnTab activeAxis = LearnTab.valueOf(activeAxisName.toUpperCase());
-                wdw.doAndWaitForElementToRefresh(runnable, Locator.byClass(activeAxis.getGridClass()).append(Locator.byClass("x-grid-table")), wdw.shortWait());
+                Optional<WebElement> searchInput = Locator.css(".learn-search-input input").findOptionalElement(wdw.getDriver());
+                String searchValue = searchInput.map(el -> el.getAttribute("value")).orElse("");
+                // If a search is present when you click "learn about", the search will be cleared and the grid with refresh
+                if (!searchValue.isEmpty())
+                {
+                    // Determine the active learn axis by the placeholder text of the search box
+                    String activeAxisName = searchInput.get().getDomAttribute("placeholder").replace("Search ", "");
+                    LearnTab activeAxis = LearnTab.valueOf(activeAxisName.toUpperCase());
+                    wdw.doAndWaitForElementToRefresh(() -> super.makeNavigationSelection(wdw, skipReadyCheck), Locator.byClass(activeAxis.getGridClass()).append(Locator.byClass("x-grid-table")), wdw.shortWait());
+                }
+                else
+                {
+                    super.makeNavigationSelection(wdw, skipReadyCheck);
+                }
+                wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.byClass("learnview")));
             }
-            else
-            {
-                runnable.run();
-            }
-            wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.byClass("learnview")));
-        }),
+        },
         SUMMARY("Find subjects", Locator.byClass("summaryview")),
         PLOT("Plot data", Locator.byClass("chartview")),
         GRID("View data grid", Locator.byClass("connector-grid").withoutClass("mab-connector-grid")),
         MABGRID("Monoclonal antibodies", Locator.tagWithClass("div", "mab-connector-grid"));
 
         private final String _linkText;
-        private final BiConsumer<WebDriverWrapper, Runnable> _waitForReady;
+        private final Consumer<WebDriverWrapper> _waitForReady;
 
-        NavigationLink(String linkText, BiConsumer<WebDriverWrapper, Runnable> waitForReady)
+        NavigationLink(String linkText, Consumer<WebDriverWrapper> waitForReady)
         {
             _linkText = linkText;
             _waitForReady = waitForReady;
@@ -1678,10 +1692,7 @@ public class CDSHelper
 
         NavigationLink(String linkText, Locator expectedElement)
         {
-            this(linkText, (wdw, runnable) -> {
-                runnable.run();
-                wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(expectedElement));
-            });
+            this(linkText, wdw -> wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(expectedElement)));
         }
 
         public String getLinkText()
@@ -1702,21 +1713,17 @@ public class CDSHelper
         public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
         {
             log("Navigate to CDS: " + getLinkText());
-            Runnable runnable = () -> wdw.waitAndClick(getLinkLocator());
-            if (skipReadyCheck)
+            wdw.waitAndClick(getLinkLocator());
+            if (!skipReadyCheck)
             {
-                runnable.run();
-            }
-            else
-            {
-                _waitForReady.accept(wdw, runnable);
+                _waitForReady.accept(wdw);
             }
             wdw._ext4Helper.waitForMaskToDisappear(30000);
         }
 
         public void waitForReady(WebDriverWrapper wdw)
         {
-            _waitForReady.accept(wdw, () -> {});
+            _waitForReady.accept(wdw);
         }
     }
 

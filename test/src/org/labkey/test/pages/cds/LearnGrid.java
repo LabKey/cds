@@ -204,20 +204,20 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     {
         WebElement filterWindow = openFilterPanel(columnName);
 
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
-
         if (option != null)
         {
             Locator.css(".sortDropdown").findElement(filterWindow).click();
-            Locator.css(".x-menu-item").withText(option).findElement(filterWindow).click();
+            Locator.css(".x-menu-item").withText(option).findElement(getDriver()).click();
             BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         }
 
-        Locator.css(".x-column-header-checkbox").findElement(filterWindow).click();
+        WebElement filterpanegrid = Locator.byClass("filterpanegrid").notHidden().findElement(filterWindow);
+
+        Locator.byClass("x-column-header-checkbox").notHidden().findElement(filterpanegrid).click();
 
         for (String label : labels)
         {
-            Locators.getFacetCheckboxForValue(label).findElement(filterWindow).click();
+            Locators.getFacetCheckboxForValue(label).findElement(filterpanegrid).click();
         }
 
         Locator.XPathLocator search = CDSHelper.Locators.cdsButtonLocator("Search", "filter-btn");
@@ -240,7 +240,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         if (option != null)
         {
             Locator.css(".sortDropdown").findElement(filterWindow).click();
-            Locator.css(".x-menu-item").withText(option).findElement(filterWindow).click();
+            Locator.css(".x-menu-item").withText(option).findElement(getDriver()).click();
             BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         }
 

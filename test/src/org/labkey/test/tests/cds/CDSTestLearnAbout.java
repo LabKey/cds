@@ -1097,7 +1097,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue(searchTextStudies.equals(learnGrid.getSearch()));
 
         log("Go to Assays and try the same basic scenario.");
-        learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS, false);
 
         searchTextAssays = "NAB";
         log("Search for '" + searchTextAssays + "' in Assays");
@@ -1111,7 +1111,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTrue(searchTextAssays.equals(learnGrid.getSearch()));
 
         log("Go to Products and try the same basic scenario.");
-        learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS, false);
 
         searchTextProducts = "M\u00E5ns";
         log("Search for '" + searchTextProducts + "' in Products");
@@ -1122,17 +1122,17 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Click back button to validate that the search value is saved.");
         learnDetailsPage.clickBack();
-        assertTrue(searchTextProducts.equals(learnGrid.getSearch()));
+        assertEquals(searchTextProducts, learnGrid.getSearch());
 
         log("Now click 'Studies' and validate that the search box is populated as expected.");
-        assertTrue(searchTextStudies.equals(cds.viewLearnAboutPage(LearnTab.STUDIES).getSearch()));
+        assertEquals(searchTextStudies, cds.viewLearnAboutPage(LearnTab.STUDIES, false).getSearch());
 
         log("Now click 'Assays' and validate that the search box is populated as expected.");
-        assertTrue(searchTextAssays.equals(cds.viewLearnAboutPage(LearnTab.ASSAYS).getSearch()));
+        assertEquals(searchTextAssays, cds.viewLearnAboutPage(LearnTab.ASSAYS, false).getSearch());
 
         log("Click 'Products' and validate that the search box is populated as expected.");
-        learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
-        assertTrue(searchTextProducts.equals(learnGrid.getSearch()));
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS, false);
+        assertEquals(searchTextProducts, learnGrid.getSearch());
 
         log("Now go to a different part of the app and return using the 'Learn about' link. Search values should be saved.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1140,11 +1140,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
 
         log("Validate that the 'Products' search value is there.");
-        assertTrue(searchTextProducts.equals(learnGrid.getSearch()));
+        assertEquals(searchTextProducts, learnGrid.getSearch());
 
         log("Now click 'Assays' and validate that the search box has the value last searched for in Assays.");
-        learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
-        assertTrue(searchTextAssays.equals(learnGrid.getSearch()));
+        learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS, false);
+        assertEquals(searchTextAssays, learnGrid.getSearch());
 
         log("Go back to Plots and return using the 'Learn about' link. Search values should be saved and show Assays.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1153,11 +1153,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText("Learn about...");
 
         log("Validate that the 'Assays' search value is there.");
-        assertTrue(searchTextAssays.equals(learnGrid.getSearch()));
+        assertEquals(searchTextAssays, learnGrid.getSearch());
 
         log("Finally repeat the tests with 'Studies'.");
-        learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
-        assertTrue(searchTextStudies.equals(learnGrid.getSearch()));
+        learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES, false);
+        assertEquals(searchTextStudies, learnGrid.getSearch());
 
         log("Go back to Plots and return using the 'Learn about' link. Search values should be saved and show Studies.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -1166,7 +1166,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         waitForText("Learn about...");
 
         log("Validate that the 'Studies' search value is there.");
-        assertTrue(searchTextStudies.equals(learnGrid.getSearch()));
+        assertEquals(searchTextStudies, learnGrid.getSearch());
     }
 
     @Test
@@ -1574,6 +1574,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Evaluating persisting to URL");
         refresh();
         sleep(CDSHelper.CDS_WAIT_LEARN);
+        learnGrid = new LearnGrid(LearnTab.STUDIES, this);
         int numRowsPostRefresh = learnGrid.getRowCount();
         assertTrue(numRowsSatisfyFilter == numRowsPostRefresh);
 
@@ -1644,7 +1645,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             waitForElement(Locator.xpath("//div[@class='detail-description']//h2[text()='" + CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[i] + "']"), 1000, true);
         }
 
-        learnGrid = new LearnGrid(LearnTab.ASSAYS, this);
+        learnGrid = new LearnGrid(LearnTab.ASSAY_ANTIGENS, this);
         log("Evaluating sorting...");
         learnGrid.sort("Antigen");
         List<WebElement> sortedAntigenNames = LEARN_ROW_TITLE_LOC.findElements(getDriver());
@@ -1690,6 +1691,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertTextPresent(CDSHelper.LEARN_ABOUT_ICS_ANTIGEN_TAB_DATA);
 
         log("Evaluating multi filtering...");
+        learnGrid = new LearnGrid(LearnTab.ASSAY_ANTIGENS, this);
         learnGrid.setWithOptionFacet("Protein:Pools", "Proteins", "POL");
         log(learnGrid.getTitleRowCount() + "a");
         assertTrue("Number of antigens is incorrect after filtering by Proteins \"POL\"", 2 == learnGrid.getTitleRowCount());
@@ -1697,6 +1699,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Evaluating filter persistence");
         refresh();
         sleep(CDSHelper.CDS_WAIT_LEARN);
+        learnGrid = new LearnGrid(LearnTab.ASSAY_ANTIGENS, this);
         assertTrue("Antigens are not filtered correctly when loading from URL", 2 == learnGrid.getTitleRowCount());
 
         learnGrid.setWithOptionFacet("Protein:Pools", "Pools", "POL 2");
@@ -2067,12 +2070,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Searching for '" + searchString + "'.");
         learnGrid.setSearch(searchString);
-        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
         log("Found " + returnedItems.size() + " items.");
 
         for (int i = 0; i < returnedItems.size(); i++)
         {
-            returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+            returnedItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
             WebElement listItem = returnedItems.get(i);
             scrollIntoView(listItem);
 
