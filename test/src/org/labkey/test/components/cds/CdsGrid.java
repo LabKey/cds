@@ -1,16 +1,19 @@
 package org.labkey.test.components.cds;
 
+import org.jetbrains.annotations.NotNull;
 import org.labkey.remoteapi.collections.CaseInsensitiveHashMap;
 import org.labkey.test.Locator;
 import org.labkey.test.components.Component;
 import org.labkey.test.components.WebDriverComponent;
 import org.labkey.test.components.ext4.Checkbox;
 import org.labkey.test.pages.cds.DataGrid;
+import org.labkey.test.selenium.LazyWebElement;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.TestLogger;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.SearchContext;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -24,20 +27,26 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 {
     public static final String FACET_HAS_DATA_HEADER = "Has data in current selection";
     public static final String FACET_NO_DATA_HEADER = "No data in current selection";
-    private final String _gridClass;
-    private final WebDriverComponent<?> _gridPanel;
+
+    private final GridElement _gridEl;
 
     public CdsGrid(String gridClass, WebDriverComponent<?> gridPanel)
     {
         super(gridPanel.getWrapper());
-        _gridClass = gridClass;
-        _gridPanel = gridPanel;
+        _gridEl = new GridElement(Locator.byClass("x-grid").withClass(gridClass), gridPanel);
     }
 
     @Override
     public WebElement getComponentElement()
     {
-        return _gridPanel.getComponentElement();
+        return _gridEl;
+    }
+
+    @Override
+    protected void clearElementCache()
+    {
+        super.clearElementCache();
+        _gridEl.unfind();
     }
 
     public void applyAndWaitForGrid(Runnable function)
@@ -57,7 +66,6 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
             getWrapper().mouseOver(columnHeader);
             columnHeader.click();
         });
-        getWrapper()._ext4Helper.waitForMaskToDisappear();
         Locator.tagWithClassContaining("div", "x-column-header-sort-").withText(columnName)
                 .waitForElement(this, 2_000);
     }
@@ -212,7 +220,6 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     protected class ElementCache extends Component<?>.ElementCache
     {
-        private final WebElement grid = Locator.byClass("x-grid").withClass(_gridClass).findWhenNeeded(_gridPanel);
         private List<WebElement> columnHeaders;
         private List<String> columnNames;
         private final Map<String, WebElement> columnHeadersByName = new CaseInsensitiveHashMap<>();
@@ -221,7 +228,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
         {
             if (!columnHeadersByName.containsKey(colName))
             {
-                columnHeadersByName.put(colName, Locator.findAnyElement("Column header named " + colName, grid,
+                columnHeadersByName.put(colName, Locator.findAnyElement("Column header named " + colName, this,
                         Locators.columnHeader.withText(colName),
                         Locators.columnHeader.withText(colName.toLowerCase())));
             }
@@ -231,7 +238,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
         protected List<WebElement> getColumnHeaders()
         {
             if (columnHeaders == null)
-                columnHeaders = Collections.unmodifiableList(Locators.columnHeader.findElements(grid));
+                columnHeaders = Collections.unmodifiableList(Locators.columnHeader.findElements(this));
             return columnHeaders;
         }
 
@@ -251,7 +258,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
         protected List<WebElement> getDataRows()
         {
-            return Locator.tagWithAttribute("tr", "role", "row").findElements(grid);
+            return Locator.tagWithAttribute("tr", "role", "row").findElements(this);
         }
     }
 
@@ -277,4 +284,17 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
         }
     }
 
+}
+
+class GridElement extends LazyWebElement<GridElement>
+{
+    public GridElement(@NotNull Locator locator, @NotNull SearchContext searchContext)
+    {
+        super(locator, searchContext);
+    }
+
+    protected void unfind()
+    {
+        setWrappedElement(null);
+    }
 }

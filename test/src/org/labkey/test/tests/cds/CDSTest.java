@@ -25,6 +25,7 @@ import org.labkey.test.components.cds.ActiveFilterDialog;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.InfoPane;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.PortalHelper;
@@ -264,7 +265,7 @@ public class CDSTest extends CDSReadOnlyTest
                 withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
 
         log("Verifying the message is displayed in learn about");
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnGrid.LearnTab.ASSAYS);
         assertElementPresent(Locator.tagWithClass("div", "notification-messages").
                 withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
 

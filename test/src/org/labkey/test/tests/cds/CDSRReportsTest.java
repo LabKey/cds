@@ -22,6 +22,7 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -92,7 +93,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         goToProjectHome();
         cds.enterApplication();
 
-        cds.viewLearnAboutPage("Reports");
+        cds.viewLearnAboutPage(LearnTab.REPORTS);
 
         assertTextPresent(reportName);
         Assert.assertFalse("MAb reports shouldn't be visible in Learn About", isElementPresent(Locator.tagWithText("h2", NAB_MAB_DILUTION_REPORT)));
@@ -221,7 +222,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         goToProjectHome();
         cds.enterApplication();
 
-        cds.viewLearnAboutPage("Reports");
+        LearnGrid grid = cds.viewLearnAboutPage(LearnTab.REPORTS);
 
         for (int i = 0; i < reports.length - 1; i++)
         {
@@ -233,7 +234,6 @@ public class CDSRReportsTest extends CDSReadOnlyTest
         assertTextNotPresent(reports[reports.length - 1]);
 
         log("Now validate individual aspects of the reports in CDS.");
-        LearnGrid grid = new LearnGrid(this);
         log("Number of reports shown: " + grid.getRowCount());
 
         List<String> gridText = grid.getGridText();
@@ -300,7 +300,7 @@ public class CDSRReportsTest extends CDSReadOnlyTest
             log("Validate that one svg tag is shown for this report.");
             assertElementPresent(Locator.css("table[class='labkey-output'] tbody tr td svg"), 1);
 
-            cds.viewLearnAboutPage("Reports");
+            cds.viewLearnAboutPage(LearnTab.REPORTS);
 
         }
 

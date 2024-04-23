@@ -27,6 +27,7 @@ import org.labkey.test.Locators;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
@@ -75,7 +76,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             "mAb 126", "mAb 127", "mAb 128", "MVN", "MVN/A12", "P16i", "PG9", "PGDM1400", "PGT121", "PGT121 + PGDM1400", "PGT121 + PGT145", "PGT123", "PGT125",
             "PGT126", "PGT127", "PGT128", "PGT128 + 3BNC117 + PGDM1400", "PGT128/3BNC117 + PGDM1400", "PGT130", "PGT135", "PGT143", "PGT145", "PGT151", "PGT151/3BNC117",
             "Pi", "RhiMab", "sCD4", "VRC01", "VRC01/CCFV", "VRC01/SCFV", "VRC07-523-LS", "VRC13", "VRC26.25"};
-    public static final String XPATH_TEXTBOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
     public static final org.labkey.test.Locator.XPathLocator LEARN_ROW_TITLE_LOC = Locator.tagWithClass("tr", "detail-row").append("/td//div/div/h2");
     public static final org.labkey.test.Locator.XPathLocator LEARN_HAS_DATA_ROW_TITLE_LOC = Locator.tagWithClass("tr", "detail-row-has-data").append("/td//div/div/h2");
     public static final org.labkey.test.Locator.XPathLocator DETAIL_PAGE_BREADCRUMB_LOC = Locator.tagWithClass("div", "breadcrumb");
@@ -119,7 +119,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutStudies()
     {
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         List<String> studies = Arrays.asList(CDSHelper.STUDIES);
         _asserts.verifyLearnAboutPage(studies);
@@ -131,10 +131,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> returnedItems;
         String[] lockedParts, unlockedParts;
 
-        cds.viewLearnAboutPage("Studies");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
+        List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(learnGrid.getGrid());
 
         int index = returnedItems.size() / 2;
 
@@ -172,14 +171,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         List<String> searchStrings = new ArrayList<>(Arrays.asList("Proin", "ACETAMINOPHEN", "Phase IIB"));
 
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
 
-        searchStrings.stream().forEach((searchString) -> validateSearchFor(searchString));
+        searchStrings.stream().forEach((searchString) -> validateSearchFor(learnGrid, searchString));
 
         log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.setSearch(MISSING_SEARCH_STRING);
         _asserts.verifyEmptyLearnAboutStudyPage();
     }
 
@@ -188,9 +185,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         final String studyName = CDSHelper.QED_1;
 
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
 
-        LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch(studyName);
         goToDetail(studyName, false);
         String treatmentLinkId = "groups_treatment_link";
@@ -230,13 +226,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String clintrialsId = "blah030";
         final String specimenRepoLabel = "HVTN 505";
 
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         log("Searching for '" + searchString + "'.");
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.setSearch(searchString);
 
         log("Verifying integrated data availability on summary page.");
-        LearnGrid learnGrid = new LearnGrid(this);
         int rowCount = learnGrid.getRowCount();
         assertTrue("Expected one row in the grid, found " + rowCount + " row(s).", rowCount == 1);
         assertTrue("Row did not contain " + searchString, learnGrid.getRowText(0).contains(searchString));
@@ -275,14 +269,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyLearnAboutAntigenDetails()
     {
-        cds.viewLearnAboutPage("Antigens");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.ANTIGENS);
         log("Searching for '" + CDSHelper.ANTIGEN_HIV_1C + "'.");
-        setFormElement(Locator.xpath(XPATH_TEXTBOX), CDSHelper.ANTIGEN_HIV_1C);
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.setSearch(CDSHelper.ANTIGEN_HIV_1C);
 
-        LearnGrid learnGrid = new LearnGrid(this);
         int rowCount = learnGrid.getRowCount();
-        assertTrue("Expected one row in antigen grid, found " + rowCount + " row(s).", rowCount == 1);
+        assertEquals("Expected one row in antigen grid, found " + rowCount + " row(s).", 1, rowCount);
         assertTrue("Row did not contain " + CDSHelper.ANTIGEN_HIV_1C, learnGrid.getRowText(0).contains(CDSHelper.ANTIGEN_HIV_1C));
 
         learnGrid.getCellWebElement(0, 0).click();
@@ -298,10 +290,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyStudyDetailsMabListing()
     {
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         String studyName = "RED 4";
 
-        LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch(studyName);
         goToDetail(studyName, true);
         Locator breadcrumb = DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /");
@@ -333,10 +324,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyStudyDetailsGroupsListing()
     {
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         String studyName = "RED 4";
 
-        LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch(studyName);
         goToDetail(studyName, true);
         Locator breadcrumb = DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /");
@@ -371,10 +361,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyStudyDetailsShowAll()
     {
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         String studyName = "ZAP 110";
 
-        LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch(studyName);
         goToDetail(studyName, true);
         Locator breadcrumb = DETAIL_PAGE_BREADCRUMB_LOC.withText("Studies /");
@@ -406,7 +395,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void testLearnAboutStudyProducts()
     {
         log("Extra logging to record time stamps.");
-        cds.viewLearnAboutPage("Products");
+        cds.viewLearnAboutPage(LearnTab.PRODUCTS);
         log("Should now be on the Learn About - Products page.");
         sleep(30000);
         log("Should have slept for 30 seconds.");
@@ -427,7 +416,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutMAbsSummaryPage()
     {
-        cds.viewLearnAboutPage("MAbs");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.MABS);
         waitForElement(Locators.pageSignal("learnAboutMabsLoaded"), 60000, false);
         log("Signal should have fired. Now wait, at most, 60 seconds for an h2 element with the text '1361'");
         waitForElement(Locator.xpath("//h2").withText("1361"), 60000);
@@ -437,7 +426,6 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         _asserts.verifyLearnAboutPage(mAbs);
 
         log("Verify mAb summary page fields");
-        LearnGrid learnGrid = new LearnGrid(this);
 
         verifyMAbSummaryRow(learnGrid, "2F5", "Individual mAb", "human", "IgG3?", "gp160", "gp160", "gp41 MPER", "gp41 MPER");
         verifyMAbSummaryRow(learnGrid, "PGT151/3BNC117", "Bispecific mAb", "human", "IgG", "gp160, Env", "Env, gp160", "gp120 CD4BS, gp41-gp120 (quartenary interface)", "gp41-gp120 (quartenary interface), gp120 CD4BS");
@@ -449,7 +437,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Locator.XPathLocator fieldLoc = Locator.tagWithClass("div", "detail-black-text");
 
-        List<WebElement> rowItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        List<WebElement> rowItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
         assertEquals("Search is not returning mAbs as expected", 1, rowItems.size());
 
         assertTrue("Type not as expected", isElementVisible(fieldLoc.withText(type)));
@@ -476,12 +464,11 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String labelDonorId = "Donor ID";
         final String labelDonarClade = "Donor clade";
 
-        cds.viewLearnAboutPage("MAbs");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.MABS);
 
         String mAbName = "2F5";
 
         log("Verify mAb details for " + mAbName);
-        LearnGrid learnGrid = new LearnGrid(this);
 
         learnGrid.setSearch(mAbName);
         goToDetail(mAbName, true);
@@ -578,23 +565,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         List<WebElement> lockedColItems;
         List<WebElement> freeColItems;
 
-        // This code was put in place because we were seeing failure in TeamCity where the page wasn't loading.
-        // The TeamCity configuration has been changed to use chrome which looks like it addressed this issue. Going to remove some of these lines for now.
-//        log("Extra logging to record time stamps.");
-        cds.viewLearnAboutPage("Products");
-//        log("Should now be on the Learn About - Study Products page.");
-//        sleep(10000);
-//        log("Should have slept for 10 seconds.");
-        refresh();
-        log("Page was refreshed.");
-        sleep(10000);
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
         log("Should have slept for another 10 seconds. Now wait at most 30 seconds for the page signal to fire.");
         waitForElement(Locators.pageSignal("determinationLearnAboutStudyProductLoaded"), 30000, false);
         log("Signal should have fired. Now wait, at most, 30 seconds for an h2 element with the text 'verapamil hydrochloride'");
         waitForElement(Locator.xpath("//h2").withText("verapamil hydrochloride"), 30000);
         log("Element should be there.");
-        lockedColItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
+        lockedColItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
+        freeColItems = XPATH_RESULT_ROW_DATA.findElements(learnGrid.getGrid());
 
         //Because learngrid has a locked column is actually rendered as two grids.
         int listSize = lockedColItems.size();
@@ -642,14 +620,12 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         List<String> searchStrings = new ArrayList<>(Arrays.asList("Pénélope", "acid", "ART", "is a"));
 
-        cds.viewLearnAboutPage("Products");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
 
-        searchStrings.stream().forEach((searchString) -> validateSearchFor(searchString));
+        searchStrings.stream().forEach((searchString) -> validateSearchFor(learnGrid, searchString));
 
         log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.setSearch(MISSING_SEARCH_STRING);
         _asserts.verifyEmptyLearnAboutStudyProductsPage();
     }
 
@@ -657,11 +633,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     public void testLearnAboutPublications()
     {
         log("Verify Publications listing page");
-        cds.viewLearnAboutPage("Publications");
-        sleep(CDSHelper.CDS_WAIT_LEARN);
-        log(XPATH_RESULT_ROW_TITLE.toString());
-        List<WebElement> publicationLockedLists = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(getDriver());
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
+
+        List<WebElement> publicationLockedLists = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
+        List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(learnGrid.getGrid());
 
         final String expectedPublicationTitle = "Modification of the Association Between T-Cell Immune Responses and Human Immunodeficiency Virus " +
                 "Type 1 Infection Risk by Vaccine-Induced Antibody Responses in the HVTN 505 Trial";
@@ -704,12 +679,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify Publications search");
         List<String> searchStrings = new ArrayList<>(Arrays.asList("Calmette-Guérin", "Korioth-Schmitz B", "3152265", "Clin Vaccine Immunol"));
-        cds.viewLearnAboutPage("Publications");
-        searchStrings.stream().forEach((searchString) -> validateSearchFor(searchString));
+        LearnGrid learnPubGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
+        searchStrings.stream().forEach((searchString) -> validateSearchFor(learnPubGrid, searchString));
         log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
-        sleep(CDSHelper.CDS_WAIT);
+        learnPubGrid.setSearch(MISSING_SEARCH_STRING);
         _asserts.verifyEmptyLearnAboutPublicationsPage();
     }
 
@@ -724,10 +697,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String publication_2 = "Fong Y 2018 J Infect Dis";
 
         log("Verify Publication Details Data");
-        cds.viewLearnAboutPage("Publications");
-        sleep(CDSHelper.CDS_WAIT_LEARN);
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
         log(XPATH_RESULT_ROW_TITLE.toString());
-        List<WebElement> publicationList = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        List<WebElement> publicationList = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
 
         scrollIntoView(publicationList.get(0));
         publicationList.get(0).click();
@@ -736,8 +708,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         verifyNonIntegratedDetailFieldValues(publication_data_1, "(PDF)");
         click(CDSHelper.Locators.pageHeaderBack());
-        sleep(CDSHelper.CDS_WAIT_LEARN);
-        publicationList = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
+        learnGrid = new LearnGrid(LearnTab.PUBLICATIONS, this);
+        publicationList = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
         scrollIntoView(publicationList.get(1));
         publicationList.get(1).click();
         sleep(CDSHelper.CDS_WAIT);
@@ -762,21 +734,18 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 "GSSIHmqWMz 2caxBEHKF7YcjKXJFT %55 8n hqh90Ulh3T G3pundG62H te1Crk zvKe NgfH36cjlP LMqqU9 JIUY *goaYn3 MqZH 7a09KB9saR R";
 
         log("Verify Publication Abstract details");
-        cds.viewLearnAboutPage("Publications");
-        LearnGrid learnGrid = new LearnGrid(this);
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
         learnGrid.setSearch("Bekker").clickFirstItem();
         assertTrue(Locator.tagWithText("h3", "Abstract").findElement(getDriver()).isDisplayed());
 
         log("Verify Publication Abstract details - Fong");
-        cds.viewLearnAboutPage("Publications");
-        learnGrid = new LearnGrid(this);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
         learnGrid.setSearch("fong").clickFirstItem();
         waitForElement(Locator.tagWithText("h3", "Abstract"));
         assertTrue(Locator.tagWithText("h3", "Abstract").followingSibling("p").findElement(getDriver()).getText().contains(Fong_Abstract));
 
         log("Verify No Publication Abstract details");
-        cds.viewLearnAboutPage("Publications");
-        learnGrid = new LearnGrid(this);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
         learnGrid.setSearch("mayer").clickFirstItem();
         assertFalse(isElementPresent(Locator.tagWithText("h3", "Abstract")));
     }
@@ -784,8 +753,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testAssayTutorial()
     {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid grid = new LearnGrid(this);
+        LearnGrid grid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
 
         log("Go to NAB assay page - verify tutorial section");
         grid.setSearch(CDSHelper.TITLE_NAB).clickFirstItem();
@@ -802,7 +770,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         });
 
         log("Go to BAMA assay page - verify absence of tutorial section");
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnTab.ASSAYS);
         grid.setSearch(CDSHelper.TITLE_BAMA).clickFirstItem();
         assertElementNotPresent("Assay tutorial section should not be present.", Locator.tagWithClass("div", "assay-tutorial-img-container"));
 
@@ -811,11 +779,10 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutAssays()
     {
-        cds.viewLearnAboutPage("Assays");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
-        LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch("BAMA");
         learnGrid.clickFirstItem();
         sleep(CDSHelper.CDS_WAIT);
@@ -833,7 +800,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         click(Locator.tagWithClass("div", "iarrow"));
         sleep(CDSHelper.CDS_WAIT);
         _ext4Helper.waitForMaskToDisappear();
-        learnGrid = new LearnGrid(this);
+        learnGrid = new LearnGrid(LearnTab.ANTIGENS, this);
         learnGrid.clickFirstItem();
         sleep(CDSHelper.CDS_WAIT);
 
@@ -880,8 +847,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         verifyShowAllCollapse(showAllListToggle, 6);
 
         // Go back to assays and validate the Data Added column.
-        cds.viewLearnAboutPage("Assays");
-        learnGrid = new LearnGrid(this);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
         String toolTipText, cellText, expectedText;
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
 
@@ -959,8 +925,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutNABMAbAssay()
     {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid summaryGrid = new LearnGrid(this);
+        LearnGrid summaryGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
 
         log("Go to NAB MAB assay page");
         summaryGrid.setSearch(CDSHelper.TITLE_NABMAB)
@@ -1031,10 +996,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
                 Locator.tagWithClass("div", "detail-gray-text").withText("SG3 beta env 2").findElement(rowElement).isDisplayed());
 
         log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
-        cds.viewLearnAboutPage("MAbs");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), MISSING_SEARCH_STRING);
-        sleep(CDSHelper.CDS_WAIT);
+        cds.viewLearnAboutPage(LearnTab.MABS)
+                .setSearch(MISSING_SEARCH_STRING);
         _asserts.verifyEmptyLearnAboutMAbProductsPage();
 
     }
@@ -1042,8 +1005,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutNABAssayAntigenTab()
     {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid summaryGrid = new LearnGrid(this);
+        LearnGrid summaryGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
 
         log("Go to NAB assay page");
         summaryGrid.setSearch(CDSHelper.GRID_TITLE_NAB).clickFirstItem();
@@ -1101,156 +1063,110 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateSearchNavigation()
     {
-        final String STUDIES_LINK = "//h1[@class='lhdv'][text()='Studies']";
-        final String ASSAYS_LINK = "//h1[@class='lhdv'][text()='Assays']";
-        final String PRODUCTS_LINK = "//h1[@class='lhdv'][text()='Products']";
-        final String LEARN_ABOUT = "//span[contains(@class, 'right-label')][text()='Learn about']";
-        final String BACK_BUTTON = "//div[contains(@class, 'learnview')]/span/div/div[contains(@class, 'x-container')][not(contains(@style, 'display: none'))]//div[contains(@class, 'learn-up')]//div[contains(@class, 'iarrow')]";
-
         String searchTextStudies, searchTextAssays, searchTextProducts;
-        List<WebElement> returnedItems;
 
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         searchTextStudies = "Proin leo odio, porttitor id";
         log("Search for '" + searchTextStudies + "' in Studies");
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextStudies);
-        waitForElement(XPATH_RESULT_ROW_TITLE);
+        learnGrid.setSearch(searchTextStudies);
 
         log("Go to the detail page of the item returned.");
-        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        returnedItems.get(0).click();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        LearnDetailsPage learnDetailsPage = learnGrid.clickFirstItem();
 
         log("Click back button to validate that the search value is saved.");
-        Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
-        waitForText("Learn about...");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        learnDetailsPage.clickBack();
+        assertTrue(searchTextStudies.equals(learnGrid.getSearch()));
 
         log("Click 'Learn about' and validate that the text box gets cleared.");
-        click(Locator.xpath(LEARN_ABOUT));
-        waitForText("Learn about...");
-        sleep(CDSHelper.CDS_WAIT);
-        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        assertTrue(this.getFormElement(Locator.xpath(XPATH_TEXTBOX)).length() == 0);
+
+        CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
+        LearnGrid finalLearnGrid = learnGrid;
+        Awaitility.await().untilAsserted(() -> assertTrue(finalLearnGrid.getSearch().isEmpty()));
 
         log("Search in Studies again to give it a history...");
         searchTextStudies = "Oxygen";
         log("Search for '" + searchTextStudies + "' in Studies.");
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextStudies);
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.setSearch(searchTextStudies);
 
         log("Go to the detail page of one of the items returned.");
-        returnedItems.clear();
-        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        returnedItems.get(0).click();
-        sleep(CDSHelper.CDS_WAIT);
+        learnDetailsPage = learnGrid.clickFirstItem();
 
         log("Again click the back button to save the search value. It will be checked again in a little while.");
-        Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
-        waitForText("Learn about...");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        learnDetailsPage.clickBack();
+        assertTrue(searchTextStudies.equals(learnGrid.getSearch()));
 
         log("Go to Assays and try the same basic scenario.");
-        click(Locator.xpath(ASSAYS_LINK));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
 
         searchTextAssays = "NAB";
         log("Search for '" + searchTextAssays + "' in Assays");
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextAssays);
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.setSearch(searchTextAssays);
 
         log("Go to the detail page for " + searchTextAssays + ".");
-        returnedItems.clear();
-        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        returnedItems.get(0).click();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        learnDetailsPage = learnGrid.clickFirstItem();
 
         log("Click back button to validate that the search value is saved.");
-        Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        learnDetailsPage.clickBack();
+        assertTrue(searchTextAssays.equals(learnGrid.getSearch()));
 
         log("Go to Products and try the same basic scenario.");
-        click(Locator.xpath(PRODUCTS_LINK));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
 
         searchTextProducts = "M\u00E5ns";
         log("Search for '" + searchTextProducts + "' in Products");
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchTextProducts);
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.setSearch(searchTextProducts);
 
         log("Go to the detail page for " + searchTextProducts + ".");
-        returnedItems.clear();
-        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
-        returnedItems.get(0).click();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        learnDetailsPage = learnGrid.clickFirstItem();
 
         log("Click back button to validate that the search value is saved.");
-        Locator.xpath(BACK_BUTTON).findElement(getDriver()).click();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(Locator.xpath(XPATH_TEXTBOX).findElement(getDriver()).isDisplayed());
-        assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        learnDetailsPage.clickBack();
+        assertTrue(searchTextProducts.equals(learnGrid.getSearch()));
 
         log("Now click 'Studies' and validate that the search box is populated as expected.");
-        click(Locator.xpath(STUDIES_LINK));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextStudies.equals(cds.viewLearnAboutPage(LearnTab.STUDIES).getSearch()));
 
         log("Now click 'Assays' and validate that the search box is populated as expected.");
-        click(Locator.xpath(ASSAYS_LINK));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextAssays.equals(cds.viewLearnAboutPage(LearnTab.ASSAYS).getSearch()));
 
         log("Click 'Products' and validate that the search box is populated as expected.");
-        click(Locator.xpath(PRODUCTS_LINK));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
+        assertTrue(searchTextProducts.equals(learnGrid.getSearch()));
 
         log("Now go to a different part of the app and return using the 'Learn about' link. Search values should be saved.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        click(Locator.xpath(LEARN_ABOUT));
-        waitForText("Learn about...");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
+        CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
 
         log("Validate that the 'Products' search value is there.");
-        assertTrue(searchTextProducts.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextProducts.equals(learnGrid.getSearch()));
 
         log("Now click 'Assays' and validate that the search box has the value last searched for in Assays.");
-        click(Locator.xpath(ASSAYS_LINK));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
+        assertTrue(searchTextAssays.equals(learnGrid.getSearch()));
 
         log("Go back to Plots and return using the 'Learn about' link. Search values should be saved and show Assays.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        click(Locator.xpath(LEARN_ABOUT));
+        CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
         waitForText("Learn about...");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Validate that the 'Assays' search value is there.");
-        assertTrue(searchTextAssays.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextAssays.equals(learnGrid.getSearch()));
 
         log("Finally repeat the tests with 'Studies'.");
-        click(Locator.xpath(STUDIES_LINK));
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
-        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        assertTrue(searchTextStudies.equals(learnGrid.getSearch()));
 
         log("Go back to Plots and return using the 'Learn about' link. Search values should be saved and show Studies.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
-        click(Locator.xpath(LEARN_ABOUT));
+        CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
         waitForText("Learn about...");
-        sleep(CDSHelper.CDS_WAIT_ANIMATION);
 
         log("Validate that the 'Studies' search value is there.");
-        assertTrue(searchTextStudies.equals(this.getFormElement(Locator.xpath(XPATH_TEXTBOX))));
+        assertTrue(searchTextStudies.equals(learnGrid.getSearch()));
     }
 
     @Test
@@ -1258,7 +1174,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         final int STUDY_WITH_DATA_AVAILABLE = 34;//For available integrated assays, non-integrated assays, and publications
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
         assertTextPresent("Data not added");
 
         List<WebElement> hasDataRows = Locator.css(".detail-row-has-data").findElements(getDriver());
@@ -1289,7 +1205,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         String studyName = "QED 2";
         log("Verify instruction text on Learn About page for Studies - " + studyName);
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
         goToDetail(studyName, true);
         assertTextPresent("Visualize subject-level data in");
         assertElementPresent(plotLink);
@@ -1299,7 +1215,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         String assayName = CDSHelper.ASSAYS_FULL_TITLES[1]; //ICS
         log("Verify instruction text on Learn About page for Assays - " + assayName);
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnTab.ASSAYS);
         goToDetail(assayName, true);
         assertTextPresent("Visualize subject-level data in ");
         assertElementPresent(plotLink);
@@ -1307,14 +1223,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         String mabAssayName = CDSHelper.ASSAYS_FULL_TITLES[4]; //NAb MAb
         log("Verify instruction text on Learn About page for NAB MAB assay - " + assayName);
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnTab.ASSAYS);
         goToDetail(mabAssayName, true);
         assertElementPresent(mabLink);
         assertTextPresent("to visualize or export mAb data");
 
         String productName = "2F5";
         log("Verify instruction text on Learn About page for Products - " + productName);
-        cds.viewLearnAboutPage("Products");
+        cds.viewLearnAboutPage(LearnTab.PRODUCTS);
         goToDetail(productName, true);
         assertTextPresent("Visualize subject-level data in");
         assertElementPresent(plotLink);
@@ -1323,7 +1239,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         String MAbName = "2F5";
         log("Verify sub-header instruction text on Learn About page for MAbs - " + MAbName);
-        cds.viewLearnAboutPage("MAbs");
+        cds.viewLearnAboutPage(LearnTab.MABS);
         goToDetail(MAbName, true);
 
         log("Verify sub-header instruction under MAb Characterization Studies");
@@ -1335,7 +1251,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         String publicationName = "Fong Y 2018 J Infect Dis";
         log("Verify instruction text on Learn About page for Publications - " + publicationName);
-        cds.viewLearnAboutPage("Publications");
+        cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
         goToDetail(publicationName, false);
         assertTextPresent("Go to Plot to view or Grid to export.  Additional non-integrated data files may be available for download. See study page.");
     }
@@ -1371,7 +1287,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         verifyDetailFieldValues("ARV drug levels (ARV drug levels)");
 
         log("Non-Integrated data with with Learn Assay page, and no downloadable data");
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
         goToDetail(study2, true);
         verifyNonIntegratedDetailFieldValues(ni_assay5_label, null);
 
@@ -1414,7 +1330,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     {
         log("Verify Don-Integrated Data header for " + studyName);
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
         goToDetail(studyName, true);
 
         verifySectionHeaders("Non-integrated data");
@@ -1445,7 +1361,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String waitForTextIntegratedData = "Integrated data";
 
         log(partialLogMsgIntegratedData + "Studies");
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         goToDetail(STUDY, true);
 
@@ -1457,7 +1373,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
 
         log(partialLogMsgIntegratedData + "Assays");
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnTab.ASSAYS);
         Locator loc = Locator.xpath("//h2[contains(text(), '" + CDSHelper.ICS + "')]");
         waitForElementToBeVisible(loc);
         waitAndClick(loc);
@@ -1478,9 +1394,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         verifyShowAllCollapse(showAllListToggle, 6);
 
         log(partialLogMsgIntegratedData + "Products");
-        cds.viewLearnAboutPage("Products");
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), PRODUCT);
-        sleep(CDSHelper.CDS_WAIT);
+        cds.viewLearnAboutPage(LearnTab.PRODUCTS)
+                .setSearch(PRODUCT);
 
         goToDetail(PRODUCT, true);
 
@@ -1492,10 +1407,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementPresent(cds.noDataDetailIconXPath(STUDY_FROM_PRODUCT[1]));
 
         log(partialLogMsgIntegratedData + "mAbs");
-        cds.viewLearnAboutPage("MAbs");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.MABS);
         String mAbName = "2F5";
 
-        LearnGrid learnGrid = new LearnGrid(this);
         learnGrid.setSearch(mAbName);
 
         Locator.XPathLocator mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);
@@ -1528,7 +1442,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementPresent(labeledAsLoc);
 
         log("Verify mAb integrated data availability sub listing with only 1 category");
-        cds.viewLearnAboutPage("MAbs");
+        cds.viewLearnAboutPage(LearnTab.MABS);
         mAbName = "PGT121";
         learnGrid.setSearch(mAbName);
         mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);
@@ -1545,10 +1459,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void verifyLearnAboutMabProductDetail()
     {
-        cds.viewLearnAboutPage("Products");
+        LearnGrid summaryGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
 
         String mabProduct = "2F5";
-        LearnGrid summaryGrid = new LearnGrid(this);
         summaryGrid.setSearch(mabProduct).clickFirstItem();
 
         log("Verify Integrated Data Availability");
@@ -1574,8 +1487,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutPKMAbAssay()
     {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid summaryGrid = new LearnGrid(this);
+        LearnGrid summaryGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
 
         summaryGrid.setSearch(CDSHelper.TITLE_PKMAB)
                 .clickFirstItem();
@@ -1607,9 +1519,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateLearnAboutFiltering()
     {
-        LearnGrid learnGrid = new LearnGrid(this);
-
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         log("Evaluating sorting...");
         learnGrid.sort("Name & Description");
@@ -1623,7 +1533,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Evaluating filtering...");
         String[] studiesToFilter = {CDSHelper.STUDIES[0], CDSHelper.STUDIES[7], CDSHelper.STUDIES[20]}; //Arbitrarily chosen
-        int numRowsPreFilter = XPATH_RESULT_ROW_TITLE.findElements(getDriver()).size();
+        int numRowsPreFilter = learnGrid.getRowCount();
 
         assertEquals("Facet options should all have data before filtering", LearnGrid.FacetGroups.hasData, learnGrid.getFacetGroupStatus("Name & Description"));
 
@@ -1686,9 +1596,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         // This test is used to validate the fix for issue 29002 (DataSpace: Learn filters restrict info pane link).
         final String STUDY_INFO_TEXT_TRIGGER = "Study information";
 
-        LearnGrid learnGrid = new LearnGrid(this);
-
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         log("Filter the type of study to 'Phase I'");
         String[] studiesToFilter = {"Phase I"}; //Arbitrarily chosen
@@ -1704,15 +1612,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementVisible(Locator.linkWithText("Heather Wright"));
         click(CDSHelper.Locators.cdsButtonLocator("Cancel", "filterinfocancel"));
 
-        cds.viewLearnAboutPage("Studies");
-        learnGrid.clearFilters("Type");
+        cds.viewLearnAboutPage(LearnTab.STUDIES)
+                .clearFilters("Type");
 
     }
 
     @Test
     public void validateAssayAntigens()
     {
-        cds.viewLearnAboutPage("Assays");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
         List<String> assays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(assays); // Until the data is stable don't count the assay's shown.
 
@@ -1736,7 +1644,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             waitForElement(Locator.xpath("//div[@class='detail-description']//h2[text()='" + CDSHelper.LEARN_ABOUT_BAMA_ANTIGEN_DATA[i] + "']"), 1000, true);
         }
 
-        LearnGrid learnGrid = new LearnGrid(this);
+        learnGrid = new LearnGrid(LearnTab.ASSAYS, this);
         log("Evaluating sorting...");
         learnGrid.sort("Antigen");
         List<WebElement> sortedAntigenNames = LEARN_ROW_TITLE_LOC.findElements(getDriver());
@@ -1806,15 +1714,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void validateMultiFiltering()
     {
-        LearnGrid learnGrid = new LearnGrid(this);
-
         //Test basic functionality of multifacet
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         learnGrid.setWithOptionFacet("Type", "Species", "Vulcan");
         assertTrue(1 == learnGrid.getRowCount());
 
         //Test filter for alt property persists correctly
         refresh();
+        learnGrid = new LearnGrid(LearnTab.STUDIES, this);
         sleep(CDSHelper.CDS_WAIT_LEARN);
         assertTrue(1 == learnGrid.getRowCount());
 
@@ -1850,6 +1757,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         learnGrid.setWithOptionFacet("Name & Description", "Network", "CAVD");
         assertTrue(1 == learnGrid.getRowCount());
         refresh();
+        learnGrid = new LearnGrid(LearnTab.STUDIES, this);
         sleep(CDSHelper.CDS_WAIT_LEARN);
         assertTrue(1 == learnGrid.getRowCount());
         learnGrid.clearFiltersWithOption("PI", "Grant Affiliation");
@@ -1911,7 +1819,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         }
 
         log("Validate a study that has link but the document is not there.");
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         goToDetail(CDSHelper.RED_1, false);
 
@@ -1932,7 +1840,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String studyName, documentName;
         WebElement documentLink;
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         studyName = CDSHelper.RED_5;
 
@@ -1966,7 +1874,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         scrollIntoView(documentLink);
         cds.validatePDFLink(documentLink, documentName);
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         studyName = CDSHelper.RED_9;
 
@@ -1992,7 +1900,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         scrollIntoView(documentLink);
         cds.validatePDFLink(documentLink, documentName);
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         log("Now validate a study that should have no links.");
         studyName = CDSHelper.QED_2;
@@ -2007,7 +1915,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Validate the related studies links");
         String relatedStudiesText, expectedStudiesText;
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         studyName = CDSHelper.QED_1;
         expectedStudiesText = "QED 2 (Main study)\nQED 3 (Main study)\nRED 3 (Extension study)\nRED 4 (Extension study)\nZAP 100 (Co-conducted study)\nZAP 111 (HIV follow up study)\nRED 2 (Ancillary study)\nZAP 101 (A poorly-named study relationship)";
@@ -2035,7 +1943,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         click(Locator.linkWithText("QED 1"));
         CDSHelper.Locators.studyname.withText("QED 1").waitForElement(getDriver(), 5_000);
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         studyName = CDSHelper.QED_2;
         expectedStudiesText = "QED 4 (Main study)\nQED 1 (Ancillary study)";
@@ -2048,7 +1956,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         studyName = CDSHelper.ZAP_105;
         expectedStudiesText = "ZAP 102 (Ancillary study)";
@@ -2061,7 +1969,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         studyName = CDSHelper.RED_2;
 
@@ -2071,7 +1979,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertFalse("There should be no related studies for this study, but the related studies grid was found.", isElementPresent(relatedStudiesTable));
         assertFalse("The header for the related studies section was found.", isElementPresent(Locator.xpath("//h3[text()='Related Studies']")));
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         studyName = CDSHelper.ZAP_103;
         expectedStudiesText = "YOYO 55 (Main study)\nZAP 110 (Main study)\nZAP 111 (Main study)\nZAP 105 (HIV follow up study)";
@@ -2084,7 +1992,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         Assert.assertEquals("The text for the related studies is not as expected.", expectedStudiesText, relatedStudiesText);
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         studyName = CDSHelper.RED_5;
         expectedStudiesText = "RED 5 (Ancillary study)";
@@ -2110,7 +2018,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         pdfFileName = pdfFileName.toLowerCase();
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         log("Validate that study " + studyName + " has a grant document and is of type pdf.");
         goToDetail(studyName, false);
@@ -2131,7 +2039,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         docFileName = docFileName.toLowerCase();
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
 
         log("Validate that study " + studyName + " has a grant document and is of type docx.");
 
@@ -2151,15 +2059,14 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         return Locator.xpath("//tr[contains(@class,'item-row')]/td/a[contains(text(), '" + rowText + "')]").parent().parent();
     }
 
-    private void validateSearchFor(String searchString)
+    private void validateSearchFor(LearnGrid learnGrid, String searchString)
     {
         String itemText;
         String[] itemParts;
         List<WebElement> returnedItems;
 
         log("Searching for '" + searchString + "'.");
-        this.setFormElement(Locator.xpath(XPATH_TEXTBOX), searchString);
-        sleep(CDSHelper.CDS_WAIT);  // Same elements are reused between searched, this sleep prevents a "stale element" error.
+        learnGrid.setSearch(searchString);
         returnedItems = XPATH_RESULT_ROW_TITLE.findElements(getDriver());
         log("Found " + returnedItems.size() + " items.");
 
@@ -2173,13 +2080,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
             itemParts = itemText.split("\n");
             log("Looking at detail page of " + itemParts[0]);
 
-            click(listItem);
-            sleep(1000);
+            listItem.click();
+            shortWait().until(ExpectedConditions.invisibilityOf(listItem));
 
             assertTextPresentCaseInsensitive(searchString);
 
             click(CDSHelper.Locators.pageHeaderBack());
-            sleep(2000);
+            shortWait().until(ExpectedConditions.visibilityOf(learnGrid.getGrid().getComponentElement()));
         }
 
     }

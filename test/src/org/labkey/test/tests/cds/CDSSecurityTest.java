@@ -26,6 +26,7 @@ import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.dumbster.EmailRecordTable;
 import org.labkey.test.pages.cds.CDSCreateAccountPage;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LogMethod;
@@ -47,7 +48,6 @@ import java.util.Map;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.labkey.test.tests.cds.CDSTestLearnAbout.XPATH_TEXTBOX;
 
 @Category({})
 @BaseWebDriverTest.ClassTimeout(minutes = 22)
@@ -105,7 +105,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         // Because of the feature change 30212 two studies (z120 & z121) will always be included.
         _asserts.assertFilterStatusCounts(278, 3, 1, 1, 8);
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
         List<String> studies = Arrays.asList("ZAP 119");
         _asserts.verifyLearnAboutPage(studies);
 
@@ -139,17 +139,17 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.enterApplication();
 
         log("Verify users with no study permission can see all study listing on Learn About.");
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
         List<String> allStudies = Arrays.asList(CDSHelper.STUDIES);
         _asserts.verifyLearnAboutPage(allStudies);
 
         log("Verify users with no study permission can see all assay listing on Learn About.");
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnTab.ASSAYS);
         List<String> allAssays = Arrays.asList(CDSHelper.ASSAYS_FULL_TITLES);
         _asserts.verifyLearnAboutPage(allAssays);
 
         log("Verify users with no study permission can see all product listing on Learn About.");
-        cds.viewLearnAboutPage("Products");
+        cds.viewLearnAboutPage(LearnTab.PRODUCTS);
         List<String> allProducts = Arrays.asList(CDSHelper.PRODUCTS);
         _asserts.verifyLearnAboutPage(allProducts);
 
@@ -166,7 +166,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         final String NOT_ACCESSIBLE_ICON = "ni-restricted.svg";
         final String HAS_NO_DATA_ICON = "ni-notAdded.svg";
         String study = "ZAP 138";
-        LearnGrid learnGrid = new LearnGrid(this);
 
         Map<String, String> studyPermissions = new HashMap<>();
         log("Create a user group with Read permission to project but no permission to any study folder");
@@ -175,7 +174,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log ("Verify limited access to Non-integrated data");
         impersonateGroup(_permGroups[0], false);
         cds.enterApplication();
-        cds.viewLearnAboutPage("Studies");
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         learnGrid.setSearch(study);
 
         log("Verify gray checkmark is present indicating limited access");
@@ -204,7 +203,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
         log ("Verify full access to Non-integrated data");
         cds.enterApplication();
-        cds.viewLearnAboutPage("Studies");
+        learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         learnGrid.setSearch(study);
 
         log("Verify green checkmark is present indicating access");
@@ -234,12 +233,12 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(_permGroups[0], false);
         cds.enterApplication();
 
-        cds.viewLearnAboutPage("Studies");
-        validateStudyListDataAdded(false);
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        validateStudyListDataAdded(learnGrid, false);
         validateStudyDetailDataAvailability(false);
 
-        cds.viewLearnAboutPage("Publications");
-        validatePublicationStudyList();
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
+        validatePublicationStudyList(learnGrid);
         validatePublicationDetailDataAvailability(false);
 
         beginAt(getProjectName() + "/project-begin.view");
@@ -256,13 +255,12 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         impersonateGroup(_permGroups[1], false);
         cds.enterApplication();
 
-        cds.viewLearnAboutPage("Studies");
-        sleep(CDSHelper.CDS_WAIT);
-        validateStudyListDataAdded(true);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        validateStudyListDataAdded(learnGrid, true);
         validateStudyDetailDataAvailability(true);
 
-        cds.viewLearnAboutPage("Publications");
-        validatePublicationStudyList();
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
+        validatePublicationStudyList(learnGrid);
         validatePublicationDetailDataAvailability(true);
 
         beginAt(getProjectName() + "/project-begin.view");
@@ -326,10 +324,9 @@ public class CDSSecurityTest extends CDSReadOnlyTest
                 .waitForElement(getDriver(), 1_000).getText();
     }
 
-    private void validatePublicationStudyList()
+    private void validatePublicationStudyList(LearnGrid learnGrid)
     {
-        setFormElement(Locator.xpath(XPATH_TEXTBOX), "fong y");
-        sleep(3000);
+        learnGrid.setSearch( "fong y");
         String studyList = getText(Locator.tagWithClass("div", "publication-study-list"));
         Assert.assertEquals("Publication Studies listing is not as expected for 'Fong Y 2018 J Infect Dis'", "QED 1\nQED 3\nQED 4\nRED 1\nRED 2\n...", studyList);
     }
@@ -340,8 +337,6 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         final String NOT_ACCESSIBLE_ICON = "grayCheck.png";
         final String HAS_NO_DATA_ICON = "smallGreyX.png";
 
-        CDSHelper cdsHelper = new CDSHelper(this);
-
         String dataIcon = hasAccessToQ2 ? ACCESSIBLE_ICON : NOT_ACCESSIBLE_ICON;
 
         log("Verify detailed Integrated Data Availability for QED 2");
@@ -351,7 +346,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.id("integrated-data-title")));
         Assert.assertTrue("Integrated Data Availability status for NAB is not as expected", isElementPresent(cds.getDataRowXPath("NAB").append("//td//img[contains(@src, '" + dataIcon + "')]")));
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
         log("Verify detailed Integrated Data Availability for RED 4");
         study = "RED 4";
         element = shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath("//tr[contains(@class, 'has-data')]/td/div/div/h2[contains(text(), '" + study + "')]")));
@@ -363,22 +358,21 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         Assert.assertTrue("Integrated Data Availability status for IFNg ELISpot is not as expected", isElementPresent(cds.getDataRowXPath("IFNg ELISpot").append("//td//img[contains(@src, '" + NOT_ACCESSIBLE_ICON + "')]")));
         Assert.assertTrue("Integrated Data Availability status for BAMA is not as expected", isElementPresent(cds.getDataRowXPath("BAMA").append("//td//img[contains(@src, '" + HAS_NO_DATA_ICON + "')]")));
 
-        cds.viewLearnAboutPage("Studies");
+        cds.viewLearnAboutPage(LearnTab.STUDIES);
     }
 
-    private void validateStudyListDataAdded(boolean hasAccessToQ2)
+    private void validateStudyListDataAdded(LearnGrid learnGrid, boolean hasAccessToQ2)
     {
         final int STUDY_WITH_DATA_ADDED = 24;
         int dataAddedCount = hasAccessToQ2 ? (STUDY_WITH_DATA_ADDED - 2) : STUDY_WITH_DATA_ADDED;
         int dataAccessibleCount = hasAccessToQ2 ? 3 : 1;
 
-        List<WebElement> hasDataIcons = LearnGrid.Locators.rowsWithDataNotAccessible.findElements(getDriver());
-        List<WebElement> hasAccessIcons = LearnGrid.Locators.rowsWithDataAccessible.findElements(getDriver());
+        List<WebElement> hasDataIcons = LearnGrid.Locators.rowsWithDataNotAccessible.findElements(learnGrid.getComponentElement());
+        List<WebElement> hasAccessIcons = LearnGrid.Locators.rowsWithDataAccessible.findElements(learnGrid.getComponentElement());
 
         assertEquals("Number of studies without Data Accessible is not as expected", hasDataIcons.size(), dataAddedCount);
         assertEquals("Number of studies with Data Accessible is not as expected", hasAccessIcons.size(), dataAccessibleCount);
 
-        LearnGrid learnGrid = new LearnGrid(this);
         int dataAddedColumn = learnGrid.getColumnIndex("Data Added");
         String qed2DataAddedText = hasAccessToQ2 ? "2 Integrated Assays" : "0/2 Integrated Assays";
         String cellText = learnGrid.getCellText(1, dataAddedColumn);
@@ -422,8 +416,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.enterApplication();
 
         log("Verify users with no study permission can see study documents with public access only.");
-        cds.viewLearnAboutPage("Studies");
-        validateStudyDocumentForR2("ADCC Data Summary", "cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf", false);
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        validateStudyDocumentForR2(learnGrid, "ADCC Data Summary", "cvd256_Ferrari_ADCC_Pantaleo_EV03_logscale.pdf", false);
 
         beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
@@ -438,8 +432,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         cds.enterApplication();
 
         log("Verify users with study permission can see all study documents.");
-        cds.viewLearnAboutPage("Studies");
-        validateStudyDocumentForR2("ELISpot Results Summary", "cvd256_EV03 ELISpot data.pdf", true);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        validateStudyDocumentForR2(learnGrid, "ELISpot Results Summary", "cvd256_EV03 ELISpot data.pdf", true);
 
         beginAt(getProjectName() + "/project-begin.view");
         Ext4Helper.resetCssPrefix();
@@ -447,14 +441,12 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         assertSignedInNotImpersonating();
     }
 
-    private void validateStudyDocumentForR2(String linkText, String documentName, boolean hasAccessToR2)
+    private void validateStudyDocumentForR2(LearnGrid learnGrid, String linkText, String documentName, boolean hasAccessToR2)
     {
         String study = "RED 2";
-        setFormElement(Locator.xpath(XPATH_TEXTBOX), study);
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.setSearch(study);
+        learnGrid.clickFirstItem();
 
-        List<WebElement> returnedItems  = CDSTestLearnAbout.COLUMN_LOCKING ? LearnGrid.Locators.lockedRow.findElements(getDriver()) : LearnGrid.Locators.gridRows.findElements(getDriver());
-        returnedItems.get(0).click();
         waitForText("Study information");
         sleep(2000);
 

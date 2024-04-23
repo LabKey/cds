@@ -31,6 +31,7 @@ import org.labkey.test.components.cds.ActiveFilterDialog;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.pages.query.ExecuteQueryPage;
@@ -39,7 +40,6 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -175,7 +175,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         log("Verify group details from learn about --> group page");
         refresh();
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", STUDY_GROUP));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", STUDY_GROUP, detailsPage.getGroupName());
@@ -218,7 +218,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         log("Verify navigation from learn about page");
         refresh();
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", ASSAY_GROUP_NAME));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", ASSAY_GROUP_NAME, detailsPage.getGroupName());
@@ -242,7 +242,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Assert.assertEquals("Group delete cancel does not work", ASSAY_GROUP_NAME, detailsPage.getGroupName());
 
         detailsPage.deleteGroup("Delete");
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         refresh();
         Assert.assertFalse("Deleted group is still present " + ASSAY_GROUP_NAME,
                 isElementPresent(Locator.tagWithText("h2", ASSAY_GROUP_NAME)));
@@ -267,7 +267,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         log("Verifying Single filter group");
         refresh();
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", singleFilterGroup));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", singleFilterGroup, detailsPage.getGroupName());
@@ -299,7 +299,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         log("Verifying Multi filter group");
         refresh();
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", multiFilterGroup));
         detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", multiFilterGroup, detailsPage.getGroupName());
@@ -503,7 +503,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private void verifyExportButtonOnReports()
     {
         cds.enterApplication();
-        cds.viewLearnAboutPage("Reports");
+        cds.viewLearnAboutPage(LearnTab.REPORTS);
         Locator.XPathLocator exportBtn = Locator.tagWithId("a", "learn-grid-export-button-id-btnIconEl").withAttributeContaining("style", "display: none");
         assertFalse("Export button should not be present", isElementPresent(exportBtn));
     }
@@ -535,22 +535,20 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
     private void goToPubPage(String pub)
     {
-        cds.viewLearnAboutPage("Publications");
+        cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
         _cdsTestLearnAbout.goToDetail(pub, false);
     }
 
     private void goToStudyPage(String prot)
     {
-        cds.viewLearnAboutPage("Studies");
-        LearnGrid learnGrid = new LearnGrid(this);
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         learnGrid.setSearch(prot);
         _cdsTestLearnAbout.goToDetail(prot, true);
     }
 
     private void goToAssayPage(String name)
     {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid learnGrid = new LearnGrid(this);
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
         learnGrid.setSearch(name).clickFirstItem();
     }
 
@@ -663,7 +661,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
 
-        assertEquals("Filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(0).findElement(By.className("sel-label")).getText());
+        assertEquals("Filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(0).findElement(Locator.byClass("sel-label")).getText());
 
         log("Clear the filter again and lets go back and undo everything.");
         cds.clearFilters();
@@ -688,8 +686,8 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         assertEquals("Number of active filters not as expected.", 2, activeFilters.size());
 
-        assertEquals("First filter selection not as expecxted.", "Study", activeFilters.get(0).findElement(By.className("sel-label")).getText());
-        assertEquals("Second filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(1).findElement(By.className("sel-label")).getText());
+        assertEquals("First filter selection not as expecxted.", "Study", activeFilters.get(0).findElement(Locator.byClass("sel-label")).getText());
+        assertEquals("Second filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(1).findElement(Locator.byClass("sel-label")).getText());
 
         log("Ok, looks good. Clear the filter, delete the group, and test is done.");
         cds.goToAppHome();

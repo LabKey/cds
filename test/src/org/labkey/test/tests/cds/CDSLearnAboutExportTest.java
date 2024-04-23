@@ -15,8 +15,8 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,8 +34,6 @@ import static org.junit.Assert.assertTrue;
 @BaseWebDriverTest.ClassTimeout(minutes = 13)
 public class CDSLearnAboutExportTest extends CDSReadOnlyTest
 {
-    public static final String XPATH_SEARCH_BOX = "//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input";
-
     private final CDSHelper cds = new CDSHelper(this);
 
     @Before
@@ -53,7 +51,7 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
     @Test
     public void testExportExcelDownload() throws IOException
     {
-        File assaysExcelFile = clickExportExcel("Assays", null);
+        File assaysExcelFile = clickExportExcel(LearnTab.ASSAYS, null);
         String fileContents = TestFileUtils.getFileContents(assaysExcelFile);
         assertTrue("Empty file", fileContents.length() > 0);
         assertEquals("Incorrect downloaded columns for Assays ", Arrays.asList("Assay ID", "Assay Long Name", "Assay Short Name", "Assay Category",
@@ -61,28 +59,28 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
                         "Assay Description", "Assay Method Description", "Assay Endpoint Description"),
                 getRowFromExcel(assaysExcelFile, 0));
 
-        File productsExcelFile = clickExportExcel("Products", null);
+        File productsExcelFile = clickExportExcel(LearnTab.PRODUCTS, null);
         fileContents = TestFileUtils.getFileContents(productsExcelFile);
         assertTrue("Empty file", fileContents.length() > 0);
         assertEquals("Incorrect downloaded columns for Products ", Arrays.asList("Product Id", "Product Name", "Product Type", "Product Class",
                         "Product Subclass", "Product Class Label", "Product Description", "Product Developer", "Product Manufacturer", "MAb Mixture ID"),
                 getRowFromExcel(productsExcelFile, 0));
 
-        File mabsExcelFile = clickExportExcel("MAbs", null);
+        File mabsExcelFile = clickExportExcel(LearnTab.MABS, null);
         fileContents = TestFileUtils.getFileContents(mabsExcelFile);
         assertTrue("Empty file", fileContents.length() > 0);
         assertEquals("Incorrect downloaded columns for MAbs ", Arrays.asList("MAb Mixture ID", "MAb or Mixture Standardized Name", "MAb Label", "MAb ID", "MAb Name",
                         "LANL ID", "HXB2 Location", "MAb Binding Type", "MAb Isotype", "MAb Donor ID", "MAb Donor Species", "MAb Donor Clade"),
                 getRowFromExcel(mabsExcelFile, 0));
 
-        File publicationExcelFile = clickExportExcel("Publications", null);
+        File publicationExcelFile = clickExportExcel(LearnTab.PUBLICATIONS, null);
         fileContents = TestFileUtils.getFileContents(publicationExcelFile);
         assertTrue("Empty file", fileContents.length() > 0);
         assertEquals("Incorrect downloaded columns for Publications ", Arrays.asList("Publication Id", "Title", "Authors", "Journal",
                         "Publication Date", "Volume", "Issue", "Pages", "PubMed ID", "Link", "Abstract"),
                 getRowFromExcel(publicationExcelFile, 0));
 
-        File studiesExcelFile = clickExportExcel("Studies", null);
+        File studiesExcelFile = clickExportExcel(LearnTab.STUDIES, null);
         fileContents = TestFileUtils.getFileContents(studiesExcelFile);
         assertTrue("Empty file", fileContents.length() > 0);
         assertEquals("Incorrect downloaded columns for Studies ", Arrays.asList("Study ID", "Network",
@@ -93,7 +91,7 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
                 getRowFromExcel(studiesExcelFile, 0));
 
         log("Verify Antigen tab excel export");
-        File antigenExcelFile = clickExportExcel("Antigens", null);
+        File antigenExcelFile = clickExportExcel(LearnTab.ANTIGENS, null);
         fileContents = TestFileUtils.getFileContents(antigenExcelFile);
         assertTrue("Empty excel file downloaded for antigens", fileContents.length() > 0);
         assertEquals("Incorrect downloaded columns for antigens", Arrays.asList("DataSpace antigen ID", "Full name", "Short name",
@@ -107,22 +105,18 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         assertEquals("Antigen : Incorrect number of rows imported", 2 , getRowCount(antigenExcelFile));
 
         log("Verify filtered antigen tab excel export");
-        shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath(XPATH_SEARCH_BOX)));
-        setFormElement(Locator.tagWithNameContaining("input","learn-search"), "HIV-1 D");
-        sleep(CDSHelper.CDS_WAIT);
-        LearnGrid learnGrid = new LearnGrid(this);
+        LearnGrid learnGrid = new LearnGrid(LearnTab.ANTIGENS, this);
+        learnGrid.setSearch("HIV-1 D");
         assertEquals("Incorrect number of rows after antigen filter", 1, learnGrid.getRowCount());
-        File filteredData = clickExportExcel("Antigens", null);
+        File filteredData = clickExportExcel(LearnTab.ANTIGENS, null);
         assertEquals("Antigen : Incorrect number of rows imported", 1, getRowCount(filteredData));
         assertEquals("Incorrect Antigen imported after filter", "HIV-1 D.99986.B12 [gx120.D7.avi]", getRowFromExcel(filteredData, 1).get(2)); //getting short name column data
 
         log("Verifying only filtered rows are downloaded\n");
-        cds.viewLearnAboutPage("Studies");
-        setFormElement(Locator.xpath(XPATH_SEARCH_BOX), "RED 1");
-        sleep(CDSHelper.CDS_WAIT);
-        learnGrid = new LearnGrid(this);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        learnGrid.setSearch("RED 1");
         assertEquals("Incorrect number of rows after study filter", 1, learnGrid.getRowCount());
-        filteredData = clickExportExcel("Studies", null);
+        filteredData = clickExportExcel(LearnTab.STUDIES, null);
         assertEquals("Incorrect number of rows imported", 1, getRowCount(filteredData));
         assertEquals("Incorrect study name", "RED 1", getRowFromExcel(filteredData, 1).get(2));
     }
@@ -130,27 +124,27 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
     @Test
     public void testExportCSVDownload() throws IOException
     {
-        File studiesCSVFile = clickExportCSV("Studies", null);
+        File studiesCSVFile = clickExportCSV(LearnTab.STUDIES, null);
         assertEquals("Incorrect file downloaded by CSV for Studies", Arrays.asList("Studies.csv"),
                 TestFileUtils.getFilesInZipArchive(studiesCSVFile));
 
-        File assaysCSVFile = clickExportCSV("Assays", null);
+        File assaysCSVFile = clickExportCSV(LearnTab.ASSAYS, null);
         assertEquals("Incorrect file downloaded by CSV for Assays", Arrays.asList("Assays.csv"),
                 TestFileUtils.getFilesInZipArchive(assaysCSVFile));
 
-        File productsCSVFile = clickExportCSV("Products", null);
+        File productsCSVFile = clickExportCSV(LearnTab.PRODUCTS, null);
         assertEquals("Incorrect file downloaded by CSV for Products", Arrays.asList("Products.csv"),
                 TestFileUtils.getFilesInZipArchive(productsCSVFile));
 
-        File mabsCSVFile = clickExportCSV("MAbs", null);
+        File mabsCSVFile = clickExportCSV(LearnTab.MABS, null);
         assertEquals("Incorrect file downloaded by CSV for MAbs", Arrays.asList("MAbs.csv", "Metadata.txt", "Variable definitions.csv"),
                 TestFileUtils.getFilesInZipArchive(mabsCSVFile));
 
-        File publicationsCSVFile = clickExportCSV("Publications", null);
+        File publicationsCSVFile = clickExportCSV(LearnTab.PUBLICATIONS, null);
         assertEquals("Incorrect file downloaded by CSV for Publications", Arrays.asList("Publications.csv"),
                 TestFileUtils.getFilesInZipArchive(publicationsCSVFile));
 
-        File antigenCSVFile = clickExportCSV("Antigens", null);
+        File antigenCSVFile = clickExportCSV(LearnTab.ANTIGENS, null);
         assertEquals("Incorrect CSV files downloaded for Antigens", Arrays.asList("Antigens.csv"), TestFileUtils.getFilesInZipArchive(antigenCSVFile));
     }
 
@@ -158,16 +152,16 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
     public void testExportLearnAssaysExcel() throws IOException
     {
         log("Verify Export button is not available for ICS");
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnTab.ASSAYS);
         goToAssayPage("ICS");
         assertFalse("Export button should not be present",
                 isElementPresent(Locator.tagWithAttributeContaining("span", "id", "learn-grid-assay-export-button-id")));
 
-        File BAMAExcelFile = clickExportExcel("Assays", "BAMA");
+        File BAMAExcelFile = clickExportExcel(LearnTab.ASSAYS, "BAMA");
         assertEquals("Missing sheets from downloaded excel for BAMA", Arrays.asList("BAMA Biotin LX", "Metadata", "Variable definitions", "Antigens")
                 , getSheetNamesFromExcel(BAMAExcelFile));
 
-        File PKMABExcelFile = clickExportExcel("Assays", "PKMAB");
+        File PKMABExcelFile = clickExportExcel(LearnTab.ASSAYS, "PKMAB");
         assertEquals("Missing sheets from downloaded excel for PKMAB", Arrays.asList("PK MAB", "Metadata", "Variable definitions")
                 , getSheetNamesFromExcel(PKMABExcelFile));
     }
@@ -176,16 +170,16 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
     public void testExportLearnAssaysCSV() throws IOException
     {
         log("Verify Export button is not available IFN");
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnTab.ASSAYS);
         goToAssayPage("IFN");
         assertFalse("Export button should not be present",
                 isElementPresent(Locator.tagWithAttributeContaining("span", "id", "learn-grid-assay-export-button-id")));
 
-        File NABCSVFile = clickExportCSV("Assays", "NAB");
+        File NABCSVFile = clickExportCSV(LearnTab.ASSAYS, "NAB");
         assertEquals("Missing files from downloaded CSV for NAB", Arrays.asList("NAB A3R5.csv", "Metadata.txt", "Variable definitions.csv", "Antigens.csv"),
                 TestFileUtils.getFilesInZipArchive(NABCSVFile));
 
-        File NAbMABCSVFile = clickExportCSV("Assays", "NABMAB");
+        File NAbMABCSVFile = clickExportCSV(LearnTab.ASSAYS, "NABMAB");
         assertEquals("Missing files from downloaded CSV for NABMAB", Arrays.asList("NAB MAB.csv", "Metadata.txt", "Variable definitions.csv", "Antigens.csv"),
                 TestFileUtils.getFilesInZipArchive(NAbMABCSVFile));
     }
@@ -227,9 +221,9 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         return firstSheet.getLastRowNum();
     }
 
-    private File clickExportExcel(String learnTab, @Nullable String assayName)
+    private File clickExportExcel(LearnTab learnTab, @Nullable String assayName)
     {
-        log("Verify 'Excel Export' button downloads excel file " + learnTab);
+        log("Verify 'Excel Export' button downloads excel file " + learnTab.getTabLabel());
         cds.viewLearnAboutPage(learnTab);
         Locator.XPathLocator exportBtn;
         if (assayName != null)
@@ -244,9 +238,9 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         return clickAndWaitForDownload(Locator.linkWithText("Excel (*.XLS)"));
     }
 
-    private File clickExportCSV(String learnTab, @Nullable String assayName)
+    private File clickExportCSV(LearnTab learnTab, @Nullable String assayName)
     {
-        log("Verify 'CSV Export' button downloads the zip " + learnTab);
+        log("Verify 'CSV Export' button downloads the zip " + learnTab.getTabLabel());
         Locator.XPathLocator exportBtn;
         cds.viewLearnAboutPage(learnTab);
         if (assayName != null)
@@ -263,7 +257,7 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
 
     private void goToAssayPage(String name)
     {
-        LearnGrid learnGrid = new LearnGrid(this);
+        LearnGrid learnGrid = new LearnGrid(LearnTab.ASSAYS, this);
         learnGrid.setSearch(name).clickFirstItem();
     }
 }

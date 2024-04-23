@@ -21,7 +21,6 @@ import org.labkey.test.Locator;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -188,7 +187,7 @@ public abstract class DataspaceVariableSelector
         for (String option : options)
         {
             WebElement row = variableOptionsRow().withText(option).findElement(_test.getDriver());
-            WebElement rowChecker = row.findElement(By.cssSelector(String.format(".%sgrid-row-checker", Ext4Helper.getCssPrefix())));
+            WebElement rowChecker = row.findElement(Locator.css(String.format(".%sgrid-row-checker", Ext4Helper.getCssPrefix())));
             rowChecker.click();
         }
     }

@@ -24,8 +24,10 @@ import org.labkey.test.Locator;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
 import org.labkey.test.components.html.BootstrapMenu;
+import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
@@ -34,7 +36,6 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -990,22 +991,21 @@ public class CDSHelper
         _test.createUserWithPermissions(userName, projectName, permissions);
     }
 
+    @LogMethod
     public void ensureGroupsDeleted(List<String> groups)
     {
         List<String> deletable = new ArrayList<>();
         _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
-        LearnGrid learnGrid = new LearnGrid(_test);
+        LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
         for (String group : groups)
         {
             String subName = group.substring(0, 10);
-            if(learnGrid.setSearch(subName).getRowCount() > 0 )
+            if(Locator.byClass("detail-description").childTag("h2").withText().existsIn(learnGrid))
             {
                 deletable.add(subName);
             }
         }
-        learnGrid.clearSearch();
-        if (deletable.size() > 0)
-            deletable.forEach(this::deleteGroupFromSummaryPage);
+        deletable.forEach(this::deleteGroupFromSummaryPage);
     }
 
     @LogMethod
@@ -1209,7 +1209,7 @@ public class CDSHelper
             });
         }
 
-        BaseWebDriverTest.sleep(500);
+        DataGrid.Locators.sysmsg.containing("Filter removed.").waitForElement(_test.getDriver(), CDS_WAIT);
         _test._ext4Helper.waitForMaskToDisappear();
         _test.waitForElement(Locator.xpath("//div[@class='emptytext' and text()='All subjects']"));
     }
@@ -1261,7 +1261,7 @@ public class CDSHelper
 
     private void waitForClearSelection()
     {
-        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.selectionpanel")));
+        _test.shortWait().until(ExpectedConditions.invisibilityOfElementLocated(Locator.css("div.selectionpanel")));
     }
 
     public void clickBy(final String byNoun)
@@ -1314,7 +1314,7 @@ public class CDSHelper
     }
 
     @LogMethod
-    public void viewLearnAboutPage(@LoggedParam String learnAxis)
+    public LearnGrid viewLearnAboutPage(@LoggedParam LearnTab learnTab)
     {
         NavigationLink.LEARN.makeNavigationSelection(_test);
 
@@ -1324,13 +1324,13 @@ public class CDSHelper
 
         WebElement axisTab = _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(
                 Locator.tag("div").withClass("learn-dim-selector")
-                        .append(Locator.tag("h1").withClass("lhdv").withText(learnAxis))));
+                        .append(Locator.tag("h1").withClass("lhdv").withText(learnTab.getTabLabel()))));
 
         if (!axisTab.getAttribute("class").contains("active") &&
-                !Locator.tagWithAttribute("input", "placeholder", "Search " + learnAxis.toLowerCase()).existsIn(_test.getDriver()))
+                !Locator.tagWithAttribute("input", "placeholder", "Search " + learnTab.getTabLabel().toLowerCase()).existsIn(_test.getDriver()))
         {
             axisTab.click();
-            WebDriverWrapper.waitFor(() -> axisTab.getAttribute("class").contains("active"), "Failed to select learn axis: " + learnAxis, 5_000);
+            WebDriverWrapper.waitFor(() -> axisTab.getAttribute("class").contains("active"), "Failed to select learn axis: " + learnTab.getTabLabel(), 5_000);
             _test.shortWait().until(ExpectedConditions.invisibilityOf(initialRow));
             rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test._ext4Helper.waitForMaskToDisappear();
@@ -1340,6 +1340,8 @@ public class CDSHelper
             // Just wait a moment if we're already on the desired page
             WebDriverWrapper.sleep(1000);
         }
+
+        return new LearnGrid(learnTab, _test);
     }
 
     @LogMethod (quiet = true)
@@ -1358,7 +1360,7 @@ public class CDSHelper
 
         _test.refresh();
         _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
-        LearnGrid learnGrid = new LearnGrid(_test);
+        LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
         int rowCount = learnGrid.setSearch(name).getRowCount();
         assertTrue("Group '" + name + "' was not deleted.", rowCount == 0);
         learnGrid.clearSearch();
@@ -1366,7 +1368,7 @@ public class CDSHelper
     }
     private GroupDetailsPage goToGroupFromLearnGrid(String groupName)
     {
-        LearnGrid learnGrid = new LearnGrid(_test);
+        LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
         learnGrid.setSearch(groupName).clickFirstItem();
         return new GroupDetailsPage(_test.getDriver());
     }

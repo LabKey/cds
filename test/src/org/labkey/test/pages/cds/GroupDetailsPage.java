@@ -2,6 +2,7 @@ package org.labkey.test.pages.cds;
 
 import org.labkey.test.Locator;
 import org.labkey.test.pages.LabKeyPage;
+import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -13,6 +14,7 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
     public GroupDetailsPage(WebDriver driver)
     {
         super(driver);
+        Ext4Helper.setCssPrefix("x-");
     }
 
     @Override
