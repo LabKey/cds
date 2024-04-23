@@ -1654,7 +1654,7 @@ public class CDSHelper
             {
                 String activeAxisName = searchInput.get().getDomAttribute("placeholder").replace("Search ", "");
                 LearnTab activeAxis = LearnTab.valueOf(activeAxisName.toUpperCase());
-                wdw.doAndWaitForElementToRefresh(runnable, Locator.byClass(activeAxis.getGridClass()), wdw.shortWait());
+                wdw.doAndWaitForElementToRefresh(runnable, Locator.byClass(activeAxis.getGridClass()).append(Locator.byClass("x-grid-table")), wdw.shortWait());
             }
             else
             {
