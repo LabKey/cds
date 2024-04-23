@@ -45,7 +45,8 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         _learnTab = learn;
         _learnPanel = wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(panelLoc));
         wdw._ext4Helper.waitForMaskToDisappear();
-        wdw.shortWait().until(ExpectedConditions.visibilityOf(getGrid().getComponentElement()));
+        getGrid().waitForGrid();
+//        wdw.shortWait().until(ExpectedConditions.visibilityOf(getGrid().getComponentElement()));
     }
 
     public LearnGrid(LearnTab learn, WebDriverWrapper wdw)
@@ -130,7 +131,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
                 : Locators.gridRows.refindWhenNeeded(getGrid());
         returnedItem.click();
         getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(returnedItem));
-        getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnDetailsPage.Locators.tabHeaders.withText("Overview")));
+        getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnDetailsPage.Locators.tabHeaders.withText(_learnTab == LearnTab.GROUPS ? "Details" : "Overview")));
 
         return new LearnDetailsPage(getWrapper());
     }

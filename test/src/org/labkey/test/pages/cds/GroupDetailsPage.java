@@ -6,6 +6,7 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
@@ -41,7 +42,9 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
     public GroupDetailsPage deleteGroup(String option)
     {
         newElementCache().delete.click();
-        CDSHelper.Locators.cdsButtonLocator(option, "x-toolbar-item").notHidden().findElement(getDriver()).click();
+        WebElement confirmButton = CDSHelper.Locators.cdsButtonLocator(option, "x-toolbar-item").notHidden().findElement(getDriver());
+        confirmButton.click();
+        shortWait().until(ExpectedConditions.invisibilityOf(confirmButton));
         return this;
     }
 

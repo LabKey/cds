@@ -36,6 +36,7 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.PermissionsHelper;
 import org.labkey.test.util.RReportHelper;
+import org.labkey.test.util.TestLogger;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoSuchElementException;
@@ -1000,13 +1001,13 @@ public class CDSHelper
         LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
         for (String group : groups)
         {
-            String subName = group.substring(0, 10);
-            if(Locator.byClass("detail-description").childTag("h2").withText().existsIn(learnGrid))
+            if(Locator.byClass("detail-description").childTag("h2").withText(group).existsIn(learnGrid))
             {
-                deletable.add(subName);
+                deletable.add(group);
             }
         }
-        deletable.forEach(this::deleteGroupFromSummaryPage);
+        TestLogger.log("Deleting groups: " + deletable);
+        deletable.forEach(g -> deleteGroupFromSummaryPage(g.substring(0, 10)));
     }
 
     @LogMethod
