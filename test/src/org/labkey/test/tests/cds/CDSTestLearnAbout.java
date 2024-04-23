@@ -800,7 +800,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         click(Locator.tagWithClass("div", "iarrow"));
         sleep(CDSHelper.CDS_WAIT);
         _ext4Helper.waitForMaskToDisappear();
-        learnGrid = new LearnGrid(LearnTab.ANTIGENS, this);
+        learnGrid = new LearnGrid(LearnTab.ASSAYS, this);
         learnGrid.clickFirstItem();
         sleep(CDSHelper.CDS_WAIT);
 
@@ -1442,7 +1442,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         assertElementPresent(labeledAsLoc);
 
         log("Verify mAb integrated data availability sub listing with only 1 category");
-        cds.viewLearnAboutPage(LearnTab.MABS);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.MABS);
         mAbName = "PGT121";
         learnGrid.setSearch(mAbName);
         mabRowLoc = LEARN_HAS_DATA_ROW_TITLE_LOC.withText(mAbName);

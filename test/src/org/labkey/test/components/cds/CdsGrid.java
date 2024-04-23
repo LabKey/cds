@@ -51,11 +51,20 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     public void applyAndWaitForGrid(Runnable function)
     {
+        waitForGrid();
         getWrapper().doAndWaitForElementToRefresh(() -> {
             function.run();
             clearElementCache();
             }, Locator.css("table.x-grid-table"), this, getWrapper().shortWait());
         getWrapper()._ext4Helper.waitForMaskToDisappear();
+        waitForGrid();
+    }
+
+    private void waitForGrid()
+    {
+        Locator.XPathLocator.union(
+                Locator.byClass("detail-description"), Locator.byClass("detail-empty-text"))
+                .waitForElement(this, CDS_WAIT);
     }
 
     @LogMethod

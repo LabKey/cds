@@ -82,6 +82,11 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         {
             return _tabLabel;
         }
+
+        public String getGridClass()
+        {
+            return _gridClass;
+        }
     }
 
     @Override

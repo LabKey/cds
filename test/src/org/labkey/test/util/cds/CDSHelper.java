@@ -52,7 +52,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
+import java.util.Optional;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
@@ -1334,13 +1335,15 @@ public class CDSHelper
             _test.shortWait().until(ExpectedConditions.invisibilityOf(initialRow));
             rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
             _test._ext4Helper.waitForMaskToDisappear();
+            _test.shortWait().until(ExpectedConditions
+                    .attributeToBe(Locator.css(".learn-search-input input"),
+                            "placeholder", "Search " + learnTab.getTabLabel().toLowerCase()));
         }
         else
         {
             // Just wait a moment if we're already on the desired page
             WebDriverWrapper.sleep(1000);
         }
-
         return new LearnGrid(learnTab, _test);
     }
 
@@ -1644,16 +1647,30 @@ public class CDSHelper
     public enum NavigationLink
     {
         HOME("Home", Locator.id("homecontrollerview")),
-        LEARN("Learn about", Locator.byClass("learnview")),
+        LEARN("Learn about", (wdw, runnable) -> {
+            Optional<WebElement> searchInput = Locator.css(".learn-search-input input").findOptionalElement(wdw.getDriver());
+            String searchValue = searchInput.map(el -> el.getAttribute("value")).orElse("");
+            if (!searchValue.isEmpty())
+            {
+                String activeAxisName = searchInput.get().getDomAttribute("placeholder").replace("Search ", "");
+                LearnTab activeAxis = LearnTab.valueOf(activeAxisName.toUpperCase());
+                wdw.doAndWaitForElementToRefresh(runnable, Locator.byClass(activeAxis.getGridClass()), wdw.shortWait());
+            }
+            else
+            {
+                runnable.run();
+            }
+            wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.byClass("learnview")));
+        }),
         SUMMARY("Find subjects", Locator.byClass("summaryview")),
         PLOT("Plot data", Locator.byClass("chartview")),
         GRID("View data grid", Locator.byClass("connector-grid").withoutClass("mab-connector-grid")),
         MABGRID("Monoclonal antibodies", Locator.tagWithClass("div", "mab-connector-grid"));
 
         private final String _linkText;
-        private final Consumer<WebDriverWrapper> _waitForReady;
+        private final BiConsumer<WebDriverWrapper, Runnable> _waitForReady;
 
-        NavigationLink(String linkText, Consumer<WebDriverWrapper> waitForReady)
+        NavigationLink(String linkText, BiConsumer<WebDriverWrapper, Runnable> waitForReady)
         {
             _linkText = linkText;
             _waitForReady = waitForReady;
@@ -1661,7 +1678,10 @@ public class CDSHelper
 
         NavigationLink(String linkText, Locator expectedElement)
         {
-            this(linkText, wdw -> wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(expectedElement)));
+            this(linkText, (wdw, runnable) -> {
+                runnable.run();
+                wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(expectedElement));
+            });
         }
 
         public String getLinkText()
@@ -1682,15 +1702,21 @@ public class CDSHelper
         public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
         {
             log("Navigate to CDS: " + getLinkText());
-            wdw.waitAndClick(getLinkLocator());
-            if (!skipReadyCheck)
-                waitForReady(wdw);
+            Runnable runnable = () -> wdw.waitAndClick(getLinkLocator());
+            if (skipReadyCheck)
+            {
+                runnable.run();
+            }
+            else
+            {
+                _waitForReady.accept(wdw, runnable);
+            }
             wdw._ext4Helper.waitForMaskToDisappear(30000);
         }
 
         public void waitForReady(WebDriverWrapper wdw)
         {
-            _waitForReady.accept(wdw);
+            _waitForReady.accept(wdw, () -> {});
         }
     }
 
