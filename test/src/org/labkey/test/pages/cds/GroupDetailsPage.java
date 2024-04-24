@@ -42,7 +42,7 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
     public GroupDetailsPage deleteGroup(String option)
     {
         elementCache().delete.click();
-        WebElement window = Ext4Helper.Locators.window("Delete Group").waitForElement(getDriver(), 2_000);
+        WebElement window = CDSHelper.extLoc(Ext4Helper.Locators.window("Delete Group")).waitForElement(getDriver(), 2_000);
         shortWait().until(ExpectedConditions.textToBePresentInElement(window, "Are you sure you want to delete \""));
         WebElement confirmButton = CDSHelper.Locators.cdsButtonLocator(option, "x-toolbar-item").findElement(window);
         confirmButton.click();
