@@ -58,7 +58,6 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.TestLogger.log;
 
 public class CDSHelper
@@ -1001,13 +1000,28 @@ public class CDSHelper
         LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
         for (String group : groups)
         {
-            if(Locator.byClass("detail-description").childTag("h2").withText(group).existsIn(learnGrid))
+            if(LearnGrid.Locators.rowDescriptionLink(group).existsIn(learnGrid))
             {
                 deletable.add(group);
             }
         }
         TestLogger.log("Deleting groups: " + deletable);
-        deletable.forEach(g -> deleteGroupFromSummaryPage(g.substring(0, 10)));
+        deletable.forEach(this::deleteGroupFromSummaryPage);
+    }
+
+    @LogMethod
+    public void deleteAllGroups()
+    {
+        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
+        LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
+        int groupCount = learnGrid.getRowCount();
+        for (int i = 0; i < groupCount; i++)
+        {
+            String group = LearnGrid.Locators.rowDescriptionLink.findElement(learnGrid.getGrid()).getText();
+            deleteGroupFromSummaryPage(group);
+            learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
+        }
+        Assert.assertEquals("All groups should be deleted", 0, learnGrid.getRowCount());
     }
 
     @LogMethod
@@ -1373,15 +1387,12 @@ public class CDSHelper
         _test.refresh();
         _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
         LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
-        int rowCount = learnGrid.setSearch(name).getRowCount();
-        assertTrue("Group '" + name + "' was not deleted.", rowCount == 0);
-        learnGrid.clearSearch();
-        _test._ext4Helper.waitForMaskToDisappear();
+        LearnGrid.Locators.rowDescriptionLink(name).waitForElementToDisappear(learnGrid.getGrid(), CDS_WAIT);
     }
     private GroupDetailsPage goToGroupFromLearnGrid(String groupName)
     {
         LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
-        learnGrid.setSearch(groupName).clickFirstItem();
+        learnGrid.clickDetails(groupName);
         return new GroupDetailsPage(_test.getDriver());
     }
 

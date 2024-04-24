@@ -44,7 +44,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -115,17 +114,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.goToAppHome();
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
 
-        List<String> groups = new ArrayList<>();
-        groups.add(GROUP_LIVE_FILTER);
-        groups.add(GROUP_STATIC_FILTER);
-        groups.add(STUDY_GROUP);
-        groups.add(HOME_PAGE_GROUP);
-        groups.add(SHARED_GROUP_NAME);
-        groups.add(SHARED_MAB_GROUP_NAME);
-        groups.add(ASSAY_GROUP_NAME_UPDATED);
-        groups.add(CDS_SINGLE_GROUP);
-        groups.add(MULTI_FILTER_GROUP);
-        cds.ensureGroupsDeleted(groups);
+        cds.deleteAllGroups();
 
         cds.ensureNoFilter();
         cds.ensureNoSelection();
@@ -360,13 +349,12 @@ public class CDSGroupTest extends CDSGroupBaseTest
     @Test
     public void verifyInteractiveAndCuratedLinks()
     {
+        Ext4Helper.resetCssPrefix(); // Report creation happens in LKS
         _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
         createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
 
         createSharedReports(NEW_USER_ACCOUNTS[0]);
         cds.enterApplication();
-        refresh();
-        cds.ensureGroupsDeleted(new ArrayList(Arrays.asList(STUDY_GROUP_Q2, STUDY_GROUP_Z110)));
 
         String studyGroupDesc = "Curated group for " + QED_2;
         log("create " + studyGroupDesc);
@@ -692,7 +680,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
         log("Ok, looks good. Clear the filter, delete the group, and test is done.");
         cds.goToAppHome();
         cds.deleteGroupFromSummaryPage(GROUP_NAME);
-//        cds.clearFilters(); //TODO : delete group should clear the filter, need to verify with client if this is the expected behavior.
 
     }
 

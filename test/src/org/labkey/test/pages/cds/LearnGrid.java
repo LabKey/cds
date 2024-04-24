@@ -46,7 +46,6 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         _learnPanel = wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(panelLoc));
         wdw._ext4Helper.waitForMaskToDisappear();
         getGrid().waitForGrid();
-//        wdw.shortWait().until(ExpectedConditions.visibilityOf(getGrid().getComponentElement()));
     }
 
     public LearnGrid(LearnTab learn, WebDriverWrapper wdw)
@@ -130,6 +129,17 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
                 ? Locators.unlockedRow.refindWhenNeeded(getGrid())
                 : Locators.gridRows.refindWhenNeeded(getGrid());
         returnedItem.click();
+        getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(returnedItem));
+        getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnDetailsPage.Locators.tabHeaders.withText(_learnTab == LearnTab.GROUPS ? "Details" : "Overview")));
+
+        return new LearnDetailsPage(getWrapper());
+    }
+
+    public LearnDetailsPage clickDetails(String description)
+    {
+        WebElement returnedItem  = Locators.rowDescriptionLink(description).findElement(getGrid());
+        returnedItem.click();
+
         getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(returnedItem));
         getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnDetailsPage.Locators.tabHeaders.withText(_learnTab == LearnTab.GROUPS ? "Details" : "Overview")));
 
@@ -395,6 +405,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         public static final Locator rowsWithData = Locator.css(".detail-row-has-data");
         public static final Locator rowsWithDataNotAccessible = Locator.css(".detail-has-data-gray");
         public static final Locator rowsWithDataAccessible = Locator.css(".detail-has-data-green");
+        public static final Locator.XPathLocator rowDescriptionLink = Locator.byClass("detail-description").childTag("h2");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {
@@ -405,6 +416,11 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
         {
             return Locator.tagWithClass("div", "x-column-header-inner").withText(columnHeaderName);
+        }
+
+        public static Locator.XPathLocator rowDescriptionLink(String description)
+        {
+            return rowDescriptionLink.withText(description);
         }
     }
 

@@ -21,7 +21,7 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
     @Override
     public void waitForPage()
     {
-        waitForText("Edit details");
+        shortWait().until(ExpectedConditions.visibilityOf(elementCache().groupName));
     }
 
     public String getGroupName()
@@ -41,10 +41,12 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
 
     public GroupDetailsPage deleteGroup(String option)
     {
-        newElementCache().delete.click();
-        WebElement confirmButton = CDSHelper.Locators.cdsButtonLocator(option, "x-toolbar-item").notHidden().findElement(getDriver());
+        elementCache().delete.click();
+        WebElement window = Ext4Helper.Locators.window("Delete Group").waitForElement(getDriver(), 2_000);
+        shortWait().until(ExpectedConditions.textToBePresentInElement(window, "Are you sure you want to delete \""));
+        WebElement confirmButton = CDSHelper.Locators.cdsButtonLocator(option, "x-toolbar-item").findElement(window);
         confirmButton.click();
-        shortWait().until(ExpectedConditions.invisibilityOf(confirmButton));
+        shortWait().until(ExpectedConditions.invisibilityOf(window));
         return this;
     }
 
@@ -54,7 +56,7 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
         return new GroupDetailsPage.ElementCache();
     }
 
-    protected class ElementCache extends LabKeyPage.ElementCache
+    protected class ElementCache extends LabKeyPage<?>.ElementCache
     {
         private final WebElement groupName = Locator.tagWithClass("div", "studyname").refindWhenNeeded(this);
         private final WebElement groupDesc = Locator.tagWithId("table", "group-description-id").refindWhenNeeded(this);
