@@ -63,7 +63,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
     public void waitForGrid()
     {
         Locator.XPathLocator.union(
-                Locator.byClass("detail-description"), Locator.byClass("detail-empty-text"))
+                Locator.byClass("detail-description"), Locator.byClass("detail-empty-text"), Locator.byClass("x-grid-data-row"))
                 .waitForElement(this, CDS_WAIT);
     }
 
