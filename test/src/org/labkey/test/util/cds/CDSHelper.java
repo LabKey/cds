@@ -2110,9 +2110,4 @@ public class CDSHelper
        else
         return Integer.parseInt(subString);
     }
-
-    public static Locator.XPathLocator extLoc(Locator.XPathLocator loc)
-    {
-        return Locator.xpath(loc.toXpath().replace("x4-", "x-"));
-    }
 }
