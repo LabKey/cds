@@ -1725,7 +1725,7 @@ public class CDSHelper
 
         public void makeNavigationSelection(CdsGrid grid)
         {
-            grid.applyAndWaitForGrid(() -> makeNavigationSelection(grid.getWrapper()));
+            grid.doAndWaitForUpdate(() -> makeNavigationSelection(grid.getWrapper()));
         }
 
         public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
