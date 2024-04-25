@@ -275,7 +275,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
         getWrapper().click(checkbox);
         if (getWrapper().isElementPresent(checkedLoc))
             getWrapper().click(checkbox);
-        getWrapper().sleep(2000);
+        WebDriverWrapper.sleep(2000);
     }
 
     public void selectMAbs(String ...mabNames)
@@ -317,7 +317,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     public void openMAbReport(String reportName)
     {
         getWrapper().click(Locators.getMAbReportBtn(reportName));
-        getWrapper().sleep(500);
+        WebDriverWrapper.sleep(500);
         getWrapper().waitForElement(Locators.getMAbReportHeader(reportName));
         getWrapper()._ext4Helper.waitForMaskToDisappear(10000);
     }

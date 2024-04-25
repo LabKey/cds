@@ -49,11 +49,9 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
         _gridEl.unfind();
     }
 
-    public void waitForGrid()
+    public WebElement waitForGrid()
     {
-        Locator.XPathLocator.union(
-                        Locator.byClass("detail-description"), Locator.byClass("detail-empty-text"), Locator.byClass("x-grid-data-row"))
-                .waitForElement(this, CDS_WAIT);
+        return Locators.rowLoc.waitForElement(this, CDS_WAIT);
     }
 
     public void doAndWaitForGridUpdate(Runnable function)
@@ -66,11 +64,12 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     public void doAndWaitForRowUpdate(Runnable function)
     {
-        waitForGrid();
+        WebElement beforeRows = waitForGrid();
         getWrapper().doAndWaitForElementToRefresh(() -> {
             function.run();
             clearElementCache();
         }, Locator.css("table.x-grid-table"), this, getWrapper().shortWait());
+        getWrapper().shortWait().until(ExpectedConditions.stalenessOf(beforeRows));
         getWrapper()._ext4Helper.waitForMaskToDisappear();
         waitForGrid();
     }
@@ -281,7 +280,10 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     public static final class Locators
     {
-
+        static Locator.XPathLocator rowLoc = Locator.XPathLocator.union(
+                Locator.byClass("detail-description"),
+                Locator.byClass("detail-empty-text"),
+                Locator.byClass("x-grid-data-row"));
         public static Locator.XPathLocator columnHeader = Locator.tagWithClass("div", "x-column-header");
         public static Locator.XPathLocator rowCheckBoxLoc = Locator.tagWithClass("td", "x-grid-cell-row-checker");
 
