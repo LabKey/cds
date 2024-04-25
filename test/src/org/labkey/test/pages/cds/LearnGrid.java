@@ -149,7 +149,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     @LogMethod
     public LearnGrid setSearch(@LoggedParam String searchQuery)
     {
-        elementCache().grid.doAndWaitForUpdate(() ->
+        elementCache().grid.doAndWaitForRowUpdate(() ->
                 getWrapper().setFormElement(elementCache().searchBox, searchQuery));
 
         return this;
@@ -158,7 +158,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     @LogMethod
     public LearnGrid clearSearch()
     {
-        elementCache().grid.doAndWaitForUpdate(() -> Locators.clearSearch.findElement(this).click());
+        elementCache().grid.doAndWaitForGridUpdate(() -> Locators.clearSearch.findElement(this).click());
         return this;
     }
 
@@ -232,7 +232,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         }
 
         Locator.XPathLocator search = CDSHelper.Locators.cdsButtonLocator("Search", "filter-btn");
-        elementCache().grid.doAndWaitForUpdate(() -> search.findElement(filterWindow).click());
+        elementCache().grid.doAndWaitForGridUpdate(() -> search.findElement(filterWindow).click());
 
         return this;
     }
@@ -256,7 +256,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         }
 
         WebElement clearBtn = CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn").findElement(filterWindow);
-        elementCache().grid.doAndWaitForUpdate(clearBtn::click);
+        elementCache().grid.doAndWaitForGridUpdate(clearBtn::click);
 
         return this;
     }

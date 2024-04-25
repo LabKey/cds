@@ -56,7 +56,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
                 .waitForElement(this, CDS_WAIT);
     }
 
-    public void doAndWaitForUpdate(Runnable function)
+    public void doAndWaitForGridUpdate(Runnable function)
     {
         waitForGrid();
         function.run();
@@ -66,7 +66,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
         waitForGrid();
     }
 
-    public void doAndWaitForRows(Runnable function)
+    public void doAndWaitForRowUpdate(Runnable function)
     {
         waitForGrid();
         getWrapper().doAndWaitForElementToRefresh(() -> {
@@ -79,7 +79,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
     @LogMethod
     public void sort(@LoggedParam final String columnName)
     {
-        doAndWaitForRows(() -> {
+        doAndWaitForRowUpdate(() -> {
             WebElement columnHeader = elementCache().getColumnHeader(columnName);
             getWrapper().mouseOver(columnHeader);
             columnHeader.click();
@@ -126,7 +126,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
             Checkbox.Ext4Checkbox().locatedBy(Locator.byClass("x-grid-row-checker")).find(row).check();
         }
 
-        doAndWaitForUpdate(() -> CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn").findElement(filterWindow).click());
+        doAndWaitForGridUpdate(() -> CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn").findElement(filterWindow).click());
 
     }
 
@@ -146,7 +146,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
         WebElement input = Locator.css("#value_1 input").waitForElement(filterWindow, CDS_WAIT);
         getWrapper().setFormElement(input, value);
-        doAndWaitForUpdate(() -> {
+        doAndWaitForGridUpdate(() -> {
             filterBtn.click();
             CDSHelper.Locators.filterMemberLocator(columnName).waitForElement(getDriver(), CDS_WAIT * 2);
         });
@@ -167,7 +167,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
         final WebElement button = Locator.XPathLocator.union(update, filter).findElement(filterWindow);
 
-        doAndWaitForUpdate(button::click);
+        doAndWaitForGridUpdate(button::click);
     }
 
     public boolean isHasData(String columnName, String value)
@@ -216,7 +216,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
     {
         WebElement filterWindow = openFilterPanel(columnName);
         WebElement clearButton = CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn").waitForElement(filterWindow, CDS_WAIT);
-        doAndWaitForUpdate(clearButton::click);
+        doAndWaitForGridUpdate(clearButton::click);
         DataGrid.Locators.sysmsg.containing("Filter removed.").waitForElement(getDriver(), CDS_WAIT);
     }
 

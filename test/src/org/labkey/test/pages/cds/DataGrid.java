@@ -89,7 +89,7 @@ public class DataGrid extends BaseCdsComponent<DataGrid.ElementCache>
         if (!activeTabLoc.existsIn(this))
         {
             WebElement tabEl = Locators.tabHeaderContainer.append(Locators.header.withText(tabName)).waitForElement(this, 2_000);
-            elementCache().grid.doAndWaitForUpdate(() -> {
+            elementCache().grid.doAndWaitForGridUpdate(() -> {
                         tabEl.click();
                         WebElement activeTabHeader = activeTabLoc.waitForElement(this, BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
                         getWrapper().shortWait().until(ExpectedConditions.visibilityOf(activeTabHeader));
@@ -560,37 +560,37 @@ public class DataGrid extends BaseCdsComponent<DataGrid.ElementCache>
 
     public void doAndWaitForUpdate(Runnable function)
     {
-        elementCache().grid.doAndWaitForUpdate(function);
+        elementCache().grid.doAndWaitForGridUpdate(function);
     }
 
     public void goToLastPage()
     {
-        elementCache().grid.doAndWaitForRows(() -> getWrapper().click(Locators.lastPage));
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.lastPage));
     }
 
     public void goToFirstPage()
     {
-        elementCache().grid.doAndWaitForRows(() -> getWrapper().click(Locators.firstPage));
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.firstPage));
     }
 
     public void clickPreviousBtn()
     {
-        elementCache().grid.doAndWaitForRows(() -> getWrapper().click(Locators.previousBtn));
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.previousBtn));
     }
 
     public void clickNextBtn()
     {
-        elementCache().grid.doAndWaitForRows(() -> getWrapper().click(Locators.nextBtn));
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.nextBtn));
     }
 
     public void goToPreviousPage()
     {
-        elementCache().grid.doAndWaitForRows(() -> getWrapper().click(Locators.previousPage));
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.previousPage));
     }
 
     public void goToNextPage()
     {
-        elementCache().grid.doAndWaitForRows(() -> getWrapper().click(Locators.nextPage));
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.nextPage));
     }
 
     public static class Locators
