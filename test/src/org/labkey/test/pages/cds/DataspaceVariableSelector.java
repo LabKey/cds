@@ -104,7 +104,7 @@ public abstract class DataspaceVariableSelector
             _test.log("Waiting for subject counts before clicking source.");
             _test.sleep(5000);
         }
-        _test.click(window().append(" div.content-label").withText(source));
+        _test.waitAndClick(window().append(" div.content-label").withText(source));
 
         // Click the title (try to get rid of tool-tip bubble.
         _test.click(Locator.xpath("//span[@class='section-title']").notHidden());
