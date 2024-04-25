@@ -58,12 +58,10 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     public void doAndWaitForGridUpdate(Runnable function)
     {
-        waitForGrid();
-        function.run();
-        getWrapper().shortWait().until(ExpectedConditions.stalenessOf(getComponentElement()));
-        getWrapper()._ext4Helper.waitForMaskToDisappear();
-        clearElementCache();
-        waitForGrid();
+        doAndWaitForRowUpdate(() -> {
+            function.run();
+            getWrapper().shortWait().until(ExpectedConditions.stalenessOf(getComponentElement()));
+        });
     }
 
     public void doAndWaitForRowUpdate(Runnable function)
@@ -73,6 +71,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
             function.run();
             clearElementCache();
         }, Locator.css("table.x-grid-table"), this, getWrapper().shortWait());
+        getWrapper()._ext4Helper.waitForMaskToDisappear();
         waitForGrid();
     }
 

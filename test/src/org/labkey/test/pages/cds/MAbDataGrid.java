@@ -156,7 +156,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
     {
         Optional<WebElement> clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear").findOptionalElement(getDriver());
         clearAllFilterBtn.ifPresent(webElement ->
-                elementCache().mabGrid.doAndWaitForGridUpdate(webElement::click));
+                elementCache().mabGrid.doAndWaitForRowUpdate(webElement::click));
         Locator.tagWithClass("div", "filtered-column").waitForElementToDisappear(this, WAIT_FOR_PAGE);
     }
 
@@ -236,7 +236,7 @@ public class MAbDataGrid extends WebDriverComponent<MAbDataGrid.ElementCache>
 
         final WebElement button = CDSHelper.Locators.cdsButtonLocator(buttonText).findElement(getDriver());
 
-        elementCache().mabGrid.doAndWaitForGridUpdate(() -> {
+        elementCache().mabGrid.doAndWaitForRowUpdate(() -> {
             button.click();
             getWrapper().shortWait().until(ExpectedConditions.stalenessOf(button));
             getWrapper()._ext4Helper.waitForMaskToDisappear();
