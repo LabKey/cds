@@ -23,6 +23,7 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.WebTestHelper;
+import org.labkey.test.components.cds.CdsGrid;
 import org.labkey.test.components.html.BootstrapMenu;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.GroupDetailsPage;
@@ -1720,6 +1721,11 @@ public class CDSHelper
         public void makeNavigationSelection(WebDriverWrapper wdw)
         {
             makeNavigationSelection(wdw, false);
+        }
+
+        public void makeNavigationSelection(CdsGrid grid)
+        {
+            grid.applyAndWaitForGrid(() -> makeNavigationSelection(grid.getWrapper()));
         }
 
         public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)

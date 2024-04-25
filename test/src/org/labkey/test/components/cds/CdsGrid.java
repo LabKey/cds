@@ -49,34 +49,43 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
         _gridEl.unfind();
     }
 
-    public void applyAndWaitForGrid(Runnable function)
-    {
-        waitForGrid();
-        getWrapper().doAndWaitForElementToRefresh(() -> {
-            function.run();
-            clearElementCache();
-            }, Locator.css("table.x-grid-table"), this, getWrapper().shortWait());
-        getWrapper()._ext4Helper.waitForMaskToDisappear();
-        waitForGrid();
-    }
-
     public void waitForGrid()
     {
         Locator.XPathLocator.union(
-                Locator.byClass("detail-description"), Locator.byClass("detail-empty-text"), Locator.byClass("x-grid-data-row"))
+                        Locator.byClass("detail-description"), Locator.byClass("detail-empty-text"), Locator.byClass("x-grid-data-row"))
                 .waitForElement(this, CDS_WAIT);
+    }
+
+    public void applyAndWaitForGrid(Runnable function)
+    {
+        waitForGrid();
+        function.run();
+        getWrapper().shortWait().until(ExpectedConditions.stalenessOf(getComponentElement()));
+        getWrapper()._ext4Helper.waitForMaskToDisappear();
+        clearElementCache();
+        waitForGrid();
     }
 
     @LogMethod
     public void sort(@LoggedParam final String columnName)
     {
-        applyAndWaitForGrid(() -> {
+        doAndWaitForSort(() -> {
             WebElement columnHeader = elementCache().getColumnHeader(columnName);
             getWrapper().mouseOver(columnHeader);
             columnHeader.click();
         });
         Locator.tagWithClassContaining("div", "x-column-header-sort-").withText(columnName)
                 .waitForElement(this, 2_000);
+    }
+
+    private void doAndWaitForSort(Runnable function)
+    {
+        waitForGrid();
+        getWrapper().doAndWaitForElementToRefresh(() -> {
+            function.run();
+            clearElementCache();
+        }, Locator.css("table.x-grid-table"), this, getWrapper().shortWait());
+        waitForGrid();
     }
 
     public boolean isColumnFiltered(String columnHeaderName)

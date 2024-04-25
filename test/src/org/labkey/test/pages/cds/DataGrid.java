@@ -97,6 +97,11 @@ public class DataGrid extends BaseCdsComponent<DataGrid.ElementCache>
         }
     }
 
+    public CdsGrid getGrid()
+    {
+        return elementCache().grid;
+    }
+
     public void assertColumnsNotPresent(String... columns)
     {
         Assertions.assertThat(elementCache().grid.getColumnNames()).doesNotContain(columns);
@@ -424,7 +429,7 @@ public class DataGrid extends BaseCdsComponent<DataGrid.ElementCache>
 
     public void assertCellContent(String content)
     {
-        getWrapper().waitForElement(CdsGrid.Locators.cellLocator(content));
+        CdsGrid.Locators.cellLocator(content).waitForElement(elementCache().grid, 2_000);
     }
 
     public void sort(String columnName)
@@ -560,9 +565,7 @@ public class DataGrid extends BaseCdsComponent<DataGrid.ElementCache>
 
     public void goToLastPage()
     {
-        getWrapper().click(Locators.lastPage);
-        WebDriverWrapper.sleep(500);
-        getWrapper()._ext4Helper.waitForMaskToDisappear();
+        doAndWaitForUpdate(() -> getWrapper().click(Locators.lastPage));
     }
 
     public void goToFirstPage()
