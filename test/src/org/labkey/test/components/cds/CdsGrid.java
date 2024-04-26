@@ -281,7 +281,6 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
     public static final class Locators
     {
         static Locator.XPathLocator rowLoc = Locator.XPathLocator.union(
-                Locator.byClass("detail-description"),
                 Locator.byClass("detail-empty-text"),
                 Locator.byClass("x-grid-data-row"));
         public static Locator.XPathLocator columnHeader = Locator.tagWithClass("div", "x-column-header");

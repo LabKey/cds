@@ -1363,12 +1363,10 @@ public class CDSHelper
                     .attributeToBe(Locator.css(".learn-search-input input"),
                             "placeholder", "Search " + learnTab.getTabLabel().toLowerCase()));
         }
-        else
-        {
-            // Just wait a moment if we're already on the desired page
-            WebDriverWrapper.sleep(1000);
-        }
-        return new LearnGrid(learnTab, _test);
+
+        LearnGrid learnGrid = new LearnGrid(learnTab, _test);
+        _test.shortWait().until(ExpectedConditions.visibilityOf(learnGrid.getGrid().waitForGrid()));
+        return learnGrid;
     }
 
     @LogMethod (quiet = true)
