@@ -35,6 +35,7 @@ import java.util.List;
 
 import static org.labkey.test.tests.cds.CDSTestLearnAbout.COLUMN_LOCKING;
 import static org.labkey.test.util.cds.CDSHelper.CDS_WAIT;
+import static org.labkey.test.util.cds.CDSHelper.CDS_WAIT_LEARN;
 
 public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
 {
@@ -128,6 +129,13 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     public LearnDetailsPage clickFirstItem()
     {
         WebElement link = Locators.rowDescriptionLink.findElement(getGrid());
+        return clickDetailsLink(link, link.getText());
+    }
+
+    public LearnDetailsPage clickItemContaining(String partialDescription)
+    {
+        setSearch(partialDescription);
+        WebElement link = Locators.rowDescriptionLink.index(0).containing(partialDescription).waitForElement(getGrid(), CDS_WAIT_LEARN);
         return clickDetailsLink(link, link.getText());
     }
 

@@ -213,8 +213,6 @@ Ext.define('Connector.app.store.MAb', {
             this.mabMixStudies = undefined;
 
             this.loadRawData(mixRecs);
-
-            LABKEY.Utils.signalWebDriverTest("learnAboutMabsLoaded");
         }
     },
 

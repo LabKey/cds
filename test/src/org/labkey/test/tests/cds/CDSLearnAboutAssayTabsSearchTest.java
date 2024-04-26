@@ -38,8 +38,8 @@ public class CDSLearnAboutAssayTabsSearchTest extends CDSReadOnlyTest
         LearnGrid summaryGrid = cds.viewLearnAboutPage(LearnGrid.LearnTab.ASSAYS);
 
         log("Test basic search functionality.");
-        LearnDetailsPage.DetailLearnGrid ICSAntigenGrid = summaryGrid.setSearch(CDSHelper.TITLE_ICS)
-                .clickFirstItem()
+        LearnDetailsPage.DetailLearnGrid ICSAntigenGrid = summaryGrid
+                .clickItemContaining(CDSHelper.TITLE_ICS)
                 .getGridTab(LearnGrid.LearnTab.ASSAY_VARIABLES);
         ICSAntigenGrid.setSearch("%");
         Assert.assertEquals("Incorrect count in search result", 3, ICSAntigenGrid.getRowCount());
@@ -59,8 +59,8 @@ public class CDSLearnAboutAssayTabsSearchTest extends CDSReadOnlyTest
         LearnGrid summaryGrid = cds.viewLearnAboutPage(LearnGrid.LearnTab.ASSAYS);
 
         log("Test basic search functionality.");
-        LearnDetailsPage.DetailLearnGrid bamaAntigenGrid = summaryGrid.setSearch(CDSHelper.TITLE_BAMA)
-                .clickFirstItem()
+        LearnDetailsPage.DetailLearnGrid bamaAntigenGrid = summaryGrid
+                .clickItemContaining(CDSHelper.TITLE_BAMA)
                 .getGridTab(LearnGrid.LearnTab.ASSAY_ANTIGENS);
 
         bamaAntigenGrid.setSearch("antibody");

@@ -537,7 +537,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private void goToAssayPage(String name)
     {
         LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
-        learnGrid.setSearch(name).clickFirstItem();
+        learnGrid.clickItemContaining(name);
     }
 
     private void verifyCuratedLink(String descr)

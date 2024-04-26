@@ -14,6 +14,7 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
+import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.util.cds.CDSHelper;
@@ -255,10 +256,10 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         return clickAndWaitForDownload(Locator.linkWithText("Comma separated values (*.CSV)"));
     }
 
-    private void goToAssayPage(String name)
+    private LearnDetailsPage goToAssayPage(String name)
     {
         LearnGrid learnGrid = new LearnGrid(LearnTab.ASSAYS, this);
-        learnGrid.setSearch(name).clickFirstItem();
+        return learnGrid.clickItemContaining(name);
     }
 }
 

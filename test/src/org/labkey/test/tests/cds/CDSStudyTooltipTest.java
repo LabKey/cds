@@ -43,7 +43,7 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         log("Verifying the tooltip for Learn about - Assays");
         CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
         LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
-        learnGrid.setSearch(CDSHelper.TITLE_ICS).clickFirstItem();
+        learnGrid.clickItemContaining(CDSHelper.TITLE_ICS);
         validateToolTip(Locator.linkWithText(CDSHelper.RED_4).findElement(getDriver()), RED4ToolTipText);
 
         log("Verifying the tooltip for Learn about - Products");
@@ -55,7 +55,7 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         log("Verifying the tooltip for Learn about - MAbs");
         CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
         learnGrid = cds.viewLearnAboutPage(LearnTab.MABS);
-        learnGrid.setSearch("2F5").clickFirstItem();
+        learnGrid.clickItemContaining("2F5");
         validateToolTip(Locator.linkWithText(CDSHelper.QED_4).findElement(getDriver()), QED4ToolTipText);
 
         log("Verifying the tooltip for Learn about - Publications");

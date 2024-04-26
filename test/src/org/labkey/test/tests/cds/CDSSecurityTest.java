@@ -444,8 +444,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
     private void validateStudyDocumentForR2(LearnGrid learnGrid, String linkText, String documentName, boolean hasAccessToR2)
     {
         String study = "RED 2";
-        learnGrid.setSearch(study);
-        learnGrid.clickFirstItem();
+        learnGrid.clickItemContaining(study);
 
         waitForText("Study information");
         sleep(2000);
