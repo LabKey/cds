@@ -30,6 +30,7 @@ import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.pages.cds.MAbDataGrid;
+import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -945,23 +946,22 @@ public class CDSMAbTest extends CDSGroupBaseTest
         cds.clearFilters();
         click(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup));
 
-        WebElement mabGridLink = shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.tagWithText("span", "View in MAb grid")));
+        WebElement mabGridLink = shortWait().until(ExpectedConditions.visibilityOfElementLocated(Ext4Helper.Locators.ext4Button( "View in MAb grid")));
 
         Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
         Assert.assertFalse("Subject filters shouldn't have changed by applying mAb group", isElementPresent(clearAllFilterBtn));
 
         log("Verify mAb group details page");
         mabGridLink.click();
+        shortWait().until(ExpectedConditions.invisibilityOf(mabGridLink));
 
         log("Verify mab grid filters after applying mAb group");
-        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         grid = new MAbDataGrid(this);
         Assert.assertTrue(MAB_COL + " should have been filtered", grid.isColumnFiltered(MAB_COL));
         Assert.assertFalse(STUDIES_COL + " should not have been filtered", grid.isColumnFiltered(STUDIES_COL));
 
         log("Replace a mab group");
         grid.clearAllFilters();
-        sleep(5000);
         grid.setFacet(SPECIES_COL,false,"llama");
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("save", "mabfiltersave"));
         waitAndClick(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
