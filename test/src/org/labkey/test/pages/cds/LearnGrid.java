@@ -150,7 +150,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     public LearnGrid setSearch(@LoggedParam String searchQuery)
     {
         elementCache().grid.doAndWaitForRowUpdate(() ->
-                getWrapper().setFormElement(elementCache().searchBox, searchQuery));
+                getWrapper().actionPaste(elementCache().searchBox, searchQuery));
 
         return this;
     }
