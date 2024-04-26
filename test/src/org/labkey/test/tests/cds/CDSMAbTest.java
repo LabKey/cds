@@ -884,12 +884,11 @@ public class CDSMAbTest extends CDSGroupBaseTest
         String mabPrivateGroup = "mabPrivateTestGroup";
         String mabPublicGroup = "mabPublicTestGroup";
 
-        List<String> groups = new ArrayList<>();
-        groups.add(subjectPrivateGroup);
-        groups.add(subjectPublicGroup);
-        groups.add(mabPrivateGroup);
-        groups.add(mabPublicGroup);
-        cds.ensureGroupsDeleted(groups);
+        cds.ensureGroupsDeleted(List.of(
+                subjectPrivateGroup,
+                subjectPublicGroup,
+                mabPrivateGroup,
+                mabPublicGroup));
 
         log("Compose a shared and a private subject group");
         cds.goToSummary();

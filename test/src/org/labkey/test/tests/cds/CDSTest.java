@@ -33,7 +33,6 @@ import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -70,11 +69,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToAppHome();
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
 
-        List<String> groups = new ArrayList<>();
-        groups.add(GROUP_NAME);
-        groups.add(HOME_PAGE_GROUP);
-        cds.ensureGroupsDeleted(groups);
-
+        cds.ensureGroupsDeleted(List.of(GROUP_NAME, HOME_PAGE_GROUP));
         cds.ensureNoFilter();
         cds.ensureNoSelection();
 

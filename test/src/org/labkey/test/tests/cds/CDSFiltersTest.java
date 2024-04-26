@@ -26,7 +26,6 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,19 +49,13 @@ public class CDSFiltersTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
-
         cds.enterApplication();
 
         // clean up groups
         cds.goToAppHome();
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
 
-        List<String> groups = new ArrayList<>();
-        groups.add(GROUP_NAME);
-        groups.add(GROUP_NAME2);
-        groups.add(GROUP_NAME3);
-        cds.ensureGroupsDeleted(groups);
-
+        cds.ensureGroupsDeleted(List.of(GROUP_NAME, GROUP_NAME2, GROUP_NAME3));
         cds.ensureNoFilter();
         cds.ensureNoSelection();
 
