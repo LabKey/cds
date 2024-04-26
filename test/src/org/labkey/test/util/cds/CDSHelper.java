@@ -1001,7 +1001,7 @@ public class CDSHelper
         LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
         for (String group : groups)
         {
-            if(LearnGrid.Locators.rowDescriptionLink(group).existsIn(learnGrid))
+            if(LearnGrid.Locators.rowDescriptionLink.withText(group).existsIn(learnGrid))
             {
                 deletable.add(group);
             }
@@ -1388,7 +1388,7 @@ public class CDSHelper
         _test.refresh();
         _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
         LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
-        LearnGrid.Locators.rowDescriptionLink(name).waitForElementToDisappear(learnGrid.getGrid(), CDS_WAIT);
+        LearnGrid.Locators.rowDescriptionLink.withText(name).waitForElementToDisappear(learnGrid.getGrid(), CDS_WAIT);
     }
     private GroupDetailsPage goToGroupFromLearnGrid(String groupName)
     {

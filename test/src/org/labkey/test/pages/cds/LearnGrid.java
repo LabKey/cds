@@ -15,6 +15,7 @@
  */
 package org.labkey.test.pages.cds;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
@@ -24,6 +25,7 @@ import org.labkey.test.components.cds.BaseCdsComponent;
 import org.labkey.test.components.cds.CdsGrid;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
+import org.labkey.test.util.TestLogger;
 import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -125,28 +127,28 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
 
     public LearnDetailsPage clickFirstItem()
     {
-        WebElement returnedItem  = COLUMN_LOCKING
-                ? Locators.unlockedRow.refindWhenNeeded(getGrid())
-                : Locators.gridRows.refindWhenNeeded(getGrid());
-        returnedItem.click();
-        getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(returnedItem));
-        getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnDetailsPage.Locators.tabHeaders.withText(_learnTab == LearnTab.GROUPS ? "Details" : "Overview")));
-
-        return new LearnDetailsPage(getWrapper());
+        WebElement link = Locators.rowDescriptionLink.findElement(getGrid());
+        return clickDetailsLink(link, link.getText());
     }
 
     public LearnDetailsPage clickDetails(String description)
     {
-        WebElement returnedItem  = Locators.rowDescriptionLink(description).findElement(getGrid());
-        returnedItem.click();
+        WebElement link  = Locators.rowDescriptionLink.withText(description).findElement(getGrid());
+        return clickDetailsLink(link, description);
+    }
 
-        getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(returnedItem));
+    @NotNull
+    private LearnDetailsPage clickDetailsLink(WebElement detailsLink, String description)
+    {
+        TestLogger.log("Viewing details for " + description);
+        detailsLink.click();
+        getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(detailsLink));
         getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnDetailsPage.Locators.tabHeaders.withText(_learnTab == LearnTab.GROUPS ? "Details" : "Overview")));
 
         return new LearnDetailsPage(getWrapper());
     }
 
-    @LogMethod
+    @LogMethod (quiet = true)
     public LearnGrid setSearch(@LoggedParam String searchQuery)
     {
         elementCache().grid.doAndWaitForRowUpdate(() ->
@@ -418,10 +420,6 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
             return Locator.tagWithClass("div", "x-column-header-inner").withText(columnHeaderName);
         }
 
-        public static Locator.XPathLocator rowDescriptionLink(String description)
-        {
-            return rowDescriptionLink.withText(description);
-        }
     }
 
     @Override
