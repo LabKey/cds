@@ -1678,13 +1678,14 @@ public class CDSHelper
                     // Determine the active learn axis by the placeholder text of the search box
                     String activeAxisName = searchInput.get().getDomAttribute("placeholder").replace("Search ", "");
                     LearnTab activeAxis = LearnTab.valueOf(activeAxisName.toUpperCase());
-                    wdw.doAndWaitForElementToRefresh(() -> super.makeNavigationSelection(wdw, skipReadyCheck), Locator.byClass(activeAxis.getGridClass()).append(Locator.byClass("x-grid-table")), wdw.shortWait());
+                    new LearnGrid(activeAxis, wdw).getGrid().doAndWaitForRowUpdate(() -> super.makeNavigationSelection(wdw, skipReadyCheck));
+
                 }
                 else
                 {
                     super.makeNavigationSelection(wdw, skipReadyCheck);
+                    new LearnGrid(LearnTab.STUDIES, wdw).getGrid().waitForGrid(); // Studies grid is default. Wait for it when first visiting learn page
                 }
-                wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.byClass("learnview")));
             }
         },
         SUMMARY("Find subjects", Locator.byClass("summaryview")),
