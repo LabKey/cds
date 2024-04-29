@@ -1367,9 +1367,7 @@ public class CDSHelper
                             "placeholder", "Search " + learnTab.getTabLabel().toLowerCase()));
         }
 
-        LearnGrid learnGrid = new LearnGrid(learnTab, _test);
-        learnGrid.getGrid().waitForGrid();
-        return learnGrid;
+        return new LearnGrid(learnTab, _test);
     }
 
     @LogMethod (quiet = true)
@@ -1671,7 +1669,7 @@ public class CDSHelper
         HOME("Home", Locator.id("homecontrollerview")),
         LEARN("Learn about", LearnGrid.Locators.panel) {
             @Override
-            public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
+            public void makeNavigationSelection(WebDriverWrapper wdw)
             {
                 Locator.CssLocator searchInputLoc = Locator.css(".learn-search-input input");
                 Optional<WebElement> searchInput = searchInputLoc.findOptionalElement(wdw.getDriver());
@@ -1688,11 +1686,15 @@ public class CDSHelper
                 if (!emptySearch && gridExists)
                 {
                     new CdsGrid(activeAxis.getGridClass(), LearnGrid.Locators.panel.findElement(wdw.getDriver()), wdw)
-                            .doAndWaitForRowUpdate(() -> super.makeNavigationSelection(wdw, skipReadyCheck));
+                            .doAndWaitForRowUpdate(() -> {
+                                super.makeNavigationSelection(wdw);
+                                waitForTab(activeAxis, wdw);
+                            });
                 }
                 else
                 {
-                    super.makeNavigationSelection(wdw, skipReadyCheck);
+                    super.makeNavigationSelection(wdw);
+                    waitForTab(activeAxis, wdw);
                     wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(searchInputLoc));
                     if (!emptySearch)
                     {
@@ -1702,6 +1704,13 @@ public class CDSHelper
                     }
                     new LearnGrid(activeAxis, wdw).getGrid().waitForGrid();
                 }
+            }
+
+            private void waitForTab(LearnTab learnTab, WebDriverWrapper wdw)
+            {
+                wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(
+                        Locator.tag("div").withClass("learn-dim-selector")
+                                .append(Locator.tag("h1").withClasses("lhdv", "active").withText(learnTab.getTabLabel()))));
             }
         },
         SUMMARY("Find subjects", Locator.byClass("summaryview")),
@@ -1733,24 +1742,16 @@ public class CDSHelper
             return Locator.tagWithClass("div", "navigation-view").append(Locator.tagWithClass("div", "nav-label").withText(_linkText));
         }
 
-        public void makeNavigationSelection(WebDriverWrapper wdw)
-        {
-            makeNavigationSelection(wdw, false);
-        }
-
         public void makeNavigationSelection(CdsGrid grid)
         {
             grid.doAndWaitForRowUpdate(() -> makeNavigationSelection(grid.getWrapper()));
         }
 
-        public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
+        public void makeNavigationSelection(WebDriverWrapper wdw)
         {
             log("Navigate to CDS: " + getLinkText());
             wdw.waitAndClick(getLinkLocator());
-            if (!skipReadyCheck)
-            {
-                _waitForReady.accept(wdw);
-            }
+            _waitForReady.accept(wdw);
             wdw._ext4Helper.waitForMaskToDisappear(30000);
         }
 
