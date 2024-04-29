@@ -163,7 +163,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
         activeFilterDialog.saveAsAGroup().setGroupName(STUDY_GROUP).setGroupDescription(studyGroupDesc).saveGroup();
 
         log("Verify group details from learn about --> group page");
-        refresh();
         cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", STUDY_GROUP));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
@@ -206,7 +205,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
         activeFilterDialog.saveAsAGroup().setGroupName(ASSAY_GROUP_NAME).setGroupDescription(desc).saveGroup();
 
         log("Verify navigation from learn about page");
-        refresh();
         cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", ASSAY_GROUP_NAME));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
@@ -255,7 +253,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
                 .saveGroup();
 
         log("Verifying Single filter group");
-        refresh();
         cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", singleFilterGroup));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
@@ -367,6 +364,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.goToAppHome();
         Locator.XPathLocator listGroup = Locator.tagWithClass("div", "grouplabel");
         waitAndClick(listGroup.withText(STUDY_GROUP_Q2));
+        sleep(1000); // Wait for group selection animation
         String groupUrl = getCurrentRelativeURL();
         String[] vals = groupUrl.split("/");
         int rowId = Integer.valueOf(vals[vals.length - 1]); //study.SubjectGroup.RowId
