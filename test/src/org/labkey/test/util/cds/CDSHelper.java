@@ -1356,6 +1356,7 @@ public class CDSHelper
         if (!axisTab.getAttribute("class").contains("active") &&
                 !Locator.tagWithAttribute("input", "placeholder", "Search " + learnTab.getTabLabel().toLowerCase()).existsIn(_test.getDriver()))
         {
+            TestLogger.log("Select learn axis: " + learnTab.getTabLabel());
             axisTab.click();
             WebDriverWrapper.waitFor(() -> axisTab.getAttribute("class").contains("active"), "Failed to select learn axis: " + learnTab.getTabLabel(), 5_000);
             _test.shortWait().until(ExpectedConditions.invisibilityOf(initialRow));
@@ -1367,7 +1368,7 @@ public class CDSHelper
         }
 
         LearnGrid learnGrid = new LearnGrid(learnTab, _test);
-        _test.shortWait().until(ExpectedConditions.visibilityOf(learnGrid.getGrid().waitForGrid()));
+        learnGrid.getGrid().waitForGrid();
         return learnGrid;
     }
 

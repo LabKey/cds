@@ -57,7 +57,8 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     public WebElement waitForGrid()
     {
-        return getWrapper().shortWait().until(ExpectedConditions.visibilityOf(waitForGridMaybeHidden()));
+        getWrapper().shortWait().until(ExpectedConditions.visibilityOf(getComponentElement()));
+        return waitForGridMaybeHidden();
     }
 
     private WebElement waitForGridMaybeHidden()
