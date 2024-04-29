@@ -3,6 +3,7 @@ package org.labkey.test.components.cds;
 import org.jetbrains.annotations.NotNull;
 import org.labkey.remoteapi.collections.CaseInsensitiveHashMap;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.components.Component;
 import org.labkey.test.components.WebDriverComponent;
 import org.labkey.test.components.ext4.Checkbox;
@@ -30,10 +31,15 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     private final GridElement _gridEl;
 
+    public CdsGrid(String gridClass, WebElement gridPanel, WebDriverWrapper wdw)
+    {
+        super(wdw);
+        _gridEl = new GridElement(Locator.byClass("x-grid").withClass(gridClass), gridPanel);
+    }
+
     public CdsGrid(String gridClass, WebDriverComponent<?> gridPanel)
     {
-        super(gridPanel.getWrapper());
-        _gridEl = new GridElement(Locator.byClass("x-grid").withClass(gridClass), gridPanel);
+        this(gridClass, gridPanel.getComponentElement(), gridPanel.getWrapper());
     }
 
     @Override
@@ -51,6 +57,11 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     public WebElement waitForGrid()
     {
+        return getWrapper().shortWait().until(ExpectedConditions.visibilityOf(waitForGridMaybeHidden()));
+    }
+
+    private WebElement waitForGridMaybeHidden()
+    {
         return Locators.rowLoc.waitForElement(this, CDS_WAIT);
     }
 
@@ -64,7 +75,7 @@ public class CdsGrid extends BaseCdsComponent<CdsGrid.ElementCache>
 
     public void doAndWaitForRowUpdate(Runnable function)
     {
-        WebElement beforeRows = waitForGrid();
+        WebElement beforeRows = waitForGridMaybeHidden();
         getWrapper().doAndWaitForElementToRefresh(() -> {
             function.run();
             clearElementCache();

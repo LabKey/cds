@@ -53,7 +53,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
 
     public LearnGrid(LearnTab learn, WebDriverWrapper wdw)
     {
-        this(learn, Locator.byClass("learnview"), wdw);
+        this(learn, Locators.panel, wdw);
     }
 
     public enum FacetGroups { hasData, noData, both }
@@ -135,7 +135,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     public LearnDetailsPage clickItemContaining(String partialDescription)
     {
         setSearch(partialDescription);
-        WebElement link = Locators.rowDescriptionLink.index(0).containing(partialDescription).waitForElement(getGrid(), CDS_WAIT_LEARN);
+        WebElement link = Locators.rowDescriptionLink.index(0).containingIgnoreCase(partialDescription).waitForElement(getGrid(), CDS_WAIT_LEARN);
         return clickDetailsLink(link, link.getText());
     }
 
@@ -398,6 +398,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
 
     public static class Locators
     {
+        public static final Locator.XPathLocator panel = Locator.byClass("learnview");
         public static final Locator.XPathLocator searchBox = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input");
 
         public static final Locator.XPathLocator clearSearch = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//div");

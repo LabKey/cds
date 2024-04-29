@@ -737,6 +737,7 @@ public class CDSHelper
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         _test.waitForElement(Locator.tagWithClass("body", "appready"));
         Ext4Helper.setCssPrefix("x-");
+        NavigationLink.HOME.waitForReady(_test);
     }
 
     public void dismissTooltip()
@@ -1168,6 +1169,7 @@ public class CDSHelper
     {
         _test.click(Locator.xpath("//div[contains(@class, 'connectorheader')]//div[contains(@class, 'logo')]"));
         _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
+        NavigationLink.HOME.waitForReady(_test);
         _test.sleep(1000);
     }
 
@@ -1666,25 +1668,38 @@ public class CDSHelper
     public enum NavigationLink
     {
         HOME("Home", Locator.id("homecontrollerview")),
-        LEARN("Learn about", Locator.byClass("learnview")) {
+        LEARN("Learn about", LearnGrid.Locators.panel) {
             @Override
             public void makeNavigationSelection(WebDriverWrapper wdw, boolean skipReadyCheck)
             {
-                Optional<WebElement> searchInput = Locator.css(".learn-search-input input").findOptionalElement(wdw.getDriver());
-                String searchValue = searchInput.map(el -> el.getAttribute("value")).orElse("");
-                // If a search is present when you click "learn about", the search will be cleared and the grid with refresh
-                if (!searchValue.isEmpty())
-                {
-                    // Determine the active learn axis by the placeholder text of the search box
-                    String activeAxisName = searchInput.get().getDomAttribute("placeholder").replace("Search ", "");
-                    LearnTab activeAxis = LearnTab.valueOf(activeAxisName.toUpperCase());
-                    new LearnGrid(activeAxis, wdw).getGrid().doAndWaitForRowUpdate(() -> super.makeNavigationSelection(wdw, skipReadyCheck));
+                Locator.CssLocator searchInputLoc = Locator.css(".learn-search-input input");
+                Optional<WebElement> searchInput = searchInputLoc.findOptionalElement(wdw.getDriver());
+                boolean emptySearch = searchInput.map(el -> el.getAttribute("value").isEmpty()).orElse(true);
 
+                // Determine the active learn axis by the placeholder text of the search box
+                LearnTab activeAxis = searchInput.map(el ->
+                                LearnTab.valueOf(el.getDomAttribute("placeholder").replace("Search ", "").toUpperCase()))
+                        .orElse(LearnTab.STUDIES);
+
+                boolean gridExists = LearnGrid.Locators.panel.append(Locator.byClass(activeAxis.getGridClass())).existsIn(wdw.getDriver());
+
+                // If a search is present when you click "learn about", the search will be cleared and the grid will refresh
+                if (!emptySearch && gridExists)
+                {
+                    new CdsGrid(activeAxis.getGridClass(), LearnGrid.Locators.panel.findElement(wdw.getDriver()), wdw)
+                            .doAndWaitForRowUpdate(() -> super.makeNavigationSelection(wdw, skipReadyCheck));
                 }
                 else
                 {
                     super.makeNavigationSelection(wdw, skipReadyCheck);
-                    new LearnGrid(LearnTab.STUDIES, wdw).getGrid().waitForGrid(); // Studies grid is default. Wait for it when first visiting learn page
+                    wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(searchInputLoc));
+                    if (!emptySearch)
+                    {
+                        // Grid will refresh twice if there is a search value but grid isn't hidden on page.
+                        // No great way to detect two loads so we just pause.
+                        WebDriverWrapper.sleep(CDS_WAIT);
+                    }
+                    new LearnGrid(activeAxis, wdw).getGrid().waitForGrid();
                 }
             }
         },

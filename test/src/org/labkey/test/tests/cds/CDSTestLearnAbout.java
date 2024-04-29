@@ -1049,7 +1049,9 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         searchTextStudies = "Proin leo odio, porttitor id";
         log("Search for '" + searchTextStudies + "' in Studies");
-        LearnDetailsPage learnDetailsPage = learnGrid.clickItemContaining(searchTextStudies);
+        LearnDetailsPage learnDetailsPage = learnGrid
+                .setSearch(searchTextStudies)
+                .clickFirstItem();
 
         log("Click back button to validate that the search value is saved.");
         learnDetailsPage.clickBack();
@@ -1064,7 +1066,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         log("Search in Studies again to give it a history...");
         searchTextStudies = "Oxygen";
         log("Search for '" + searchTextStudies + "' in Studies.");
-        learnGrid.clickItemContaining(searchTextStudies);
+        learnGrid.setSearch(searchTextStudies)
+                .clickFirstItem();
 
         log("Again click the back button to save the search value. It will be checked again in a little while.");
         learnDetailsPage.clickBack();
@@ -1075,7 +1078,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         searchTextAssays = "NAB";
         log("Search for '" + searchTextAssays + "' in Assays");
-        learnGrid.clickItemContaining(searchTextAssays);
+        learnGrid.setSearch(searchTextAssays)
+                .clickFirstItem();
 
         log("Click back button to validate that the search value is saved.");
         learnDetailsPage.clickBack();
@@ -1086,7 +1090,8 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         searchTextProducts = "M\u00E5ns";
         log("Search for '" + searchTextProducts + "' in Products");
-        learnGrid.clickItemContaining(searchTextProducts);
+        learnGrid.setSearch(searchTextProducts)
+                .clickFirstItem();
 
         log("Click back button to validate that the search value is saved.");
         learnDetailsPage.clickBack();
