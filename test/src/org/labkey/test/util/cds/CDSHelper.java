@@ -736,8 +736,9 @@ public class CDSHelper
         _test.waitForElement(Locator.tagContainingText("h1", HOME_PAGE_HEADER));
         _test.assertElementNotPresent(Locator.linkWithText("Admin"));
         _test.waitForElement(Locator.tagWithClass("body", "appready"));
+        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(Locator.tagWithClass("a", "logout").withText("Logout")));
         Ext4Helper.setCssPrefix("x-");
-        NavigationLink.HOME.waitForReady(_test);
+        NavigationLink.getActive(_test).waitForReady(_test);
     }
 
     public void dismissTooltip()
@@ -998,8 +999,7 @@ public class CDSHelper
     public void ensureGroupsDeleted(List<String> groups)
     {
         List<String> deletable = new ArrayList<>();
-        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
-        LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
+        LearnGrid learnGrid = viewLearnAboutPage(LearnTab.GROUPS);
         for (String group : groups)
         {
             if(LearnGrid.Locators.rowDescriptionLink.withText(group).existsIn(learnGrid))
@@ -1014,8 +1014,7 @@ public class CDSHelper
     @LogMethod
     public void deleteAllGroups()
     {
-        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
-        LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
+        LearnGrid learnGrid = viewLearnAboutPage(LearnTab.GROUPS);
         int groupCount = learnGrid.getRowCount();
         for (int i = 0; i < groupCount; i++)
         {
@@ -1340,13 +1339,12 @@ public class CDSHelper
     @LogMethod
     public LearnGrid viewLearnAboutPage(@LoggedParam LearnTab learnTab, boolean forceClickLearnFirst)
     {
-        if (forceClickLearnFirst || !Locator.byClass("learnview").isDisplayed(_test.getDriver()))
+        if (forceClickLearnFirst || !LearnGrid.Locators.panel.isDisplayed(_test.getDriver()))
         {
             NavigationLink.LEARN.makeNavigationSelection(_test);
         }
 
-        Locator.XPathLocator rowLoc = Locator.xpath("//table[@role='presentation']//tr[@role='row']").withDescendant(Locator.byClass("detail-description")).notHidden();
-        WebElement initialRow = rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+        LearnGrid.waitForCurrentLearnGrid(_test);
         _test._ext4Helper.waitForMaskToDisappear();
 
         WebElement axisTab = _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(
@@ -1359,12 +1357,10 @@ public class CDSHelper
             TestLogger.log("Select learn axis: " + learnTab.getTabLabel());
             axisTab.click();
             WebDriverWrapper.waitFor(() -> axisTab.getAttribute("class").contains("active"), "Failed to select learn axis: " + learnTab.getTabLabel(), 5_000);
-            _test.shortWait().until(ExpectedConditions.invisibilityOf(initialRow));
-            rowLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
-            _test._ext4Helper.waitForMaskToDisappear();
             _test.shortWait().until(ExpectedConditions
                     .attributeToBe(Locator.css(".learn-search-input input"),
                             "placeholder", "Search " + learnTab.getTabLabel().toLowerCase()));
+            _test._ext4Helper.waitForMaskToDisappear();
         }
 
         return new LearnGrid(learnTab, _test);
@@ -1380,20 +1376,15 @@ public class CDSHelper
     @LogMethod (quiet = true)
     public void deleteGroupFromSummaryPage(@LoggedParam String name)
     {
-        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
-        GroupDetailsPage groupDetailsPage = goToGroupFromLearnGrid(name);
-        groupDetailsPage.deleteGroup("Delete");
+        viewLearnAboutPage(LearnTab.GROUPS)
+                .clickDetails(name);
+        new GroupDetailsPage(_test.getDriver())
+                .deleteGroup("Delete");
 
         _test.refresh();
-        _test.beginAt("/cds/" + _test.getPrimaryTestProject() + "/cds-app.view#learn/learn/Group", WebDriverWrapper.WAIT_FOR_PAGE);
-        LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
+        afterInApplication();
+        LearnGrid learnGrid = viewLearnAboutPage(LearnTab.GROUPS);
         LearnGrid.Locators.rowDescriptionLink.withText(name).waitForElementToDisappear(learnGrid.getGrid(), CDS_WAIT);
-    }
-    private GroupDetailsPage goToGroupFromLearnGrid(String groupName)
-    {
-        LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, _test);
-        learnGrid.clickDetails(groupName);
-        return new GroupDetailsPage(_test.getDriver());
     }
 
     public void toggleExplorerBar(String largeBarText)
@@ -1464,13 +1455,13 @@ public class CDSHelper
 
     public void selectInfoPaneItem(String label, boolean onlyThisItem)
     {
+        WebElement infopanegrid = _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.byClass("infopanegrid")));
         Locator.XPathLocator memberLabel = Locator.tagWithClass("div", "x-grid-cell-inner").containing(label);
 
         if (onlyThisItem)
         {
             // click the label
-            _test.waitForElement(memberLabel);
-            _test.click(memberLabel);
+            memberLabel.waitForElement(infopanegrid, 2_000).click();
         }
         else
         {
@@ -1478,7 +1469,7 @@ public class CDSHelper
             Locator.XPathLocator check = Locator.tagWithClass("td", "x-grid-cell-row-checker");
 
             // click the checkbox
-            _test.click(row.withDescendant(memberLabel).child(check));
+            row.withDescendant(memberLabel).child(check).waitForElement(infopanegrid, 2_000).click();
         }
     }
 
@@ -1671,14 +1662,11 @@ public class CDSHelper
             @Override
             public void makeNavigationSelection(WebDriverWrapper wdw)
             {
-                Locator.CssLocator searchInputLoc = Locator.css(".learn-search-input input");
+                Locator searchInputLoc = LearnGrid.Locators.searchBox;
                 Optional<WebElement> searchInput = searchInputLoc.findOptionalElement(wdw.getDriver());
                 boolean emptySearch = searchInput.map(el -> el.getAttribute("value").isEmpty()).orElse(true);
 
-                // Determine the active learn axis by the placeholder text of the search box
-                LearnTab activeAxis = searchInput.map(el ->
-                                LearnTab.valueOf(el.getDomAttribute("placeholder").replace("Search ", "").toUpperCase()))
-                        .orElse(LearnTab.STUDIES);
+                LearnTab activeAxis = LearnTab.getActive(wdw);
 
                 boolean gridExists = LearnGrid.Locators.panel.append(Locator.byClass(activeAxis.getGridClass())).existsIn(wdw.getDriver());
 
@@ -1758,6 +1746,14 @@ public class CDSHelper
         public void waitForReady(WebDriverWrapper wdw)
         {
             _waitForReady.accept(wdw);
+        }
+
+        public static NavigationLink getActive(WebDriverWrapper wdw)
+        {
+            String activeLinkText = wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.byClass("nav-label-selected"))).getText();
+            return Arrays.stream(values())
+                    .filter(nl -> nl.getLinkText().equals(activeLinkText)).findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Unknown navigation link: " + activeLinkText));
         }
     }
 

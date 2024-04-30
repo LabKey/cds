@@ -27,6 +27,7 @@ import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.TestLogger;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -42,18 +43,24 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     private final WebElement _learnPanel;
     private final LearnTab _learnTab;
 
-    protected LearnGrid(LearnTab learn, Locator panelLoc, WebDriverWrapper wdw)
+    protected LearnGrid(LearnTab learn, WebElement panelLoc, WebDriverWrapper wdw)
     {
         super(wdw);
         _learnTab = learn;
-        _learnPanel = wdw.shortWait().until(ExpectedConditions.visibilityOfElementLocated(panelLoc));
+        _learnPanel = wdw.shortWait().until(ExpectedConditions.visibilityOf(panelLoc));
         wdw._ext4Helper.waitForMaskToDisappear();
         getGrid().waitForGrid();
     }
 
     public LearnGrid(LearnTab learn, WebDriverWrapper wdw)
     {
-        this(learn, Locators.panel, wdw);
+        this(learn, Locators.panel.findWhenNeeded(wdw.getDriver()), wdw);
+    }
+
+    public static LearnGrid waitForCurrentLearnGrid(WebDriverWrapper wdw)
+    {
+        LearnTab activeAxis = LearnTab.getActive(wdw);
+        return new LearnGrid(activeAxis, wdw);
     }
 
     public enum FacetGroups { hasData, noData, both }
@@ -90,6 +97,20 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         {
             return _gridClass;
         }
+
+        public static LearnTab getActive(WebDriverWrapper wdw)
+        {
+            try
+            {
+                // Determine the active learn axis by the placeholder text of the search box
+                return LearnTab.valueOf(Locators.searchBox.findElement(wdw.getDriver())
+                        .getDomAttribute("placeholder").replace("Search ", "").toUpperCase());
+            }
+            catch (IllegalArgumentException | NoSuchElementException iae)
+            {
+                return STUDIES;
+            }
+        }
     }
 
     @Override
@@ -103,7 +124,6 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
         return elementCache().grid;
     }
 
-    @LogMethod
     public int getRowCount()
     {
         if (COLUMN_LOCKING)
@@ -129,6 +149,12 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     public LearnDetailsPage clickFirstItem()
     {
         WebElement link = Locators.rowDescriptionLink.findElement(getGrid());
+        return clickDetailsLink(link, link.getText());
+    }
+
+    public LearnDetailsPage clickItem(int index)
+    {
+        WebElement link = Locators.rowDescriptionLink.index(index).findElement(getGrid());
         return clickDetailsLink(link, link.getText());
     }
 
@@ -399,7 +425,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     public static class Locators
     {
         public static final Locator.XPathLocator panel = Locator.byClass("learnview");
-        public static final Locator.XPathLocator searchBox = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input");
+        public static final Locator searchBox = Locator.css(".learn-search-input input");
 
         public static final Locator.XPathLocator clearSearch = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//div");
         public static final Locator.XPathLocator unlockedRow = Locator.xpath("./div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div/div/table/tbody/tr");

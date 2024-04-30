@@ -112,8 +112,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         // clean up groups
         cds.goToAppHome();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
-
         cds.deleteAllGroups();
 
         cds.ensureNoFilter();

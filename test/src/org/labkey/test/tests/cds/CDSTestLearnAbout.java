@@ -600,11 +600,15 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
     @Test
     public void testLearnAboutStudyProductsSearch()
     {
-        List<String> searchStrings = new ArrayList<>(Arrays.asList("Pénélope", "acid", "ART", "is a"));
+        List<String> searchStrings = new ArrayList<>(Arrays.asList("acid", "ART", "is a"));
 
         LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
 
         searchStrings.stream().forEach((searchString) -> validateSearchFor(learnGrid, searchString));
+
+        // "Developer" column isn't shown on product details page
+        learnGrid.setSearch("Pénélope");
+        Assert.assertEquals("Wrong number of search results", 3, learnGrid.getRowCount());
 
         log("Searching for a string '" + MISSING_SEARCH_STRING + "' that should not be found.");
         learnGrid.setSearch(MISSING_SEARCH_STRING);
@@ -680,21 +684,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify Publication Details Data");
         LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
-        log(XPATH_RESULT_ROW_TITLE.toString());
-        List<WebElement> publicationList = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
-
-        scrollIntoView(publicationList.get(0));
-        publicationList.get(0).click();
-        sleep(CDSHelper.CDS_WAIT);
+        LearnDetailsPage learnDetailsPage = learnGrid.clickFirstItem();
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + publication_1 + "']")));
 
         verifyNonIntegratedDetailFieldValues(publication_data_1, "(PDF)");
-        click(CDSHelper.Locators.pageHeaderBack());
+        learnDetailsPage.clickBack();
         learnGrid = new LearnGrid(LearnTab.PUBLICATIONS, this);
-        publicationList = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
-        scrollIntoView(publicationList.get(1));
-        publicationList.get(1).click();
-        sleep(CDSHelper.CDS_WAIT);
+        learnGrid.clickItem(1);
         shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.xpath("//div[contains(@class, 'learnheader')]//div//div[text()='" + publication_2 + "']")));
 
         verifyNonIntegratedDetailFieldValues(publication_data_2, "(Archive)");
@@ -2036,32 +2032,21 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
     private void validateSearchFor(LearnGrid learnGrid, String searchString)
     {
-        String itemText;
-        String[] itemParts;
-        List<WebElement> returnedItems;
-
         log("Searching for '" + searchString + "'.");
         learnGrid.setSearch(searchString);
-        returnedItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
-        log("Found " + returnedItems.size() + " items.");
+        int rowCount = learnGrid.getRowCount();
+        log("Found " + rowCount + " items.");
 
-        for (int i = 0; i < returnedItems.size(); i++)
+        Assert.assertTrue("No search results for " + searchString, rowCount > 0);
+
+        for (int i = 0; i < rowCount; i++)
         {
-            returnedItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
-            WebElement listItem = returnedItems.get(i);
-            scrollIntoView(listItem);
+            LearnDetailsPage learnDetailsPage = learnGrid.clickItem(i);
 
-            itemText = listItem.getText();
-            itemParts = itemText.split("\n");
-            log("Looking at detail page of " + itemParts[0]);
+            Assert.assertTrue("Item didn't contain searched text: " + searchString, learnDetailsPage.getComponentElement()
+                    .getText().toLowerCase().contains(searchString.toLowerCase()));
 
-            listItem.click();
-            shortWait().until(ExpectedConditions.invisibilityOf(listItem));
-
-            assertTextPresentCaseInsensitive(searchString);
-
-            click(CDSHelper.Locators.pageHeaderBack());
-            shortWait().until(ExpectedConditions.visibilityOf(learnGrid.getGrid().getComponentElement()));
+            learnDetailsPage.clickBack();
         }
 
     }
