@@ -59,7 +59,7 @@ public class LearnDetailsPage extends BaseCdsComponent
 
     public static class Locators
     {
-        public static final Locator panel = Locator.css(".learnview .learnheader ~ .x-container");
+        public static final Locator panel = Locator.css(".learnheader ~ .x-container");
         public static final Locator.XPathLocator backButton = Locator.xpath("//div[contains(@class, 'learnview')]/span/div/div[contains(@class, 'x-container')][not(contains(@style, 'display: none'))]//div[contains(@class, 'learn-up')]//div[contains(@class, 'iarrow')]");
         public static final Locator.XPathLocator tabHeaders = Locator.tag("div").withClass("learnabouttab").childTag("h1");
     }
