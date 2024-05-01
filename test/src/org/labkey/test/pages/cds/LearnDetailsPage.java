@@ -40,11 +40,13 @@ public class LearnDetailsPage extends BaseCdsComponent
 
     public DetailLearnGrid getGridTab(LearnGrid.LearnTab assayTab)
     {
-        WebElement tabEl = getWrapper().shortWait().until(ExpectedConditions.elementToBeClickable(Locators.tabHeaders.withText(assayTab.getTabLabel())));
+        Locator.XPathLocator tabLoc = Locators.tabHeaders.withText(assayTab.getTabLabel());
+        WebElement tabEl = getWrapper().shortWait().until(ExpectedConditions.elementToBeClickable(tabLoc));
         if (!tabEl.getDomAttribute("class").contains("active"))
         {
             getWrapper().doAndWaitForElementToRefresh(tabEl::click, Locator.byClass(assayTab.getGridClass()), getWrapper().shortWait());
             getWrapper().shortWait().until(ExpectedConditions.stalenessOf(tabEl));
+            getWrapper().shortWait().until(ExpectedConditions.attributeContains(tabLoc, "class", "active"));
         }
         return new DetailLearnGrid(assayTab, _panelEl, getWrapper());
     }

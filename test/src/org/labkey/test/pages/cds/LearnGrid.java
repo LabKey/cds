@@ -185,6 +185,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
     @LogMethod (quiet = true)
     public LearnGrid setSearch(@LoggedParam String searchQuery)
     {
+        WebDriverWrapper.sleep(CDSHelper.CDS_WAIT_ANIMATION); // Just a fudge because grid sometimes refreshes twice
         elementCache().grid.doAndWaitForRowUpdate(() ->
                 getWrapper().setFormElement(elementCache().searchBox, searchQuery));
 
