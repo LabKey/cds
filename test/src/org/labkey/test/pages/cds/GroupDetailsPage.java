@@ -48,7 +48,7 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
     public void deleteGroup()
     {
         clickDeleteGroup("Delete");
-        CDSHelper.NavigationLink.LEARN.waitForReady(this);
+        CDSHelper.NavigationLink.HOME.waitForReady(this);
     }
 
     private void clickDeleteGroup(String option)
