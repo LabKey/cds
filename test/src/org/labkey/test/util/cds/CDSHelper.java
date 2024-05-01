@@ -1379,7 +1379,7 @@ public class CDSHelper
         viewLearnAboutPage(LearnTab.GROUPS)
                 .clickDetails(name);
         new GroupDetailsPage(_test.getDriver())
-                .deleteGroup("Delete");
+                .deleteGroup();
 
         _test.refresh();
         afterInApplication();

@@ -29,7 +29,7 @@ public class LearnDetailsPage extends BaseCdsComponent
     public LearnDetailsPage(WebDriverWrapper test)
     {
         super(test);
-        _panelEl = Locators.panel.findElement(test.getDriver());
+        _panelEl = Locators.panel.refindWhenNeeded(test.getDriver());
     }
 
     @Override
@@ -43,7 +43,7 @@ public class LearnDetailsPage extends BaseCdsComponent
         WebElement tabEl = getWrapper().shortWait().until(ExpectedConditions.elementToBeClickable(Locators.tabHeaders.withText(assayTab.getTabLabel())));
         if (!tabEl.getDomAttribute("class").contains("active"))
         {
-            tabEl.click();
+            getWrapper().doAndWaitForElementToRefresh(tabEl::click, Locator.byClass(assayTab.getGridClass()), getWrapper().shortWait());
             getWrapper().shortWait().until(ExpectedConditions.stalenessOf(tabEl));
         }
         return new DetailLearnGrid(assayTab, _panelEl, getWrapper());

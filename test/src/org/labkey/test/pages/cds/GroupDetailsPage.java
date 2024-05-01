@@ -39,7 +39,19 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
         return getTexts(elementCache().groupModuleGrid.findElements(getDriver()));
     }
 
-    public GroupDetailsPage deleteGroup(String option)
+    public GroupDetailsPage clickDeleteAndCancel()
+    {
+        clickDeleteGroup("Cancel");
+        return this;
+    }
+
+    public void deleteGroup()
+    {
+        clickDeleteGroup("Delete");
+        CDSHelper.NavigationLink.LEARN.waitForReady(this);
+    }
+
+    private void clickDeleteGroup(String option)
     {
         elementCache().delete.click();
         WebElement window = Ext4Helper.Locators.window("Delete Group").waitForElement(getDriver(), 2_000);
@@ -47,7 +59,6 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
         WebElement confirmButton = CDSHelper.Locators.cdsButtonLocator(option, "x-toolbar-item").findElement(window);
         confirmButton.click();
         shortWait().until(ExpectedConditions.invisibilityOf(window));
-        return this;
     }
 
     @Override

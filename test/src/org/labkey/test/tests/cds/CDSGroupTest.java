@@ -223,10 +223,10 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
 
         log("Verifying deleting the group");
-        detailsPage = detailsPage.deleteGroup("Cancel");
+        detailsPage = detailsPage.clickDeleteAndCancel();
         Assert.assertEquals("Group delete cancel does not work", ASSAY_GROUP_NAME, detailsPage.getGroupName());
 
-        detailsPage.deleteGroup("Delete");
+        detailsPage.deleteGroup();
         cds.viewLearnAboutPage(LearnTab.GROUPS);
         refresh();
         Assert.assertFalse("Deleted group is still present " + ASSAY_GROUP_NAME,
