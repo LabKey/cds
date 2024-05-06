@@ -31,6 +31,7 @@ import org.labkey.test.components.cds.ActiveFilterDialog;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.pages.query.ExecuteQueryPage;
@@ -39,12 +40,10 @@ import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.RReportHelper;
 import org.labkey.test.util.cds.CDSHelper;
 import org.labkey.test.util.di.DataIntegrationHelper;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -113,19 +112,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         // clean up groups
         cds.goToAppHome();
-        sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
-
-        List<String> groups = new ArrayList<>();
-        groups.add(GROUP_LIVE_FILTER);
-        groups.add(GROUP_STATIC_FILTER);
-        groups.add(STUDY_GROUP);
-        groups.add(HOME_PAGE_GROUP);
-        groups.add(SHARED_GROUP_NAME);
-        groups.add(SHARED_MAB_GROUP_NAME);
-        groups.add(ASSAY_GROUP_NAME_UPDATED);
-        groups.add(CDS_SINGLE_GROUP);
-        groups.add(MULTI_FILTER_GROUP);
-        cds.ensureGroupsDeleted(groups);
+        cds.deleteAllGroups();
 
         cds.ensureNoFilter();
         cds.ensureNoSelection();
@@ -170,12 +157,11 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[0], CDSHelper.STUDIES[1]);
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup().setGroupName(STUDY_GROUP).setGroupDescription(studyGroupDesc).saveGroup();
 
         log("Verify group details from learn about --> group page");
-        refresh();
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", STUDY_GROUP));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", STUDY_GROUP, detailsPage.getGroupName());
@@ -183,7 +169,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Assert.assertEquals("Incorrect items in the group", Arrays.asList(CDSHelper.STUDIES[0] + "\n" + CDSHelper.STUDIES[1]), detailsPage.getGroupList());
 
         log("Update the group workflow");
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.editGroup("Update this group", null, studyGroupDescModified, false);
 
         log("Verify group description is updated");
@@ -197,7 +183,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Studies");
         cds.selectBars(CDSHelper.STUDIES[3]);
         cds.useSelectionAsSubjectFilter();
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(STUDY_GROUP)
                 .setGroupDescription(studyGroupDesc)
@@ -213,18 +199,17 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Assays");
         cds.selectBars(CDSHelper.ASSAYS[1]);
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup().setGroupName(ASSAY_GROUP_NAME).setGroupDescription(desc).saveGroup();
 
         log("Verify navigation from learn about page");
-        refresh();
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", ASSAY_GROUP_NAME));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", ASSAY_GROUP_NAME, detailsPage.getGroupName());
         Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
 
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.editGroup("Save as new group", ASSAY_GROUP_NAME_UPDATED, null, false);
 
         log("Verify updated group details");
@@ -238,11 +223,11 @@ public class CDSGroupTest extends CDSGroupBaseTest
         Assert.assertEquals("Group description is incorrect", desc, detailsPage.getGroupDescription());
 
         log("Verifying deleting the group");
-        detailsPage = detailsPage.deleteGroup("Cancel");
+        detailsPage = detailsPage.clickDeleteAndCancel();
         Assert.assertEquals("Group delete cancel does not work", ASSAY_GROUP_NAME, detailsPage.getGroupName());
 
-        detailsPage.deleteGroup("Delete");
-        cds.viewLearnAboutPage("Groups");
+        detailsPage.deleteGroup();
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         refresh();
         Assert.assertFalse("Deleted group is still present " + ASSAY_GROUP_NAME,
                 isElementPresent(Locator.tagWithText("h2", ASSAY_GROUP_NAME)));
@@ -259,15 +244,14 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.clickBy("Assays");
         cds.selectBars("ICS");
         cds.useSelectionAsSubjectFilter();
-        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(getDriver());
+        ActiveFilterDialog activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(singleFilterGroup)
                 .setGroupDescription(singleFilterGroup)
                 .saveGroup();
 
         log("Verifying Single filter group");
-        refresh();
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", singleFilterGroup));
         GroupDetailsPage detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", singleFilterGroup, detailsPage.getGroupName());
@@ -276,7 +260,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         assertEquals("Number of active filters not as. expected.", 1, activeFilters.size());
 
         log("Clear the previous filter");
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.clear();
 
         log("Compose a group that consist of 4 filter");
@@ -291,7 +275,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.selectBars("RED 4", "RED 5");
         cds.useSelectionAsSubjectFilter();
 
-        activeFilterDialog = new ActiveFilterDialog(getDriver());
+        activeFilterDialog = new ActiveFilterDialog(this);
         activeFilterDialog.saveAsAGroup()
                 .setGroupName(multiFilterGroup)
                 .setGroupDescription(multiFilterGroup)
@@ -299,7 +283,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         log("Verifying Multi filter group");
         refresh();
-        cds.viewLearnAboutPage("Groups");
+        cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", multiFilterGroup));
         detailsPage = new GroupDetailsPage(getDriver());
         Assert.assertEquals("Group Name is incorrect", multiFilterGroup, detailsPage.getGroupName());
@@ -360,13 +344,12 @@ public class CDSGroupTest extends CDSGroupBaseTest
     @Test
     public void verifyInteractiveAndCuratedLinks()
     {
+        Ext4Helper.resetCssPrefix(); // Report creation happens in LKS
         _userHelper.deleteUsers(false, NEW_USER_ACCOUNTS[0]);
         createUserWithPermissions(NEW_USER_ACCOUNTS[0], getProjectName(), "Reader");
 
         createSharedReports(NEW_USER_ACCOUNTS[0]);
         cds.enterApplication();
-        refresh();
-        cds.ensureGroupsDeleted(new ArrayList(Arrays.asList(STUDY_GROUP_Q2, STUDY_GROUP_Z110)));
 
         String studyGroupDesc = "Curated group for " + QED_2;
         log("create " + studyGroupDesc);
@@ -379,6 +362,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
         cds.goToAppHome();
         Locator.XPathLocator listGroup = Locator.tagWithClass("div", "grouplabel");
         waitAndClick(listGroup.withText(STUDY_GROUP_Q2));
+        sleep(1000); // Wait for group selection animation
         String groupUrl = getCurrentRelativeURL();
         String[] vals = groupUrl.split("/");
         int rowId = Integer.valueOf(vals[vals.length - 1]); //study.SubjectGroup.RowId
@@ -503,7 +487,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
     private void verifyExportButtonOnReports()
     {
         cds.enterApplication();
-        cds.viewLearnAboutPage("Reports");
+        cds.viewLearnAboutPage(LearnTab.REPORTS);
         Locator.XPathLocator exportBtn = Locator.tagWithId("a", "learn-grid-export-button-id-btnIconEl").withAttributeContaining("style", "display: none");
         assertFalse("Export button should not be present", isElementPresent(exportBtn));
     }
@@ -535,23 +519,21 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
     private void goToPubPage(String pub)
     {
-        cds.viewLearnAboutPage("Publications");
+        cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
         _cdsTestLearnAbout.goToDetail(pub, false);
     }
 
     private void goToStudyPage(String prot)
     {
-        cds.viewLearnAboutPage("Studies");
-        LearnGrid learnGrid = new LearnGrid(this);
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         learnGrid.setSearch(prot);
         _cdsTestLearnAbout.goToDetail(prot, true);
     }
 
     private void goToAssayPage(String name)
     {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid learnGrid = new LearnGrid(this);
-        learnGrid.setSearch(name).clickFirstItem();
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
+        learnGrid.clickItemContaining(name);
     }
 
     private void verifyCuratedLink(String descr)
@@ -663,7 +645,7 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         assertEquals("Number of active filters not as expected.", 1, activeFilters.size());
 
-        assertEquals("Filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(0).findElement(By.className("sel-label")).getText());
+        assertEquals("Filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(0).findElement(Locator.byClass("sel-label")).getText());
 
         log("Clear the filter again and lets go back and undo everything.");
         cds.clearFilters();
@@ -688,13 +670,12 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         assertEquals("Number of active filters not as expected.", 2, activeFilters.size());
 
-        assertEquals("First filter selection not as expecxted.", "Study", activeFilters.get(0).findElement(By.className("sel-label")).getText());
-        assertEquals("Second filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(1).findElement(By.className("sel-label")).getText());
+        assertEquals("First filter selection not as expecxted.", "Study", activeFilters.get(0).findElement(Locator.byClass("sel-label")).getText());
+        assertEquals("Second filter selection not as expecxted.", "Subject (Sex)", activeFilters.get(1).findElement(Locator.byClass("sel-label")).getText());
 
         log("Ok, looks good. Clear the filter, delete the group, and test is done.");
         cds.goToAppHome();
         cds.deleteGroupFromSummaryPage(GROUP_NAME);
-//        cds.clearFilters(); //TODO : delete group should clear the filter, need to verify with client if this is the expected behavior.
 
     }
 

@@ -20,12 +20,16 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.assertj.core.api.Assertions;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.TestFileUtils;
+import org.labkey.test.WebDriverWrapper;
+import org.labkey.test.components.Component;
+import org.labkey.test.components.cds.BaseCdsComponent;
+import org.labkey.test.components.cds.CdsGrid;
 import org.labkey.test.util.ExcelHelper;
-import org.labkey.test.util.LabKeyExpectedConditions;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
 import org.labkey.test.util.cds.CDSHelper;
@@ -43,70 +47,64 @@ import java.util.UUID;
 import static org.junit.Assert.assertTrue;
 import static org.labkey.test.util.TestLogger.log;
 
-public class DataGrid
+public class DataGrid extends BaseCdsComponent<DataGrid.ElementCache>
 {
-    protected BaseWebDriverTest _test;
+    private final WebElement _el;
 
-    public static final String FACET_HAS_DATA_HEADER = "Has data in current selection";
-    public static final String FACET_NO_DATA_HEADER = "No data in current selection";
-
-    public DataGrid(BaseWebDriverTest test)
+    public DataGrid(WebDriverWrapper test)
     {
-        _test = test;
+        super(test);
+        _el = Locator.byClass("connector-grid-container").findWhenNeeded(test.getDriver());
+    }
+
+    @Override
+    public WebElement getComponentElement()
+    {
+        return _el;
     }
 
     public String getActiveDataTab()
     {
-        return Locators.tabHeaderContainer.append(Locators.activeHeader).findElement(_test.getDriver()).getText();
+        return Locators.tabHeaderContainer.append(Locators.activeHeader).findElement(this).getText();
     }
 
     public boolean hasDataTab(String tabName)
     {
         Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header.withText(tabName));
-        _test.sleep(1000);
-        return _test.isElementPresent(tabLoc);
+        WebDriverWrapper.sleep(1000);
+        return getWrapper().isElementPresent(tabLoc);
     }
 
     public List<String> getDataTabs()
     {
         List<String> tabs = new ArrayList<>();
         Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header);
-        tabLoc.findElements(_test.getDriver()).forEach(element -> tabs.add(element.getText()));
+        tabLoc.findElements(this).forEach(element -> tabs.add(element.getText()));
         return tabs;
-    }
-
-    public boolean isDataTabsEquals(List<String> expected)
-    {
-        List<String> actual = getDataTabs();
-        if (expected.size() != actual.size())
-            return false;
-        for (int i = 0; i < expected.size(); i++)
-        {
-            if (!expected.get(i).equals(actual.get(i)))
-                return false;
-        }
-        return true;
     }
 
     public void goToDataTab(String tabName)
     {
         Locator.XPathLocator activeTabLoc = Locators.getActiveHeader(tabName);
-        if (!_test.isElementPresent(activeTabLoc))
+        if (!activeTabLoc.existsIn(this))
         {
-            Locator tabLoc = Locators.tabHeaderContainer.append(Locators.header.withText(tabName));
-            _test.waitForElement(tabLoc);
-            _test.click(tabLoc);
-            WebElement activeTabHeader = activeTabLoc.waitForElement(_test.getDriver(), BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
-            _test.shortWait().until(ExpectedConditions.visibilityOf(activeTabHeader));
-            _test._ext4Helper.waitForMaskToDisappear();
+            WebElement tabEl = Locators.tabHeaderContainer.append(Locators.header.withText(tabName)).waitForElement(this, 2_000);
+            elementCache().grid.doAndWaitForGridUpdate(() -> {
+                        tabEl.click();
+                        WebElement activeTabHeader = activeTabLoc.waitForElement(this, BaseWebDriverTest.WAIT_FOR_JAVASCRIPT);
+                        getWrapper().shortWait().until(ExpectedConditions.visibilityOf(activeTabHeader));
+                    });
         }
-        _test.sleep(1000);
+    }
+
+    public CdsGrid getGrid()
+    {
+        return elementCache().grid;
     }
 
     public void assertColumnsNotPresent(String... columns)
     {
-        for (String column : columns)
-            _test.assertElementNotPresent(Locators.columnHeaderLocator(column));
+        Assertions.assertThat(elementCache().grid.getColumnNames()).doesNotContain(columns);
     }
 
     public void ensureColumnsPresent(String... columns)
@@ -121,14 +119,10 @@ public class DataGrid
 
     public void ensureColumnsPresent(boolean isSubjectCharacteristics, String... columns)
     {
-        String[] defaultColumns = getDefaultColumns(isSubjectCharacteristics);
+        List<String> expectedColumns = new ArrayList<>(List.of(columns));
+        expectedColumns.addAll(List.of(getDefaultColumns(isSubjectCharacteristics)));
 
-        for (String column : defaultColumns)
-            _test.waitForElement(Locators.columnHeaderLocator(column));
-
-        for (String column : columns)
-            _test.waitForElement(Locators.columnHeaderLocator(column));
-
+        Assertions.assertThat(elementCache().grid.getColumnNames()).containsAll(expectedColumns);
     }
 
     public String[] getDefaultColumns(boolean isSubjectCharacteristics)
@@ -146,101 +140,29 @@ public class DataGrid
         };
     }
 
-    public boolean isColumnFiltered(String columnHeaderName)
+    public WebElement openFilterPanel(String columnHeaderName)
     {
-        return _test.isElementPresent(Locators.filteredColumnHeaderLocator(columnHeaderName));
-    }
-
-    @LogMethod(quiet = true)
-    public WebElement openFilterPanel(@LoggedParam String columnHeaderName)
-    {
-        Locator.XPathLocator columnHeader = Locators.columnHeaderLocator(columnHeaderName);
-        WebElement filterIcon = _test.waitForElement(columnHeader.append(Locator.tagWithClass("div", "x-column-header-trigger")));
-        _test.mouseOver(filterIcon);
-        Locator.XPathLocator hoveredColumn = columnHeader.append("[contains(concat(' ',normalize-space(@class),' '), ' x-column-header-over ')]");
-        _test.waitForElement(hoveredColumn);
-        filterIcon.click();
-        _test._ext4Helper.waitForMask();
-        // Sometimes the tooltip sticks around, wait for it's style to change.
-        _test.waitForElement(Locator.tagWithId("div", "ext-quicktips-tip").append("[contains(@style, 'display: none')]"), 10000);
-        return _test.shortWait().until(ExpectedConditions.visibilityOfElementLocated(Locator.byClass("x-window-filterwindow")));
+        return elementCache().grid.openFilterPanel(columnHeaderName);
     }
 
     public void setCheckBoxFilter(String columnName, Boolean clearFirst, String... values)
     {
-
-        String cellXpathContst = "//div[contains(@class, 'x-window-filterwindow')]//tr[contains(@class, 'x-grid-data-row')]//td[contains(@role, 'gridcell')]//div[text()='*']";
-        String cellXpath;
-
-        openFilterPanel(columnName);
-        _test.shortWait().until(LabKeyExpectedConditions.animationIsDone(Locator.xpath("//div[contains(@class, 'x-window-filterwindow')]//div[contains(@class, 'x-toolbar-text')][text()='" + columnName + "']")));
-
-        if (clearFirst)
-        {
-            String allXpath = "//div[contains(@class, 'x-window-filterwindow')]//div[contains(@class, 'x-column-header')]";
-            _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(allXpath)));
-            _test.scrollIntoView(Locator.xpath(allXpath));
-            _test.click(Locator.xpath(allXpath));
-        }
-
-        for (String val : values)
-        {
-            cellXpath = cellXpathContst.replaceAll("[*]", val);
-            _test.shortWait().until(ExpectedConditions.elementToBeClickable(Locator.xpath(cellXpath)));
-            _test.scrollIntoView(Locator.xpath(cellXpath));
-            _test.click(Locator.xpath(cellXpath));
-        }
-
-        applyAndWaitForGrid(() -> _test.click(CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn")));
-
+        elementCache().grid.setCheckBoxFilter(columnName, clearFirst, values);
     }
 
     public void setFilter(String columnName, String value)
     {
-        setFilter(columnName, null, value);
+        elementCache().grid.setFilter(columnName, value);
     }
 
-    @LogMethod
-    public void setFilter(@LoggedParam String columnName, @LoggedParam String filter, @LoggedParam String value)
+    public void setFilter(String columnName, String filter, String value)
     {
-        openFilterPanel(columnName);
-        Locator filterBtn = CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn");
-        _test.scrollIntoView(filterBtn);
-        if (null != filter)
-            _test._ext4Helper.selectComboBoxItem("Value:", filter);
-
-        _test.waitForElement(Locator.id("value_1"));
-        _test.setFormElement(Locator.css("#value_1 input"), value);
-        applyAndWaitForGrid(() -> _test.click(filterBtn));
-        _test.waitForElement(CDSHelper.Locators.filterMemberLocator(columnName));
+        elementCache().grid.setFilter(columnName, filter, value);
     }
 
-    @LogMethod
-    public void setFacet(@LoggedParam String columnName, @LoggedParam String label)
+    public void setFacet(String columnName, String label)
     {
-        openFilterPanel(columnName);
-
-        Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
-        Locator.XPathLocator row = gridLoc.append(Locator.tagWithClass("div", "x-grid-cell-inner").containing(label));
-
-        _test.waitAndClick(10000, row, 0);
-
-        Locator.XPathLocator update = CDSHelper.Locators.cdsButtonLocator("Update", "filter-btn");
-        Locator.XPathLocator filter = CDSHelper.Locators.cdsButtonLocator("Filter", "filter-btn");
-
-        List<WebElement> buttons = new ArrayList<>();
-        buttons.addAll(update.findElements(_test.getDriver()));
-        buttons.addAll(filter.findElements(_test.getDriver()));
-
-        Assert.assertEquals("Error getting filter/update button", 1, buttons.size());
-
-        final WebElement button = buttons.get(0);
-
-        applyAndWaitForGrid(() -> {
-            button.click();
-            _test.sleep(500);
-            _test._ext4Helper.waitForMaskToDisappear();
-        });
+        elementCache().grid.setFacet(columnName, label);
     }
 
     public boolean isHasData(String columnName, String value)
@@ -255,42 +177,13 @@ public class DataGrid
 
    public boolean isFacetContains(String columnName, boolean hasData, String value)
     {
-        openFilterPanel(columnName);
-        _test.sleep(5000); // wait for list to finish load
-        boolean result = getFacetValues(hasData).contains(value);
-        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Cancel", "filter-btn"));
-        return result;
-    }
-
-    public String getFacetValues(boolean hasData)
-    {
-        Locator.XPathLocator gridLoc = Locator.tagWithClass("div", "filterpanegrid");
-        String facetContent = _test.getText(gridLoc).trim();
-        if (hasData)
-        {
-            if (!facetContent.contains(FACET_HAS_DATA_HEADER))
-                return "";
-            if (facetContent.contains(FACET_NO_DATA_HEADER))
-            {
-                facetContent = facetContent.substring(0, facetContent.indexOf(FACET_NO_DATA_HEADER));
-            }
-        }
-        else
-        {
-            if (!facetContent.contains(FACET_NO_DATA_HEADER))
-                return "";
-            facetContent = facetContent.substring(facetContent.indexOf(FACET_NO_DATA_HEADER));
-        }
-        _test.log(facetContent);
-        return facetContent;
+        return elementCache().grid.isFacetContains(columnName, hasData, value);
     }
 
     @LogMethod
     public void clearFilters(@LoggedParam String columnName)
     {
-        openFilterPanel(columnName);
-        applyAndWaitForGrid(() -> _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn")));
-        _test.waitForElement(Locators.sysmsg.containing("Filter removed."));
+        elementCache().grid.clearFilters(columnName);
     }
 
     @LogMethod
@@ -298,7 +191,7 @@ public class DataGrid
     {
         if (expCount <= 25)
         {
-            _test.waitForElements(Locators.dataRow, expCount);
+            Assert.assertEquals("Grid row count", expCount, elementCache().grid.getDataRows().size());;
             return;
         }
         int expectedPage = (int) Math.ceil(expCount / 25.0);
@@ -526,33 +419,22 @@ public class DataGrid
 
     public void assertPageTotal(int pages)
     {
-        _test.waitForElement(Locators.totalPages.containing(Integer.toString(pages)));
+        getWrapper().waitForElement(Locators.totalPages.containing(Integer.toString(pages)));
     }
 
     public void assertCurrentPage(int page)
     {
-        _test.assertElementContains(Locators.currentPage, Integer.toString(page));
-    }
-
-    public void assertSortPresent(String columnName)
-    {
-        _test.waitForElement(Locator.tagWithClassContaining("div", "x-column-header-sort-").withText(columnName));
+        getWrapper().assertElementContains(Locators.currentPage, Integer.toString(page));
     }
 
     public void assertCellContent(String content)
     {
-        _test.waitForElement(Locators.cellLocator(content));
+        CdsGrid.Locators.cellLocator(content).waitForElement(elementCache().grid, 2_000);
     }
 
-    @LogMethod
-    public void sort(@LoggedParam final String columnName)
+    public void sort(String columnName)
     {
-        applyAndWaitForGrid(() -> {
-            _test.click(Locators.columnHeaderLocator(columnName));
-            _test.sleep(500);
-            _test._ext4Helper.waitForMaskToDisappear();
-        });
-        assertSortPresent(columnName);
+        elementCache().grid.sort(columnName);
     }
 
     public File exportExcel()
@@ -567,11 +449,11 @@ public class DataGrid
 
     public File exportGrid(boolean isExcel)
     {
-        _test.waitForElement(Locator.css(("a.export-data"))).click();
+        getWrapper().waitForElement(Locator.css(("a.export-data"))).click();
         Locator item = Locator.css("span.x-menu-item-text").withText(isExcel ? "Excel (*.XLS)" : "Comma separated values (*.CSV)");
-        WebElement menuItem = _test.waitForElement(item);
+        WebElement menuItem = getWrapper().waitForElement(item);
 
-        return _test.clickAndWaitForDownload(menuItem);
+        return getWrapper().clickAndWaitForDownload(menuItem);
     }
 
     private void verifyExportedCSVContent(File export, List<String> expectedContent)
@@ -676,60 +558,43 @@ public class DataGrid
         Assert.assertTrue("Expected files missing from export: " + StringUtils.join(missingDataFiles), missingDataFiles.isEmpty());
     }
 
-    public void applyAndWaitForGrid(Runnable function)
+    public void doAndWaitForUpdate(Runnable function)
     {
-        WebElement gridView = Locators.grid.append(Locator.css("table.x-grid-table")).findElement(_test.getDriver());
-
-        function.run();
-
-        _test.longWait().until(ExpectedConditions.stalenessOf(gridView));
-        _test._ext4Helper.waitForMaskToDisappear();
+        elementCache().grid.doAndWaitForGridUpdate(function);
     }
 
     public void goToLastPage()
     {
-        _test.click(Locators.lastPage);
-        _test.sleep(500);
-        _test._ext4Helper.waitForMaskToDisappear();
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.lastPage));
     }
 
     public void goToFirstPage()
     {
-        _test.click(Locators.firstPage);
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.firstPage));
     }
 
     public void clickPreviousBtn()
     {
-        _test.click(Locators.previousBtn);
-        _test.sleep(500);
-        _test._ext4Helper.waitForMaskToDisappear();
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.previousBtn));
     }
 
     public void clickNextBtn()
     {
-        _test.click(Locators.nextBtn);
-        _test.sleep(500);
-        _test._ext4Helper.waitForMaskToDisappear();
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.nextBtn));
     }
 
     public void goToPreviousPage()
     {
-        _test.click(Locators.previousPage);
-        _test.sleep(500);
-        _test._ext4Helper.waitForMaskToDisappear();
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.previousPage));
     }
 
     public void goToNextPage()
     {
-        _test.click(Locators.nextPage);
-        _test.sleep(500);
-        _test._ext4Helper.waitForMaskToDisappear();
+        elementCache().grid.doAndWaitForRowUpdate(() -> getWrapper().click(Locators.nextPage));
     }
 
     public static class Locators
     {
-        public static Locator.CssLocator grid = Locator.css("div.connector-grid");
-        public static Locator.CssLocator dataRow = grid.append(Locator.css("tr.x-grid-data-row"));
         public static Locator.CssLocator sysmsg = Locator.css("div.sysmsg");
         public static Locator.CssLocator totalPages = Locator.css("span.x-btn-inner.x-btn-inner-center");
         public static Locator.CssLocator currentPage = Locator.css("a.x-btn-paging-widget-pages-small.selected span.x-btn-inner");
@@ -740,29 +605,26 @@ public class DataGrid
         public static Locator.CssLocator previousPage = Locator.css("a.pager-previous");
         public static Locator.CssLocator nextPage = Locator.css("a.pager-next");
         public static Locator.XPathLocator header = Locator.tag("h1").withClass("lhdv");
+
         public static Locator.XPathLocator activeHeader = header.withClass("active");
         public static Locator.XPathLocator tabHeaderContainer = Locator.tag("div").withClass("grid-tab-selector");
-
-        public static Locator.XPathLocator columnHeaderLocator(String columnHeaderName)
-        {
-            return Locator.tagWithClass("div", "x-column-header-inner").withText(columnHeaderName);
-        }
-
-        public static Locator.XPathLocator cellLocator(String cellContent)
-        {
-            return Locator.tagWithClass("div", "x-grid-cell-inner").containing(cellContent);
-        }
 
         public static Locator.XPathLocator getActiveHeader(String tabname)
         {
             return Locators.tabHeaderContainer.append(Locators.activeHeader.withText(tabname));
         }
 
-        public static Locator.XPathLocator filteredColumnHeaderLocator(String columnHeaderName)
-        {
-            return Locator.tagWithClass("div", "filtered-column").withText(columnHeaderName);
-        }
+    }
 
+    @Override
+    protected ElementCache newElementCache()
+    {
+        return new ElementCache();
+    }
+
+    public class ElementCache extends Component<?>.ElementCache
+    {
+        private final CdsGrid grid = new CdsGrid("connector-grid", DataGrid.this);
     }
 
 }

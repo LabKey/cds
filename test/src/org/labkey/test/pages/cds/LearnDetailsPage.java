@@ -15,44 +15,69 @@
  */
 package org.labkey.test.pages.cds;
 
-import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
+import org.labkey.test.components.cds.BaseCdsComponent;
 import org.labkey.test.util.LogMethod;
-import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
-public class LearnDetailsPage
+public class LearnDetailsPage extends BaseCdsComponent
 {
-    protected BaseWebDriverTest _test;
+    private final WebElement _panelEl;
 
-    public LearnDetailsPage(BaseWebDriverTest test)
+    public LearnDetailsPage(WebDriverWrapper test)
     {
-        _test = test;
+        super(test);
+        _panelEl = Locators.panel.refindWhenNeeded(test.getDriver());
     }
 
-    public DetailLearnGrid getGridTab(String tab)
+    @Override
+    public WebElement getComponentElement()
     {
-        _test.click(Locators.tabHeaders.withText(tab));
-        _test.sleep(CDSHelper.CDS_WAIT);
-        return new DetailLearnGrid(_test);
+        return _panelEl;
+    }
+
+    public DetailLearnGrid getGridTab(LearnGrid.LearnTab assayTab)
+    {
+        Locator.XPathLocator tabLoc = Locators.tabHeaders.withText(assayTab.getTabLabel());
+        WebElement tabEl = getWrapper().shortWait().until(ExpectedConditions.elementToBeClickable(tabLoc));
+        if (!tabEl.getDomAttribute("class").contains("active"))
+        {
+            getWrapper().doAndWaitForElementToRefresh(tabEl::click, Locator.byClass(assayTab.getGridClass()), getWrapper().shortWait());
+            getWrapper().shortWait().until(ExpectedConditions.stalenessOf(tabEl));
+            getWrapper().shortWait().until(ExpectedConditions.attributeContains(tabLoc, "class", "active"));
+        }
+        return new DetailLearnGrid(assayTab, _panelEl, getWrapper());
+    }
+
+    public void clickBack()
+    {
+        WebElement backButtonElement = Locators.backButton.findElement(getDriver());
+        backButtonElement.click();
+        getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(backButtonElement));
+        getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnGrid.Locators.searchBox));
     }
 
     public static class Locators
     {
-        public static Locator.XPathLocator tabHeaders = Locator.tag("div").withClass("learnabouttab").childTag("h1");
+        public static final Locator panel = Locator.css(".learnheader ~ .x-container");
+        public static final Locator.XPathLocator backButton = Locator.xpath("//div[contains(@class, 'learnview')]/span/div/div[contains(@class, 'x-container')][not(contains(@style, 'display: none'))]//div[contains(@class, 'learn-up')]//div[contains(@class, 'iarrow')]");
+        public static final Locator.XPathLocator tabHeaders = Locator.tag("div").withClass("learnabouttab").childTag("h1");
     }
 
-    public class DetailLearnGrid extends LearnGrid
+    public static class DetailLearnGrid extends LearnGrid
     {
-        public DetailLearnGrid(BaseWebDriverTest test)
+        public DetailLearnGrid(LearnTab learnTab, WebElement panelEl, WebDriverWrapper test)
         {
-            super(test);
+            super(learnTab, panelEl, test);
         }
 
         @Override
         @LogMethod
         public int getRowCount()
         {
-            return Locators.unifiedRow.findElements(_test.getDriver()).size();
+            return Locator.tag("tr").findElements(elementCache().grid).size();
         }
     }
 

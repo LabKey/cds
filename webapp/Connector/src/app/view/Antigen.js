@@ -7,7 +7,7 @@ Ext.define('Connector.app.view.Antigen', {
 
     extend : 'Connector.app.view.LearnSummary',
 
-    cls: 'learngrid',
+    cls: 'learnantigens learngrid',
 
     itemPluralName: 'antigens',
 

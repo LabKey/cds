@@ -21,7 +21,6 @@ import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
@@ -306,7 +305,7 @@ public class CDSPlot
 
         for (WebElement study : studies)
         {
-            String studyId = study.findElement(By.className("study-label")).getAttribute("test-data-value");
+            String studyId = study.findElement(Locator.byClass("study-label")).getAttribute("test-data-value");
             CDSHelper.TimeAxisData tad = expectedCounts.get(studyId);
 
             // If tad is null it means we don't want to check the totals for the given study (or a locator is messed up).

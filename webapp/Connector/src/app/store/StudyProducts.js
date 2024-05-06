@@ -240,7 +240,6 @@ Ext.define('Connector.app.store.StudyProducts', {
             this.loadRawData(products);
             this.fireEvent('dataloaded');
             this.dataLoaded = true;
-            LABKEY.Utils.signalWebDriverTest("determinationLearnAboutStudyProductLoaded");
         }
     }
 });

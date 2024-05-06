@@ -662,7 +662,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         cds.addRaceFilter(CDSHelper.RACE_WHITE);
         _asserts.assertFilterStatusCounts(5, 1, 1, 2, 2);
 
-        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this, true); // color btn hidden since color exist, skip check
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
         waitForElement(lineLoc);
         plotLineCount = getElementCount(lineLoc);
         assertEquals("Number of lines in plot is not as expected", 6, plotLineCount);

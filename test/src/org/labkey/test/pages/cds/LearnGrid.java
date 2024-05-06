@@ -15,43 +15,126 @@
  */
 package org.labkey.test.pages.cds;
 
+import org.jetbrains.annotations.NotNull;
 import org.junit.Assert;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
 import org.labkey.test.WebDriverWrapper;
-import org.labkey.test.tests.cds.CDSTestLearnAbout;
+import org.labkey.test.components.Component;
+import org.labkey.test.components.cds.BaseCdsComponent;
+import org.labkey.test.components.cds.CdsGrid;
 import org.labkey.test.util.LogMethod;
 import org.labkey.test.util.LoggedParam;
+import org.labkey.test.util.TestLogger;
 import org.labkey.test.util.cds.CDSHelper;
-import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LearnGrid
-{
-    protected BaseWebDriverTest _test;
+import static org.labkey.test.tests.cds.CDSTestLearnAbout.COLUMN_LOCKING;
+import static org.labkey.test.util.cds.CDSHelper.CDS_WAIT;
+import static org.labkey.test.util.cds.CDSHelper.CDS_WAIT_LEARN;
 
-    public LearnGrid(BaseWebDriverTest test)
+public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
+{
+    private final WebElement _learnPanel;
+    private final LearnTab _learnTab;
+
+    protected LearnGrid(LearnTab learn, WebElement panelLoc, WebDriverWrapper wdw)
     {
-        _test = test;
+        super(wdw);
+        _learnTab = learn;
+        _learnPanel = wdw.shortWait().until(ExpectedConditions.visibilityOf(panelLoc));
+        wdw._ext4Helper.waitForMaskToDisappear();
+        getGrid().waitForGrid();
+    }
+
+    public LearnGrid(LearnTab learn, WebDriverWrapper wdw)
+    {
+        this(learn, Locators.panel.findWhenNeeded(wdw.getDriver()), wdw);
+    }
+
+    public static LearnGrid waitForCurrentLearnGrid(WebDriverWrapper wdw)
+    {
+        LearnTab activeAxis = LearnTab.getActive(wdw);
+        return new LearnGrid(activeAxis, wdw);
     }
 
     public enum FacetGroups { hasData, noData, both }
 
-    @LogMethod
+    public enum LearnTab
+    {
+        STUDIES("Studies", "learnstudies"),
+        ASSAYS("Assays", "learnassays"),
+        PRODUCTS("Products", "learnstudyproducts"),
+        ANTIGENS("Antigens", "learnantigens"),
+        MABS("MAbs", "mablearngrid"),
+        PUBLICATIONS("Publications", "publicationlearngrid"),
+        GROUPS("Groups", "learngroups"),
+        REPORTS("Reports", "reportlearngrid"),
+        ASSAY_ANTIGENS("Antigens", "antigengrid"),
+        ASSAY_VARIABLES("Variables", "variable-list-grid"),
+        ;
+
+        private final String _tabLabel;
+        private final String _gridClass;
+
+        LearnTab(String tabLabel, String gridClass)
+        {
+            _tabLabel = tabLabel;
+            _gridClass = gridClass;
+        }
+
+        public String getTabLabel()
+        {
+            return _tabLabel;
+        }
+
+        public String getGridClass()
+        {
+            return _gridClass;
+        }
+
+        public static LearnTab getActive(WebDriverWrapper wdw)
+        {
+            try
+            {
+                // Determine the active learn axis by the placeholder text of the search box
+                return LearnTab.valueOf(Locators.searchBox.findElement(wdw.getDriver())
+                        .getDomAttribute("placeholder").replace("Search ", "").toUpperCase());
+            }
+            catch (IllegalArgumentException | NoSuchElementException iae)
+            {
+                return STUDIES;
+            }
+        }
+    }
+
+    @Override
+    public WebElement getComponentElement()
+    {
+        return _learnPanel;
+    }
+
+    public CdsGrid getGrid()
+    {
+        return elementCache().grid;
+    }
+
     public int getRowCount()
     {
-        if (CDSTestLearnAbout.COLUMN_LOCKING)
+        if (COLUMN_LOCKING)
         {
-            int numRowsWithLockedPortion = Locators.lockedRow.findElements(_test.getDriver()).size();
-            int numRowsWithUnlockedPortion = Locators.unlockedRow.findElements(_test.getDriver()).size();
-            Assert.assertTrue(numRowsWithLockedPortion == numRowsWithUnlockedPortion);
+            int numRowsWithLockedPortion = Locators.lockedRow.findElements(getGrid()).size();
+            int numRowsWithUnlockedPortion = Locators.unlockedRow.findElements(getGrid()).size();
+            Assert.assertEquals("Locked and unlocked row portions should match", numRowsWithLockedPortion, numRowsWithUnlockedPortion);
             return numRowsWithUnlockedPortion;
         }
         else
-            return Locators.gridRows.findElements(_test.getDriver()).size();
+            return Locators.gridRows.findElements(getGrid()).size();
     }
 
     @LogMethod
@@ -59,31 +142,52 @@ public class LearnGrid
     {
         List<WebElement> antigensAfterFilter = Locator.tagWithClass("tr", "detail-row")
                 .append("/td//div/div/h2")
-                .findElements(_test.getDriver());
+                .findElements(getGrid());
         return antigensAfterFilter.size();
     }
 
     public LearnDetailsPage clickFirstItem()
     {
-        WebElement returnedItem  = CDSTestLearnAbout.COLUMN_LOCKING
-                ? Locators.unlockedRow.refindWhenNeeded(_test.getDriver())
-                : Locators.gridRows.refindWhenNeeded(_test.getDriver());
-        returnedItem.click();
-        WebDriverWrapper.sleep(CDSHelper.CDS_WAIT_ANIMATION);
-
-        return new LearnDetailsPage(_test);
+        WebElement link = Locators.rowDescriptionLink.findElement(getGrid());
+        return clickDetailsLink(link, link.getText());
     }
 
-    @LogMethod
+    public LearnDetailsPage clickItem(int index)
+    {
+        WebElement link = Locators.rowDescriptionLink.index(index).findElement(getGrid());
+        return clickDetailsLink(link, link.getText());
+    }
+
+    public LearnDetailsPage clickItemContaining(String partialDescription)
+    {
+        setSearch(partialDescription);
+        WebElement link = Locators.rowDescriptionLink.index(0).containingIgnoreCase(partialDescription).waitForElement(getGrid(), CDS_WAIT_LEARN);
+        return clickDetailsLink(link, link.getText());
+    }
+
+    public LearnDetailsPage clickDetails(String description)
+    {
+        WebElement link  = Locators.rowDescriptionLink.withText(description).findElement(getGrid());
+        return clickDetailsLink(link, description);
+    }
+
+    @NotNull
+    private LearnDetailsPage clickDetailsLink(WebElement detailsLink, String description)
+    {
+        TestLogger.log("Viewing details for " + description);
+        detailsLink.click();
+        getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(detailsLink));
+        getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnDetailsPage.Locators.tabHeaders.withText(_learnTab == LearnTab.GROUPS ? "Details" : "Overview")));
+
+        return new LearnDetailsPage(getWrapper());
+    }
+
+    @LogMethod (quiet = true)
     public LearnGrid setSearch(@LoggedParam String searchQuery)
     {
-        List<WebElement> possibleSearchBoxes = Locators.searchBox.findElements(_test.getDriver());
-        WebElement searchBox = possibleSearchBoxes.stream()
-                .filter(WebElement::isDisplayed)
-                .findFirst().get();
-
-        _test.setFormElement(searchBox, searchQuery);
-        _test.sleep(CDSHelper.CDS_WAIT_LEARN);
+        WebDriverWrapper.sleep(CDSHelper.CDS_WAIT_ANIMATION); // Just a fudge because grid sometimes refreshes twice
+        elementCache().grid.doAndWaitForRowUpdate(() ->
+                getWrapper().setFormElement(elementCache().searchBox, searchQuery));
 
         return this;
     }
@@ -91,26 +195,19 @@ public class LearnGrid
     @LogMethod
     public LearnGrid clearSearch()
     {
-       Locators.clearSearch.findElement(_test.getDriver()).click();
-        _test.sleep(CDSHelper.CDS_WAIT_LEARN);
-       return this;
+        elementCache().grid.doAndWaitForRowUpdate(() -> Locators.clearSearch.findElement(this).click());
+        return this;
+    }
+
+    public String getSearch()
+    {
+        return getWrapper().getFormElement(elementCache().searchBox);
     }
 
     @LogMethod(quiet = true)
-    public LearnGrid openFilterPanel(@LoggedParam String columnHeaderName)
+    public WebElement openFilterPanel(@LoggedParam String columnHeaderName)
     {
-        Locator.XPathLocator columnHeader = Locators.columnHeaderLocator(columnHeaderName);
-        Locator.XPathLocator filterIcon = columnHeader.append(Locator.tagWithClass("div", "x-column-header-trigger"));
-        _test.mouseOver(columnHeader);
-        _test.waitForElement(filterIcon);
-        _test.scrollIntoView(filterIcon);
-        _test.mouseOver(filterIcon);
-        Locator.XPathLocator hoveredColumn = columnHeader.append("[contains(concat(' ',normalize-space(@class),' '), ' x-column-header-over ')]");
-        _test.waitForElement(hoveredColumn);
-        _test.click(filterIcon);
-        _test._ext4Helper.waitForMask();
-
-        return this;
+        return elementCache().grid.openFilterPanel(columnHeaderName);
     }
 
     @LogMethod
@@ -122,24 +219,24 @@ public class LearnGrid
     @LogMethod
     public FacetGroups getFacetGroupStatusWithOption(@LoggedParam String columnName, @LoggedParam String option)
     {
-        openFilterPanel(columnName);
+        WebElement filterWindow = openFilterPanel(columnName);
         BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
 
         if (option != null)
         {
-            _test.click(Locator.css(".sortDropdown"));
-            _test.click(Locator.css(".x-menu-item").withText(option));
+            Locator.css(".sortDropdown").findElement(filterWindow).click();
+            Locator.css(".x-menu-item").withText(option).findElement(filterWindow).click();
             BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         }
 
         FacetGroups status = FacetGroups.noData;
-        if (_test.isElementPresent(Locators.hasData) && _test.isElementPresent(Locators.noData))
+        if (Locators.hasData.existsIn(filterWindow) && Locators.noData.existsIn(filterWindow))
             status = FacetGroups.both;
-        else if (_test.isElementPresent(Locators.hasData))
+        else if (Locators.hasData.existsIn(filterWindow))
             status = FacetGroups.hasData;
 
-        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Cancel", "filter-btn"));
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
+        CDSHelper.Locators.cdsButtonLocator("Cancel", "filter-btn").waitForElement(filterWindow, CDS_WAIT).click();
+        getWrapper()._ext4Helper.waitForMaskToDisappear();
 
         return status;
     }
@@ -153,27 +250,26 @@ public class LearnGrid
 
     public LearnGrid setWithOptionFacet(@LoggedParam String columnName, @LoggedParam String option, @LoggedParam String... labels)
     {
-        openFilterPanel(columnName);
-
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
+        WebElement filterWindow = openFilterPanel(columnName);
 
         if (option != null)
         {
-            _test.click(Locator.css(".sortDropdown"));
-            _test.click(Locator.css(".x-menu-item").withText(option));
+            Locator.css(".sortDropdown").findElement(filterWindow).click();
+            Locator.css(".x-menu-item").withText(option).findElement(getDriver()).click();
             BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         }
 
-        _test.click(Locator.css(".x-column-header-checkbox").findElements(_test.getDriver()).stream().filter(WebElement::isDisplayed).findFirst().get());
+        WebElement filterpanegrid = Locator.byClass("filterpanegrid").notHidden().findElement(filterWindow);
+
+        Locator.byClass("x-column-header-checkbox").notHidden().findElement(filterpanegrid).click();
 
         for (String label : labels)
         {
-            _test.click(Locators.getFacetCheckboxForValue(label));
+            Locators.getFacetCheckboxForValue(label).findElement(filterpanegrid).click();
         }
 
         Locator.XPathLocator search = CDSHelper.Locators.cdsButtonLocator("Search", "filter-btn");
-        search.findElement(_test.getDriver()).click();
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
+        elementCache().grid.doAndWaitForRowUpdate(() -> search.findElement(filterWindow).click());
 
         return this;
     }
@@ -187,35 +283,25 @@ public class LearnGrid
 
     public LearnGrid clearFiltersWithOption(@LoggedParam String columnName, @LoggedParam String option)
     {
-        openFilterPanel(columnName);
+        WebElement filterWindow = openFilterPanel(columnName);
 
         if (option != null)
         {
-            _test.click(Locator.css(".sortDropdown"));
-            _test.click(Locator.css(".x-menu-item").withText(option));
+            Locator.css(".sortDropdown").findElement(filterWindow).click();
+            Locator.css(".x-menu-item").withText(option).findElement(getDriver()).click();
             BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
         }
 
-        _test.waitAndClick(CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn"));
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
+        WebElement clearBtn = CDSHelper.Locators.cdsButtonLocator("Clear", "filter-btn").findElement(filterWindow);
+        elementCache().grid.doAndWaitForRowUpdate(clearBtn::click);
 
-        return this;
-    }
-
-    public LearnGrid assertSortPresent(String columnName)
-    {
-        _test.waitForElement(Locator.tagWithClassContaining("div", "x-column-header-sort-").withText(columnName));
         return this;
     }
 
     @LogMethod
     public LearnGrid sort(@LoggedParam final String columnName)
     {
-        _test.mouseOver(Locators.columnHeaderLocator(columnName));
-        _test.sleep(500);
-        _test.click(Locators.columnHeaderLocator(columnName));
-        BaseWebDriverTest.sleep(CDSHelper.CDS_WAIT_LEARN);
-        assertSortPresent(columnName);
+        elementCache().grid.sort(columnName);
 
         return this;
     }
@@ -223,13 +309,13 @@ public class LearnGrid
     // Columns are separated by a \n.
     public String getRowText(int rowIndex)
     {
-        if (CDSTestLearnAbout.COLUMN_LOCKING) {
-            _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex)); // Why do I have to scroll this into view to get the text?
-            return Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex).getText() + "\n" + Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex).getText();
+        if (COLUMN_LOCKING) {
+            WebElement lockedRow = getWrapper().scrollIntoView(Locators.lockedRow.findElements(getGrid()).get(rowIndex));// Why do I have to scroll this into view to get the text?
+            return lockedRow.getText() + "\n" + Locators.unlockedRow.findElements(getGrid()).get(rowIndex).getText();
         }
         else {
-            _test.scrollIntoView(Locators.gridRows.findElements(_test.getDriver()).get(rowIndex)); // Why do I have to scroll this into view to get the text?
-            return Locators.gridRows.findElements(_test.getDriver()).get(rowIndex).getText();
+            WebElement rowEl = getWrapper().scrollIntoView(Locators.gridRows.findElements(getGrid()).get(rowIndex));// Why do I have to scroll this into view to get the text?
+            return rowEl.getText();
         }
     }
 
@@ -242,19 +328,19 @@ public class LearnGrid
     public LearnGrid showDataAddedToolTip(int rowIndex, int cellIndex)
     {
         // Scroll the row into view.
-        if (CDSTestLearnAbout.COLUMN_LOCKING)
-            _test.scrollIntoView(Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex));
+        if (COLUMN_LOCKING)
+            getWrapper().scrollIntoView(Locators.lockedRow.findElements(getGrid()).get(rowIndex));
         else
-            _test.scrollIntoView(Locators.gridRows.findElements(_test.getDriver()).get(rowIndex));
+            getWrapper().scrollIntoView(Locators.gridRows.findElements(getGrid()).get(rowIndex));
 
         // The tool-tip shows up on a mouse enter event. So first go to the grey text under the icon then move over it.
-        _test.mouseOver(getCellWebElement(rowIndex, cellIndex).findElement(By.className("detail-gray-text")));
-        _test.sleep(500); // If the mouse moves too quickly ext may not always see it, so pause for a moment.
-        _test.mouseOver(getCellWebElement(rowIndex, cellIndex).findElement(By.className("detail-has-data")));
+        getWrapper().mouseOver(getCellWebElement(rowIndex, cellIndex).findElement(Locator.byClass("detail-gray-text")));
+        WebDriverWrapper.sleep(500); // If the mouse moves too quickly ext may not always see it, so pause for a moment.
+        getWrapper().mouseOver(getCellWebElement(rowIndex, cellIndex).findElement(Locator.byClass("detail-has-data")));
 
         // The tool-tip has a small delay before it is shown.
-        _test.waitForElement(Locator.css("div.hopscotch-bubble-container"), 5000, true);
-        _test.sleep(500);
+        Locator.css("div.hopscotch-bubble-container").waitForElement(getDriver(), 5_000);
+        WebDriverWrapper.sleep(500);
         return this;
     }
 
@@ -264,37 +350,37 @@ public class LearnGrid
         int cellCountLocked;
         WebElement cellWebElement;
 
-        if (CDSTestLearnAbout.COLUMN_LOCKING)
+        if (COLUMN_LOCKING)
         {
-            cellWebElement = Locators.lockedRow.findElements(_test.getDriver()).get(rowIndex);
-            _test.scrollIntoView(cellWebElement);
+            cellWebElement = Locators.lockedRow.findElements(getGrid()).get(rowIndex);
+            getWrapper().scrollIntoView(cellWebElement);
 
-            cellCountLocked = cellWebElement.findElements(By.tagName("td")).size();
+            cellCountLocked = cellWebElement.findElements(Locator.tag("td")).size();
 
             if (cellIndex < cellCountLocked)
             {
-                return cellWebElement.findElements(By.tagName("td")).get(cellIndex);
+                return cellWebElement.findElements(Locator.tag("td")).get(cellIndex);
             }
             else
             {
                 // The index is not in the locked columns, so we have to do a little offset and need to look at the unlocked grid.
-                cellWebElement = Locators.unlockedRow.findElements(_test.getDriver()).get(rowIndex);
-                return cellWebElement.findElements(By.tagName("td")).get(cellIndex - cellCountLocked);
+                cellWebElement = Locators.unlockedRow.findElements(getGrid()).get(rowIndex);
+                return cellWebElement.findElements(Locator.tag("td")).get(cellIndex - cellCountLocked);
             }
         }
         else
         {
-            cellWebElement = Locators.gridRows.findElements(_test.getDriver()).get(rowIndex);
-            _test.scrollIntoView(cellWebElement);
+            cellWebElement = Locators.gridRows.findElements(getGrid()).get(rowIndex);
+            getWrapper().scrollIntoView(cellWebElement);
 
-            return cellWebElement.findElements(By.tagName("td")).get(cellIndex);
+            return cellWebElement.findElements(Locator.tag("td")).get(cellIndex);
         }
     }
 
     // There should only be one tool-tip present at a time.
     public String getToolTipText()
     {
-        return _test.getText(Locator.css("div.hopscotch-bubble-container"));
+        return getWrapper().getText(Locator.css("div.hopscotch-bubble-container"));
     }
 
     // Text values in each of the columns is separated by a \n.
@@ -313,10 +399,10 @@ public class LearnGrid
     public String[] getColumnNames()
     {
         String colHeaderStr;
-        if (CDSTestLearnAbout.COLUMN_LOCKING)
-            colHeaderStr = Locators.lockedRowHeader.findElement(_test.getDriver()).getText() + "\n" + Locators.unlockedRowHeader.findElement(_test.getDriver()).getText();
+        if (COLUMN_LOCKING)
+            colHeaderStr = Locators.lockedRowHeader.findElement(getGrid()).getText() + "\n" + Locators.unlockedRowHeader.findElement(getGrid()).getText();
         else
-            colHeaderStr = Locators.gridRowHeader.findElement(_test.getDriver()).getText();
+            colHeaderStr = Locators.gridRowHeader.findElement(getGrid()).getText();
         return colHeaderStr.split("\n");
     }
 
@@ -339,20 +425,17 @@ public class LearnGrid
 
     public static class Locators
     {
-        public static final Locator.XPathLocator searchBox = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//input");
+        public static final Locator.XPathLocator panel = Locator.byClass("learnview");
+        public static final Locator searchBox = Locator.css(".learn-search-input input");
 
         public static final Locator.XPathLocator clearSearch = Locator.xpath("//table[contains(@class, 'learn-search-input')]//tbody//tr//td//div");
+        public static final Locator.XPathLocator unlockedRow = Locator.xpath("./div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div/div/table/tbody/tr");
+        public static final Locator.XPathLocator unlockedRowHeader = Locator.xpath("./div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div[contains(@class, 'x-grid-header-ct')]");
+        public static final Locator.XPathLocator lockedRow = Locator.xpath("./div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
+        public static final Locator.XPathLocator lockedRowHeader = Locator.xpath("./div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div[contains(@class, 'x-grid-header-ct')]");
 
-        public static final Locator.XPathLocator grid = Locator.xpath("//div[contains(@class, 'learngrid')][not(contains(@style, 'display: none'))]");
-        public static final Locator.XPathLocator unlockedRow = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div/div/table/tbody/tr");
-        public static final Locator.XPathLocator unlockedRowHeader = grid.append("/div/div/div/div[not(contains(@class, 'x-grid-inner-locked'))]/div[contains(@class, 'x-grid-header-ct')]");
-        public static final Locator.XPathLocator lockedRow = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div/div/table/tbody/tr");
-        public static final Locator.XPathLocator lockedRowHeader = grid.append("/div/div/div/div[contains(@class, 'x-grid-inner-locked')]/div[contains(@class, 'x-grid-header-ct')]");
-
-        public static final Locator.XPathLocator gridRows = grid.append("//div[contains(@class, 'x-grid-view')]/table/tbody/tr");
-        public static final Locator.XPathLocator gridRowHeader = grid.append("//div[contains(@class, 'x-grid-header-ct')]");
-
-        public static final Locator.XPathLocator unifiedRow = grid.append("//tr"); // use for locators on detail grids
+        public static final Locator.XPathLocator gridRows = Locator.xpath("//div[contains(@class, 'x-grid-view')]/table/tbody/tr");
+        public static final Locator.XPathLocator gridRowHeader = Locator.xpath("//div[contains(@class, 'x-grid-header-ct')]");
 
         public static final Locator.XPathLocator hasData = Locator.tagWithClass("div", "x-grid-group-title").withText("In current selection");
         public static final Locator.XPathLocator noData = Locator.tagWithClass("div", "x-grid-group-title").withText("Not in current selection");
@@ -360,6 +443,7 @@ public class LearnGrid
         public static final Locator rowsWithData = Locator.css(".detail-row-has-data");
         public static final Locator rowsWithDataNotAccessible = Locator.css(".detail-has-data-gray");
         public static final Locator rowsWithDataAccessible = Locator.css(".detail-has-data-green");
+        public static final Locator.XPathLocator rowDescriptionLink = Locator.byClass("detail-description").childTag("h2");
 
         public static Locator.XPathLocator getFacetCheckboxForValue(String label)
         {
@@ -371,5 +455,19 @@ public class LearnGrid
         {
             return Locator.tagWithClass("div", "x-column-header-inner").withText(columnHeaderName);
         }
+
     }
+
+    @Override
+    protected ElementCache newElementCache()
+    {
+        return new ElementCache();
+    }
+
+    public class ElementCache extends Component<?>.ElementCache
+    {
+        protected final CdsGrid grid = new CdsGrid(_learnTab._gridClass, LearnGrid.this);
+        private final WebElement searchBox = Locators.searchBox.findWhenNeeded(this);
+    }
+
 }

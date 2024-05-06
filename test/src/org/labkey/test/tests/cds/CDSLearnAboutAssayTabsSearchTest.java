@@ -35,35 +35,33 @@ public class CDSLearnAboutAssayTabsSearchTest extends CDSReadOnlyTest
     @Test
     public void testVariablesSearch()
     {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid summaryGrid = new LearnGrid(this);
+        LearnGrid summaryGrid = cds.viewLearnAboutPage(LearnGrid.LearnTab.ASSAYS);
 
         log("Test basic search functionality.");
-        LearnDetailsPage.DetailLearnGrid ICSAntigenGrid = summaryGrid.setSearch(CDSHelper.TITLE_ICS)
-                .clickFirstItem()
-                .getGridTab("Variables");
-        ICSAntigenGrid.setSearch("%");
-        Assert.assertEquals("Incorrect count in search result", 3, ICSAntigenGrid.getRowCount());
+        LearnDetailsPage.DetailLearnGrid icsVariableGrid = summaryGrid
+                .clickItemContaining(CDSHelper.TITLE_ICS)
+                .getGridTab(LearnGrid.LearnTab.ASSAY_VARIABLES);
+        icsVariableGrid.setSearch("%");
+        Assert.assertEquals("Incorrect count in search result", 3, icsVariableGrid.getRowCount());
         Assert.assertEquals("Search results for Assay-->Variable is incorrect", Arrays.asList("Magnitude (% cells) - Background subtracted",
                         "Magnitude (% cells) - Background",
                         "Magnitude (% cells) - Raw"),
                 getTexts(Locator.tagWithClass("div", "variable-list-title").findElements(getDriver())));
 
-        ICSAntigenGrid.setSearch("Junk search");
-        Assert.assertEquals("Incorrect count in search result", 0, ICSAntigenGrid.getRowCount());
+        icsVariableGrid.setSearch("Junk search");
+        Assert.assertEquals("Incorrect count in search result", 0, icsVariableGrid.getRowCount());
         Assert.assertTrue("Missing text for no result found", isTextPresent("No available variables meet your selection criteria."));
     }
 
     @Test
     public void testAntigenSearch()
     {
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid summaryGrid = new LearnGrid(this);
+        LearnGrid summaryGrid = cds.viewLearnAboutPage(LearnGrid.LearnTab.ASSAYS);
 
         log("Test basic search functionality.");
-        LearnDetailsPage.DetailLearnGrid bamaAntigenGrid = summaryGrid.setSearch(CDSHelper.TITLE_BAMA)
-                .clickFirstItem()
-                .getGridTab("Antigens");
+        LearnDetailsPage.DetailLearnGrid bamaAntigenGrid = summaryGrid
+                .clickItemContaining(CDSHelper.TITLE_BAMA)
+                .getGridTab(LearnGrid.LearnTab.ASSAY_ANTIGENS);
 
         bamaAntigenGrid.setSearch("antibody");
         Assert.assertEquals("Incorrect search result", 0, bamaAntigenGrid.getRowCount());

@@ -17,6 +17,7 @@ package org.labkey.test.util.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.pages.cds.AssayDetailsPage;
 import org.labkey.test.pages.cds.StudyDetailsPage;
 import org.labkey.test.util.Ext4Helper;
@@ -182,7 +183,7 @@ public class CDSAsserts
     {
         for (String item : axisItems)
         {
-            _test.waitForElement(Locator.tagWithClass("tr", "detail-row").append("/td/div/div/h2").containing(item), _test.WAIT_FOR_PAGE);
+            _test.waitForElement(Locator.tagWithClass("tr", "detail-row").append("/td/div/div/h2").containing(item), WebDriverWrapper.WAIT_FOR_PAGE);
             _test.assertElementPresent(Locator.tagWithClass("tr", "detail-row").append("/td/div/div/h2").withText(item));
         }
 

@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
+import org.labkey.test.components.cds.CdsGrid;
 import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.CDSPlot;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
@@ -149,7 +150,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         //
         // Check to see if grid is properly filtering based on explorer filter
         //
-        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(grid.getGrid());
 
         if (CDSHelper.validateCounts)
         {
@@ -157,15 +158,16 @@ public class CDSGridTest extends CDSReadOnlyTest
             grid.assertPageTotal(43); // TODO Test data dependent.
         }
 
-        cds.clearFilters();
+        grid.doAndWaitForUpdate(cds::clearFilters);
         _ext4Helper.waitForMaskToDisappear();
 
         if (CDSHelper.validateCounts)
         {
             grid.assertRowCount(10783); // TODO Test data dependent.
-            assertElementPresent(DataGrid.Locators.cellLocator("q2-003")); // TODO Test data dependent.
+            assertElementPresent(CdsGrid.Locators.cellLocator("q2-003")); // TODO Test data dependent.
         }
 
+        gridColumnSelector = new DataGridVariableSelector(this, grid);
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_RACE, false, true);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
@@ -431,6 +433,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         log("Verify Grid with filters.");
         setUpGridStep1();
 
+        grid = new DataGrid(this);
         log("Validate expected columns are present.");
         grid.goToDataTab(CDSHelper.TITLE_ICS);
         grid.ensureColumnsPresent(CDSHelper.ICS_MAGNITUDE_BACKGROUND_SUB);
@@ -442,6 +445,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         setUpGridStep2(true);
 
         _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
+        grid = new DataGrid(this);
         grid.assertPageTotal(1);
         grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_TITERID50, CDSHelper.NAB_INIT_DILUTION, CDSHelper.NAB_VIRUS_NAME);
@@ -451,7 +455,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         grid.assertRowCount(2);
 
         log("Remove the plot and validate that the columns stay the same, but the counts could change.");
-        cds.clearFilter(0);
+        grid.doAndWaitForUpdate(() -> cds.clearFilter(0));
         _asserts.assertFilterStatusCounts(2, 2, 1, 3, 2);
         grid.assertPageTotal(1);
         grid.goToDataTab(CDSHelper.GRID_TITLE_NAB);
@@ -498,7 +502,6 @@ public class CDSGridTest extends CDSReadOnlyTest
     private void setUpGridStep2(boolean verifyGrid)
     {
         DataGrid grid = new DataGrid(this);
-        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         log("Applying a column filter.");
         grid.goToDataTab(CDSHelper.TITLE_ICS);
@@ -513,8 +516,8 @@ public class CDSGridTest extends CDSReadOnlyTest
         }
 
         log("Go back to the grid and apply a color to it. Validate it appears as a column.");
-        // Can't use CDSHelper.NavigationLink.Grid.makeNavigationSelection. It expects that it will be going to a blank plot.
-        click(CDSHelper.NavigationLink.PLOT.getLinkLocator());
+
+        CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
 
         sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
 
@@ -526,9 +529,10 @@ public class CDSGridTest extends CDSReadOnlyTest
         coloraxis.confirmSelection();
         _ext4Helper.waitForMaskToDisappear();
 
-        CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
+        CDSHelper.NavigationLink.GRID.makeNavigationSelection(grid.getGrid());
         sleep(1000); // There is a brief moment where the grid refreshes because of filters applied in the grid.
 
+        grid = new DataGrid(this);
         grid.goToDataTab(CDSHelper.GRID_TITLE_DEMO);
         if (verifyGrid)
         {
@@ -546,6 +550,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         }
 
         log("Now add a new column to the mix.");
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
         gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_TITERID50, false, true);
 
         _ext4Helper.waitForMaskToDisappear();
@@ -564,38 +569,39 @@ public class CDSGridTest extends CDSReadOnlyTest
          * Assays                   Y                           N                           Y           N
          */
 
-        DataGrid grid = new DataGrid(this);
-        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
-
         log("Verify Default Grid: " + CDSHelper.GRID_TITLE_STUDY_TREATMENT);
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
         Locator.XPathLocator activeTabLoc = DataGrid.Locators.getActiveHeader(CDSHelper.GRID_TITLE_STUDY_TREATMENT);
         waitForElement(activeTabLoc);
+
+        DataGrid grid = new DataGrid(this);
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
+
         grid.ensureColumnsPresent(); // verify default columns
 
         log("Verify grid with added study and treatment columns");
         gridColumnSelector.addGridColumn(CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.STUDY_TREATMENT_VARS, CDSHelper.DEMO_NETWORK, true, true);
         gridColumnSelector.confirmSelection();
         sleep(2000);
-        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT)));
+        assertEquals("Grid tabs are not as expected", Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT), grid.getDataTabs());
         grid.ensureColumnsPresent(CDSHelper.DEMO_NETWORK);
 
         log("Verify grid with added assay columns");
         gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_ASSAY, true, true);
         gridColumnSelector.addGridColumn(CDSHelper.NAB, GRID_TITLE_NAB, CDSHelper.NAB_LAB, false, true);
-        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_NAB)));
+        assertEquals("Grid tabs are not as expected", Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_NAB), grid.getDataTabs());
         grid.goToDataTab(GRID_TITLE_NAB);
         grid.ensureColumnsPresent(CDSHelper.NAB_ASSAY, CDSHelper.NAB_LAB);
 
         log("Verify grid with subject characteristics and time point columns");
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_SEX, true, true);
         gridColumnSelector.addGridColumn(CDSHelper.SUBJECT_CHARS, CDSHelper.DEMO_RACE, false, true);
-        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB)));
+        assertEquals("Grid tabs are not as expected", Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB), grid.getDataTabs());
         gridColumnSelector.addGridColumn(CDSHelper.TIME_POINTS, CDSHelper.TIME_POINTS_MONTHS, true, true);
         gridColumnSelector.confirmSelection();
         sleep(2000);
 
-        assertTrue("Grid tabs are not as expected", grid.isDataTabsEquals(Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB)));
+        assertEquals("Grid tabs are not as expected", Arrays.asList(CDSHelper.GRID_TITLE_STUDY_TREATMENT, CDSHelper.GRID_TITLE_DEMO, CDSHelper.GRID_TITLE_NAB), grid.getDataTabs());
 
         // go to another page and come back to grid
         cds.goToSummary();
@@ -622,9 +628,6 @@ public class CDSGridTest extends CDSReadOnlyTest
         CDSHelper cds = new CDSHelper(this);
 
         log("Verify Grid column selector.");
-
-        DataGrid grid = new DataGrid(this);
-        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         log("Create a plot that will filter.");
         CDSHelper.NavigationLink.PLOT.makeNavigationSelection(this);
@@ -657,6 +660,7 @@ public class CDSGridTest extends CDSReadOnlyTest
 
         CDSHelper.NavigationLink.GRID.makeNavigationSelection(this);
 
+        DataGrid grid = new DataGrid(this);
         waitForText("View data grid"); // grid warning
         _ext4Helper.waitForMaskToDisappear();
 
@@ -667,6 +671,8 @@ public class CDSGridTest extends CDSReadOnlyTest
         grid.ensureColumnsPresent(CDSHelper.ICS_ANTIGEN);
         grid.goToDataTab(CDSHelper.SUBJECT_CHARS);
         grid.ensureSubjectCharacteristicsColumnsPresent(CDSHelper.DEMO_RACE);
+
+        DataGridVariableSelector gridColumnSelector = new DataGridVariableSelector(this, grid);
 
         gridColumnSelector.openSelectorWindow();
         Map<String, Boolean> columns = new HashMap<>();
@@ -680,16 +686,10 @@ public class CDSGridTest extends CDSReadOnlyTest
         gridColumnSelectorValidator(gridColumnSelector, CDSHelper.GRID_COL_ALL_VARS, columns);
 
         log("Validate that column selectors are as expected in their specific variable selector.");
-        Map<String, Boolean> oneColumn = new HashMap<>();
-        oneColumn.put(CDSHelper.DEMO_RACE, false);
-        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.SUBJECT_CHARS, oneColumn);
-        oneColumn.clear();
-        oneColumn.put(CDSHelper.ICS_ANTIGEN, false);
-        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.ICS, oneColumn);
-        oneColumn.clear();
-        oneColumn.put(CDSHelper.NAB_TITERID50, false);
-        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.NAB, oneColumn);
-        oneColumn.clear();
+
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.SUBJECT_CHARS, Map.of(CDSHelper.DEMO_RACE, false));
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.ICS, Map.of(CDSHelper.ICS_ANTIGEN, false));
+        gridColumnSelectorValidator(gridColumnSelector, CDSHelper.NAB, Map.of(CDSHelper.NAB_TITERID50, false));
 
         log("Now add a new column to the mix.");
         gridColumnSelector.pickSource(CDSHelper.ICS);
@@ -758,7 +758,7 @@ public class CDSGridTest extends CDSReadOnlyTest
         gridColumnSelector.confirmSelection();
 
         log("Clear the filters and make sure the selector reflects this.");
-        cds.clearFilters();
+        grid.doAndWaitForUpdate(cds::clearFilters);
         waitForText(5000, "Filter removed.");
         _ext4Helper.waitForMaskToDisappear();
 

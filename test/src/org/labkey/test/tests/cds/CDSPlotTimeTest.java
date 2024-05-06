@@ -262,7 +262,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         List<String> expectedToolTipText;
         Actions builder; // Used to hover the WebElement over a tag.
 
-        Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
+        Map<String, CDSHelper.TimeAxisData> expectedCounts = new HashMap<>();
         expectedCounts.put("RED_4", new CDSHelper.TimeAxisData("RED 4", 1, 3, 1, 5, 1, 0));
         expectedCounts.put("ZAP_110", new CDSHelper.TimeAxisData("ZAP 110", 1, 4, 3, 4, 0, 0));
         expectedCounts.put("ZAP_111", new CDSHelper.TimeAxisData("ZAP 111", 1, 4, 2, 6, 0, 0));
@@ -866,7 +866,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         assertEquals("Did not find the number of expected asterisk glyphs.", 74, glyphCount);
 
         log("Validate that various counts in the time axis are as expected.");
-        Map expectedCounts = new HashMap<String, CDSHelper.TimeAxisData>();
+        Map<String, CDSHelper.TimeAxisData> expectedCounts = new HashMap<>();
         expectedCounts.put("YOYO_55", new CDSHelper.TimeAxisData("YOYO 55", 1, 2, 0, 4, 1, 2));
         expectedCounts.put("ZAP_128", new CDSHelper.TimeAxisData("ZAP 128", 1, 5, 0, 10, 0, 0));
         expectedCounts.put("ZAP_133", new CDSHelper.TimeAxisData("ZAP 133", 1, 2, 0, 5, 0, 0));

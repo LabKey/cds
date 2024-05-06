@@ -25,6 +25,7 @@ import org.labkey.test.components.cds.ActiveFilterDialog;
 import org.labkey.test.pages.cds.ColorAxisVariableSelector;
 import org.labkey.test.pages.cds.DataspaceVariableSelector;
 import org.labkey.test.pages.cds.InfoPane;
+import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.PortalHelper;
@@ -32,7 +33,6 @@ import org.labkey.test.util.cds.CDSAsserts;
 import org.labkey.test.util.cds.CDSHelpCenterUtil;
 import org.labkey.test.util.cds.CDSHelper;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -69,11 +69,7 @@ public class CDSTest extends CDSReadOnlyTest
         cds.goToAppHome();
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
 
-        List<String> groups = new ArrayList<>();
-        groups.add(GROUP_NAME);
-        groups.add(HOME_PAGE_GROUP);
-        cds.ensureGroupsDeleted(groups);
-
+        cds.ensureGroupsDeleted(List.of(GROUP_NAME, HOME_PAGE_GROUP));
         cds.ensureNoFilter();
         cds.ensureNoSelection();
 
@@ -225,7 +221,7 @@ public class CDSTest extends CDSReadOnlyTest
         int plotFilterCount = Locator.css("div.groupicon img").findElements(getWrappedDriver()).size();
         cds.clearFilter(0);
 
-        ActiveFilterDialog filterDialog = new ActiveFilterDialog(getDriver());
+        ActiveFilterDialog filterDialog = new ActiveFilterDialog(this);
         filterDialog.editGroup("Update this group", HOME_PAGE_GROUP, null, false);
 
         //TODO After updating the group, should see plot icon disappear since the filter was cleared on line 225
@@ -264,7 +260,7 @@ public class CDSTest extends CDSReadOnlyTest
                 withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
 
         log("Verifying the message is displayed in learn about");
-        cds.viewLearnAboutPage("Assays");
+        cds.viewLearnAboutPage(LearnGrid.LearnTab.ASSAYS);
         assertElementPresent(Locator.tagWithClass("div", "notification-messages").
                 withChild(Locator.tagWithText("span", "Testing User notice on public page to announce outages")));
 

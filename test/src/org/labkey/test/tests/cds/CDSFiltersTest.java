@@ -26,7 +26,6 @@ import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -50,19 +49,13 @@ public class CDSFiltersTest extends CDSReadOnlyTest
     @Before
     public void preTest()
     {
-
         cds.enterApplication();
 
         // clean up groups
         cds.goToAppHome();
         sleep(CDSHelper.CDS_WAIT_ANIMATION); // let the group display load
 
-        List<String> groups = new ArrayList<>();
-        groups.add(GROUP_NAME);
-        groups.add(GROUP_NAME2);
-        groups.add(GROUP_NAME3);
-        cds.ensureGroupsDeleted(groups);
-
+        cds.ensureGroupsDeleted(List.of(GROUP_NAME, GROUP_NAME2, GROUP_NAME3));
         cds.ensureNoFilter();
         cds.ensureNoSelection();
 
@@ -392,17 +385,17 @@ public class CDSFiltersTest extends CDSReadOnlyTest
         cds.useSelectionAsSubjectFilter();
 
         // save the group and request cancel
-        ActiveFilterDialog filterDialog = new ActiveFilterDialog(getDriver());
+        ActiveFilterDialog filterDialog = new ActiveFilterDialog(this);
         filterDialog.saveAsAGroup()
                 .setGroupName(GROUP_NULL).setGroupDescription(GROUP_NULL).cancel();
 
         // save the group and request save
-        filterDialog = new ActiveFilterDialog(getDriver());
+        filterDialog = new ActiveFilterDialog(this);
         filterDialog.saveAsAGroup()
                 .setGroupName(GROUP_NAME2).setGroupDescription(GROUP_NAME2).saveGroup();
 
         // save a group with an interior group
-        filterDialog = new ActiveFilterDialog(getDriver());
+        filterDialog = new ActiveFilterDialog(this);
         filterDialog.editGroup("Save as new group", GROUP_NAME3, GROUP_DESC, false);
         cds.clearFilters();
     }

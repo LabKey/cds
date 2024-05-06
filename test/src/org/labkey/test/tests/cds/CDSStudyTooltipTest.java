@@ -6,6 +6,7 @@ import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.pages.cds.XAxisVariableSelector;
 import org.labkey.test.pages.cds.YAxisVariableSelector;
 import org.labkey.test.util.TextSearcher;
@@ -41,29 +42,25 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
     {
         log("Verifying the tooltip for Learn about - Assays");
         CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
-        cds.viewLearnAboutPage("Assays");
-        LearnGrid learnGrid = new LearnGrid(this);
-        learnGrid.setSearch(CDSHelper.TITLE_ICS).clickFirstItem();
+        LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.ASSAYS);
+        learnGrid.clickItemContaining(CDSHelper.TITLE_ICS);
         validateToolTip(Locator.linkWithText(CDSHelper.RED_4).findElement(getDriver()), RED4ToolTipText);
 
         log("Verifying the tooltip for Learn about - Products");
         CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
-        cds.viewLearnAboutPage("Products");
-        learnGrid = new LearnGrid(this);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PRODUCTS);
         learnGrid.clickFirstItem();
         validateToolTip(Locator.linkWithText(CDSHelper.QED_4).findElement(getDriver()), QED4ToolTipText);
 
         log("Verifying the tooltip for Learn about - MAbs");
         CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
-        cds.viewLearnAboutPage("MAbs");
-        learnGrid = new LearnGrid(this);
-        learnGrid.setSearch("2F5").clickFirstItem();
+        learnGrid = cds.viewLearnAboutPage(LearnTab.MABS);
+        learnGrid.clickItemContaining("2F5");
         validateToolTip(Locator.linkWithText(CDSHelper.QED_4).findElement(getDriver()), QED4ToolTipText);
 
         log("Verifying the tooltip for Learn about - Publications");
         CDSHelper.NavigationLink.LEARN.makeNavigationSelection(this);
-        cds.viewLearnAboutPage("Publications");
-        learnGrid = new LearnGrid(this);
+        learnGrid = cds.viewLearnAboutPage(LearnTab.PUBLICATIONS);
         learnGrid.clickFirstItem();
         validateToolTip(Locator.linkWithText(CDSHelper.ZAP_138).findElement(getDriver()), ZAP138ToolTipText);
     }

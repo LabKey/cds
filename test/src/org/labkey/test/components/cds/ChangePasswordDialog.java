@@ -2,34 +2,24 @@ package org.labkey.test.components.cds;
 
 import org.labkey.test.BaseWebDriverTest;
 import org.labkey.test.Locator;
-import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.components.Component;
-import org.labkey.test.components.WebDriverComponent;
 import org.labkey.test.components.html.Input;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
-public class ChangePasswordDialog extends WebDriverComponent<ChangePasswordDialog.ElementCache>
+public class ChangePasswordDialog extends BaseCdsComponent<ChangePasswordDialog.ElementCache>
 {
     private final WebElement _dialogEl;
-    private final WebDriverWrapper _webDriverWrapper;
 
     public ChangePasswordDialog(BaseWebDriverTest test)
     {
-        _webDriverWrapper = test;
-        _dialogEl = Locator.tagWithClass("div", "mfp-content").refindWhenNeeded(_webDriverWrapper.getDriver());
+        super(test);
+        _dialogEl = Locator.tagWithClass("div", "mfp-content").refindWhenNeeded(test.getDriver());
     }
 
     @Override
     public WebElement getComponentElement()
     {
         return _dialogEl;
-    }
-
-    @Override
-    protected WebDriver getDriver()
-    {
-        return _webDriverWrapper.getDriver();
     }
 
     public ChangePasswordDialog setPreviousPassword(String value)

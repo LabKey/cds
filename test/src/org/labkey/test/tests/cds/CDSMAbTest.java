@@ -28,8 +28,12 @@ import org.labkey.test.pages.cds.AntigenFilterPanel;
 import org.labkey.test.pages.cds.CDSExport;
 import org.labkey.test.pages.cds.InfoPane;
 import org.labkey.test.pages.cds.LearnGrid;
+import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.pages.cds.MAbDataGrid;
+import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
 import java.io.IOException;
@@ -880,12 +884,11 @@ public class CDSMAbTest extends CDSGroupBaseTest
         String mabPrivateGroup = "mabPrivateTestGroup";
         String mabPublicGroup = "mabPublicTestGroup";
 
-        List<String> groups = new ArrayList<>();
-        groups.add(subjectPrivateGroup);
-        groups.add(subjectPublicGroup);
-        groups.add(mabPrivateGroup);
-        groups.add(mabPublicGroup);
-        cds.ensureGroupsDeleted(groups);
+        cds.ensureGroupsDeleted(List.of(
+                subjectPrivateGroup,
+                subjectPublicGroup,
+                mabPrivateGroup,
+                mabPublicGroup));
 
         log("Compose a shared and a private subject group");
         cds.goToSummary();
@@ -908,7 +911,6 @@ public class CDSMAbTest extends CDSGroupBaseTest
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
-        sleep(5000);
         grid.setFacet(MAB_COL,false,"2F5", "A14");
         cds.saveGroup(mabPublicGroup, null, true, true, true);
 
@@ -926,7 +928,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         else
         {
             waitAndClickAndWait(Locator.linkWithText("(View all)").index(0));
-            LearnGrid learnGrid = new LearnGrid(this);
+            LearnGrid learnGrid = new LearnGrid(LearnTab.GROUPS, this);
             Assert.assertEquals(subjectPrivateGroup + " group was not found", 1, learnGrid.setSearch(subjectPrivateGroup).getRowCount());
             Assert.assertEquals(mabPublicGroup + " group was not found", 1, learnGrid.setSearch(mabPublicGroup).getRowCount());
             Assert.assertEquals(mabPrivateGroup + " group was not found", 1, learnGrid.setSearch(mabPrivateGroup).getRowCount());
@@ -941,31 +943,27 @@ public class CDSMAbTest extends CDSGroupBaseTest
         grid.clearAllFilters();
         cds.goToAppHome();
         cds.clearFilters();
-        sleep(2000);
         click(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup));
-        sleep(2000);
+
+        WebElement mabGridLink = shortWait().until(ExpectedConditions.visibilityOfElementLocated(Ext4Helper.Locators.ext4Button( "View in MAb grid")));
 
         Locator clearAllFilterBtn = CDSHelper.Locators.cdsButtonLocator("clear", "mabfilterclear");
         Assert.assertFalse("Subject filters shouldn't have changed by applying mAb group", isElementPresent(clearAllFilterBtn));
 
         log("Verify mAb group details page");
-        Locator mabGridLink = Locator.tagWithText("span", "View in MAb grid");
-        Assert.assertTrue("MAb grid link is not present", isElementPresent(mabGridLink));
-        click(mabGridLink);
+        mabGridLink.click();
+        shortWait().until(ExpectedConditions.invisibilityOf(mabGridLink));
 
         log("Verify mab grid filters after applying mAb group");
-        CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         grid = new MAbDataGrid(this);
         Assert.assertTrue(MAB_COL + " should have been filtered", grid.isColumnFiltered(MAB_COL));
         Assert.assertFalse(STUDIES_COL + " should not have been filtered", grid.isColumnFiltered(STUDIES_COL));
 
         log("Replace a mab group");
         grid.clearAllFilters();
-        sleep(5000);
         grid.setFacet(SPECIES_COL,false,"llama");
-        click(CDSHelper.Locators.cdsButtonLocator("save", "mabfiltersave"));
-        waitForText("replace an existing group");
-        click(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("save", "mabfiltersave"));
+        waitAndClick(CDSHelper.Locators.cdsButtonLocator("replace an existing group"));
 
         log("Verify mab filter can only replace existing mab groups");
         Locator.XPathLocator listGroup = Locator.tagWithClass("div", "save-label");
