@@ -134,14 +134,12 @@ Ext.define('Connector.view.GroupSave', {
                 {
                     if(this.getIsEditorOrHigher(userPerms))
                     {
-                        Ext.getCmp('creategroupshared').show();
+                        this.getGroupSharedCmp().show();
                     }
                 },
                 scope: this
             });
         }
-
-
 
         this.callParent();
 
@@ -255,6 +253,7 @@ Ext.define('Connector.view.GroupSave', {
         }
         else {
             if (!this.createGroup) {
+                var me = this;
                 this.createGroup = Ext.create('Ext.Container', {
                     hidden: this.mode !== Connector.view.GroupSave.modes.CREATE,
                     activeMode: Connector.view.GroupSave.modes.CREATE,
@@ -272,10 +271,9 @@ Ext.define('Connector.view.GroupSave', {
                         items: [{
                             xtype: 'textfield',
                             cls: 'group-name-input',
-                            itemId: 'groupname',
+                            itemId: 'groupname-cmp',
                             name: 'groupname',
                             emptyText: 'Enter a group name',
-                            id: 'groupname-id',
                             height: 30,
                             allowBlank: false,
                             validateOnBlur: false,
@@ -284,7 +282,7 @@ Ext.define('Connector.view.GroupSave', {
                                 //dynamic enable/disable of save button based on the presence of text in the group name field
                                 change: function (field, newValue, oldValue) {
 
-                                    var saveBtn = Ext.getCmp('groupcreatesave-id');
+                                    var saveBtn = me.getGroupSaveBtnCmp();
 
                                     //disable if undefined, null, or an empty string
                                     if (Ext.isEmpty(newValue) || newValue.trim() === '') {
@@ -297,8 +295,7 @@ Ext.define('Connector.view.GroupSave', {
                         }, {
                             xtype: 'textareafield',
                             cls: 'group-description-input',
-                            id: 'creategroupdescription', // tests
-                            itemId: 'groupdescription',
+                            itemId: 'groupdescription-cmp',
                             name: 'groupdescription',
                             emptyText: 'Group description',
                             maxLength: 200,
@@ -306,16 +303,16 @@ Ext.define('Connector.view.GroupSave', {
                             labelAlign: 'top'
                         }, {
                             xtype: 'checkbox',
-                            id: 'creategroupshared',
-                            itemId: 'groupshared',
+                            itemId: 'groupshared-cmp',
                             name: 'groupshared',
                             boxLabel: 'Shared group',
                             checked: false,
                             hidden: true
                         }]
                     }, {
+                        // cancel and save buttons for a new group
                         xtype: 'toolbar',
-                        id: 'groupsave-cancel-save-btns-id',
+                        itemId: 'new-group-cancel-save-btns-cmp',
                         cls: 'groupsave-cancel-save-btns cancel-save-group-btns',
                         dock: 'bottom',
                         ui: 'lightfooter',
@@ -323,27 +320,25 @@ Ext.define('Connector.view.GroupSave', {
                         items: ['->', {
                             text: 'Cancel',
                             itemId: 'groupcancel',
-                            id: 'groupcancel-id',
                             cls: 'group-cancel-btn groupcancelcreate'
                         }, {
                             text: 'Save group',
-                            itemId: 'groupcreatesave',
+                            itemId: 'groupcreatesave-cmp',
                             disabled: true,
-                            id: 'groupcreatesave-id',
                             cls: 'save-group-btn groupcreatesave' // tests
                         }]
                     }],
                     listeners: {
                         afterrender: {
                             fn: function (c) {
-                                c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                                c.getComponent('creategroupform').getComponent('groupname-cmp').focus(false, true);
                             },
                             single: true,
                             scope: this
                         },
                         show: {
                             fn: function (c) {
-                                c.getComponent('creategroupform').getComponent('groupname').focus(false, true);
+                                c.getComponent('creategroupform').getComponent('groupname-cmp').focus(false, true);
                             },
                             scope: this
                         }
@@ -355,6 +350,9 @@ Ext.define('Connector.view.GroupSave', {
         return this.createGroup;
     },
 
+    /**
+     * Cancel and save buttons for an existing group, the save will allow updating or creating a new group
+     */
     getCancelSaveMenuBtns : function() {
 
         return {
@@ -362,19 +360,16 @@ Ext.define('Connector.view.GroupSave', {
             dock: 'bottom',
             ui: 'lightfooter',
             cls: 'groupsave-cancel-save-btns menu-btns',
-            id: 'groupsave-cancel-save-menu-btns-id',
+            itemId: 'existing-group-cancel-save-btns-cmp',
             hidden: true,
             items: ['->', {
                 text: 'Cancel',
                 itemId: 'groupcancelbtn-itemid',
                 cls: 'group-cancel-btn',
                 handler: function() {
-                    Ext.getCmp('savedgroupname-id').show();
-                    Ext.getCmp('groupsave-id').hide();
-                    Ext.getCmp('editgroupbtn-id').show();
-                    Ext.getCmp('editgroupbtn-container-id').show();
-                    Ext.getCmp('filterstatus-content-id').setMargin('0 0 0 0');
-                }
+                    this.hide();
+                    this.fireEvent('groupsave_cancel', this);
+                }, scope : this
             }, {
                 xtype: 'groupsavebutton',
                 width : 100,
@@ -847,7 +842,7 @@ Ext.define('Connector.view.GroupSave', {
     showError : function(error) {
         var errorEl = this.getError();
         if (errorEl) {
-            var grpName = Ext.getCmp('groupname-id');
+            var grpName = this.getGroupNameCmp();
             if (grpName && !grpName.hidden) {
                 grpName.addCls('invalid-group-name');
             }
@@ -859,14 +854,24 @@ Ext.define('Connector.view.GroupSave', {
     hideError : function() {
         var errorEl = this.getError();
         if (errorEl) {
-            var grpName = Ext.getCmp('groupname-id');
+            var grpName = this.getGroupNameCmp();
             if (grpName && !grpName.hidden) {
                 grpName.removeCls('invalid-group-name');
             }
             errorEl.hide();
         }
-        if (!this.isMabGroup)
-            Ext.getCmp('filterstatus-content-id').setMargin('0 0 0 0');
+    },
+
+    getGroupNameCmp : function() {
+        return Ext.ComponentQuery.query('textfield#groupname-cmp', this.createGroup)[0];
+    },
+
+    getGroupSharedCmp : function() {
+        return Ext.ComponentQuery.query('checkbox#groupshared-cmp', this.createGroup)[0];
+    },
+
+    getGroupSaveBtnCmp : function() {
+        return Ext.ComponentQuery.query('button#groupcreatesave-cmp', this.createGroup)[0];
     },
 
     onWindowResize : function(width, height)

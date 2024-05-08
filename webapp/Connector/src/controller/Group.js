@@ -52,7 +52,7 @@ Ext.define('Connector.controller.Group', {
             click : this.onMabGroupSave
         });
 
-        this.control('#groupcreatesave', {
+        this.control('#groupcreatesave-cmp', {
             click : this.doGroupSave
         });
 
@@ -122,6 +122,8 @@ Ext.define('Connector.controller.Group', {
 
         if (xtype === 'groupsave') {
 
+            // this end point may no longer exist
+            console.log('createView -> groupSummary');
             var state = Connector.getState();
 
             v = Ext.create('Connector.view.GroupSave', {
@@ -213,7 +215,7 @@ Ext.define('Connector.controller.Group', {
 
     doGroupSave : function()
     {
-        var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('filterstatus-items-id').items.getByKey('groupsave-id');
+        var view = this.getGroupSave();
         this.doSubjectGroupSave(view);
     },
 
@@ -315,14 +317,13 @@ Ext.define('Connector.controller.Group', {
 
     saveFailure : function(response, isAlert) {
 
-        Ext.getCmp('savedgroupname-id').hide();
-        Ext.getCmp('editgroupbtn-id').hide();
-        Ext.getCmp('editgroupbtn-container-id').hide();
+        this.getSavedGroupName().hide();
+        this.getEditGroupBtn().hide();
 
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
         if (json.exception) {
-            var view = this.getViewManager().getViewInstance('filterstatus').items.getByKey('filterstatus-items-id').items.getByKey('groupsave-id');
+            var view = this.getGroupSave();
             if (json.exception.indexOf('There is already a category named') > -1 || json.exception.indexOf('There is already a group named') > -1 ||
                     json.exception.indexOf('duplicate key value violates') > -1) {
                 // custom error response for invalid name
@@ -349,7 +350,7 @@ Ext.define('Connector.controller.Group', {
     },
 
     hideGroupSavePanel : function() {
-        var grpSaveCmp = Ext.getCmp('groupsave-id');
+        var grpSaveCmp = this.getGroupSave();
         grpSaveCmp.hideError();
         grpSaveCmp.hide();
     },
@@ -359,8 +360,7 @@ Ext.define('Connector.controller.Group', {
     },
 
     displayEditBtn : function() {
-        Ext.getCmp('editgroupbtn-id').show();
-        Ext.getCmp('editgroupbtn-container-id').show();
+        this.getEditGroupBtn().show();
     },
 
     doSubjectGroupSave: function(view)
@@ -411,7 +411,7 @@ Ext.define('Connector.controller.Group', {
 
     // update the filter label after insert or update
     updateFilterLabel: function(label) {
-        var groupLabel = Ext.getCmp('savedgroupname-id');
+        var groupLabel = this.getSavedGroupName();
         if (groupLabel && groupLabel.items) {
             // find the record to update the group name
             let rec = this.getGroupStore().findRecord('label', label);
@@ -424,7 +424,7 @@ Ext.define('Connector.controller.Group', {
 
     doGroupEdit: function()
     {
-        var view = Ext.getCmp('groupsave-id');
+        var view = this.getGroupSave();
         this.doSubjectGroupEdit(view);
     },
 
@@ -436,7 +436,7 @@ Ext.define('Connector.controller.Group', {
             var grpStore = StoreCache.getStore('Connector.app.store.Group');
 
             //get the original group that is being edited
-            var originalGroupName = Ext.getCmp('savedgroupname-id').items.items[0].data.savedGroupName;
+            var originalGroupName = this.getSavedGroupName().items.items[0].data.savedGroupName;
             var groupItems = grpStore.query('label', originalGroupName).items;
             var group = undefined;
 
@@ -459,7 +459,7 @@ Ext.define('Connector.controller.Group', {
                     me.displayEditBtn();
 
                     //display group label
-                    var groupLabel = Ext.getCmp('savedgroupname-id');
+                    var groupLabel = me.getSavedGroupName();
                     groupLabel.items.get(0).update({savedGroupName: grp.label});
                     groupLabel.show();
 
@@ -605,8 +605,26 @@ Ext.define('Connector.controller.Group', {
         this.getViewManager().hideView('groupsave');
     },
 
+    getGroupSave : function() {
+        // use the xtype and itemId in the selector
+        var groupSave = Ext.ComponentQuery.query('groupsave#groupsave-cmp');
+        return Ext.ComponentQuery.query('groupsave#groupsave-cmp')[0];
+    },
+
+    getSavedGroupName : function() {
+        return Ext.ComponentQuery.query('container#savedgroupname-cmp')[0];
+    },
+
+    getEditGroupBtn : function() {
+        return Ext.ComponentQuery.query('container#editgroupbtn-cmp')[0];
+    },
+
+    getNewGroupCancelAndSaveGroupBtns : function() {
+        return Ext.ComponentQuery.query('toolbar#new-group-cancel-save-btns-cmp')[0];
+    },
+
     onGroupCancel : function() {
-        Ext.getCmp('groupsave-id').hide();
+        this.getGroupSave().hide();
         Ext.getCmp('filter-save-as-group-btn-id').show();
     },
 
@@ -623,6 +641,9 @@ Ext.define('Connector.controller.Group', {
         this.onGroupSave(cmp, event, true);
     },
 
+    /**
+     * Needs to be refactored out and the old views removed once mab groups use the new UI
+     */
     onGroupSave : function(cmp, event, isMab)
     {
         var isMabGroup = isMab || (cmp && cmp.group && cmp.group.get('type') === 'mab');
@@ -717,7 +738,7 @@ Ext.define('Connector.controller.Group', {
     },
 
     hideGroupLabel() {
-        Ext.getCmp('savedgroupname-id').hide();
+        this.getSavedGroupName().hide();
     },
 
     resetFilterStatusBackGroundColor() {
@@ -725,12 +746,11 @@ Ext.define('Connector.controller.Group', {
     },
 
     hideEditGroupBtn() {
-        Ext.getCmp('editgroupbtn-id').hide();
-        Ext.getCmp('editgroupbtn-container-id').hide(); // hide the container too, otherwise the height is not adjusted and it displays blank space
+        this.getEditGroupBtn().hide();
     },
 
     hideCancelAndSaveGroupBtns() {
-        Ext.getCmp('groupsave-cancel-save-btns-id').hide();
+        this.getNewGroupCancelAndSaveGroupBtns().hide();
     },
 
     clearFilter : function() {

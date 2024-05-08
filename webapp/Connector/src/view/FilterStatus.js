@@ -35,11 +35,11 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     hideGroupLabel() {
-        Ext.getCmp('savedgroupname-id').hide();
+        this.getSavedGroupNameCmp().hide();
     },
 
     hideGroupSavePanel() {
-        Ext.getCmp('groupsave-id').hide();
+        this.groupSave.hide();
     },
 
     resetFilterStatusBackGroundColor() {
@@ -47,13 +47,11 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     showEditGroupBtn() {
-        Ext.getCmp('editgroupbtn-id').show();
-        Ext.getCmp('editgroupbtn-container-id').show();
+        this.getEditGroupBtnCmp().show();
     },
 
     hideEditGroupBtn() {
-        Ext.getCmp('editgroupbtn-id').hide();
-        Ext.getCmp('editgroupbtn-container-id').hide(); // hide the container too, otherwise the height is not adjusted and it displays blank space
+        this.getEditGroupBtnCmp().hide();
     },
 
     hideSaveAsGroupBtn() {
@@ -61,29 +59,27 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     showGroupSavePanel(resetForm) {
-        var grpSaveForm = Ext.getCmp('groupsave-id');
-
         if(resetForm) {
-            grpSaveForm.hideError();
-            grpSaveForm.reset();
+            this.groupSave.hideError();
+            this.groupSave.reset();
 
-            var cancelSaveBtn = Ext.getCmp('groupsave-cancel-save-btns-id');
-            var cancelSaveMenuBtn = Ext.getCmp('groupsave-cancel-save-menu-btns-id');
+            var cancelSaveBtn = this.getNewGroupCancelAndSaveGroupBtnsCmp();
+            var cancelSaveMenuBtn = this.getExistingGroupCancelAndSaveGroupBtnsCmp();
 
             if (!cancelSaveMenuBtn.hidden && cancelSaveBtn.hidden) {
                 cancelSaveMenuBtn.hide();
                 cancelSaveBtn.show();
             }
         }
-        grpSaveForm.show();
+        this.groupSave.show();
     },
 
     hideCancelAndSaveGroupBtns() {
-        Ext.getCmp('groupsave-cancel-save-btns-id').hide();
+        this.getNewGroupCancelAndSaveGroupBtnsCmp().hide();
     },
 
     showCancelAndSaveMenuBtns() {
-        Ext.getCmp('groupsave-cancel-save-menu-btns-id').show();
+        this.getExistingGroupCancelAndSaveGroupBtnsCmp().show();
     },
 
     initComponent : function() {
@@ -93,6 +89,7 @@ Ext.define('Connector.view.FilterStatus', {
             {
                 xtype: 'container',
                 cls: 'filterstatus-items',
+                itemId: 'filter-container',
                 id: 'filterstatus-items-id',
                 items: [
                     this.getSavedGroupName(),
@@ -168,8 +165,7 @@ Ext.define('Connector.view.FilterStatus', {
     getSavedGroupName: function () {
         return {
             xtype: 'container',
-            itemId: 'savedgroupname-itemid',
-            id: 'savedgroupname-id',
+            itemId: 'savedgroupname-cmp',
             ui: 'custom',
             cls: 'savedgroup-label-container',
             hidden: true,
@@ -194,10 +190,24 @@ Ext.define('Connector.view.FilterStatus', {
     },
 
     getGroupSavePanel : function() {
-        return Ext.create('Connector.view.GroupSave', {
-            hidden: true,
-            id: 'groupsave-id'
-        });
+        if (!this.groupSave) {
+            this.groupSave = Ext.create('Connector.view.GroupSave', {
+                hidden: true,
+                itemId: 'groupsave-cmp',
+                listeners : {
+                    groupsave_cancel : {
+                        fn : function(){this.onGroupSaveCancel();},
+                        scope : this
+                    }
+                },
+            });
+        }
+        return this.groupSave;
+    },
+
+    onGroupSaveCancel : function() {
+        this.getSavedGroupNameCmp().show();
+        this.getEditGroupBtnCmp().show();
     },
 
     getFilterSaveAsGroupBtn : function() {
@@ -239,35 +249,26 @@ Ext.define('Connector.view.FilterStatus', {
 
         return {
             xtype: 'container',
-            id: 'editgroupbtn-container-id',
-            itemId: 'editGroupBtn',
+            itemId: 'editgroupbtn-cmp',
             ui: 'custom',
             layout: {
                 type: 'hbox'
             },
+            hidden : true,
             cls: 'edit-group-btn-container',
             style: 'margin-left: 140px; margin-right: auto; margin-top: 10px;',
             items: [{
                 xtype: 'button',
-                id: 'editgroupbtn-id',
                 text: 'Save as', //previously 'Edit group'
                 ui: 'rounded-inverted-accent-small',
                 cls: 'edit-group-btn',
-                itemId: 'editgroupbtn-itemid',
-                hidden: true,
                 handler: function() {
 
-                    this.hide();
-                    Ext.getCmp('editgroupbtn-container-id').hide();
-
+                    me.hideEditGroupBtn();
                     me.hideGroupLabel();
                     me.hideCancelAndSaveGroupBtns();
-
-                    var groupSavePanel = Ext.getCmp('groupsave-id');
-                    // groupSavePanel.height = 200;
-                    groupSavePanel.hideError();
-                    groupSavePanel.show();
-
+                    me.groupSave.hideError();
+                    me.groupSave.show();
                     me.showCancelAndSaveMenuBtns();
                 }
             }]
@@ -290,7 +291,6 @@ Ext.define('Connector.view.FilterStatus', {
         if (!this.filterContent) {
             this.filterContent = Ext.create('Ext.Container', {
                 cls: 'filterstatus-content',
-                id: 'filterstatus-content-id',
                 hidden: !(this.filters && this.filters.length > 0) || !(this.selections && this.selections.length > 0),
                 items: [
                     this.getFilterPanel(),
@@ -370,13 +370,10 @@ Ext.define('Connector.view.FilterStatus', {
 
         var clrBtn = filterHeader.query('#clear')[0];
 
-        var editGrpBtn = Ext.getCmp('editgroupbtn-id');
-        var groupSavePanel = Ext.getCmp('groupsave-id');
-
+        var editGrpBtn = this.getEditGroupBtnCmp();
         var filterContent = this.getFilterContent();
         var emptyText = this.getEmptyText();
-
-        var groupLabelCmp = Ext.getCmp('savedgroupname-id');
+        var groupLabelCmp = this.getSavedGroupNameCmp();
 
         if (filters.length === 0 && selections.length === 0) {
             headerText.replaceCls('section-title-filtered', 'section-title');
@@ -409,23 +406,23 @@ Ext.define('Connector.view.FilterStatus', {
                     groupLabelCmp.show();
 
                     //set the group-save form values
-                    Ext.getCmp('groupname-id').setValue(groupLabel);
+                    this.getGroupNameCmp().setValue(groupLabel);
 
                     var description = grpStore.query('id', grpId).items[0].data.description;
-                    Ext.getCmp('creategroupdescription').setValue(description);
+                    this.getGroupDescriptionCmp().setValue(description);
 
                     var shared = grpStore.query('id', grpId).items[0].data.shared;
-                    Ext.getCmp('creategroupshared').setValue(shared);
+                    this.getGroupSharedCmp().setValue(shared);
                 }
 
                 this.showEditGroupBtn();
             }
 
             // show 'Save as a group' button when the filters are applied and Group Save form and Edit button are not displayed
-            if (editGrpBtn.hidden && groupSavePanel.hidden) {
+            if (editGrpBtn.hidden && this.groupSave.hidden) {
                 saveBtn.show();
             }
-            else if (!groupSavePanel.hidden) {
+            else if (!this.groupSave.hidden) {
                 this.hideEditGroupBtn();
                 this.hideGroupLabel();
             }
@@ -436,6 +433,39 @@ Ext.define('Connector.view.FilterStatus', {
             // always display the Clear button when filters are applied
             clrBtn.show();
         }
+    },
+
+    getSavedGroupNameCmp : function() {
+        var filterContainer = this.getComponent('filter-container');
+        if (filterContainer) {
+            return filterContainer.getComponent('savedgroupname-cmp');
+        }
+    },
+
+    getEditGroupBtnCmp : function() {
+        var filterContainer = this.getComponent('filter-container');
+        if (filterContainer)
+            return filterContainer.getComponent('editgroupbtn-cmp');
+    },
+
+    getGroupNameCmp : function() {
+        return Ext.ComponentQuery.query('textfield#groupname-cmp', this.groupSave)[0];
+    },
+
+    getGroupDescriptionCmp : function() {
+        return Ext.ComponentQuery.query('textareafield#groupdescription-cmp', this.groupSave)[0];
+    },
+
+    getGroupSharedCmp : function() {
+        return Ext.ComponentQuery.query('checkbox#groupshared-cmp', this.groupSave)[0];
+    },
+
+    getNewGroupCancelAndSaveGroupBtnsCmp : function() {
+        return Ext.ComponentQuery.query('toolbar#new-group-cancel-save-btns-cmp', this.groupSave)[0];
+    },
+
+    getExistingGroupCancelAndSaveGroupBtnsCmp : function() {
+        return Ext.ComponentQuery.query('toolbar#existing-group-cancel-save-btns-cmp', this.groupSave)[0];
     },
 
     getGroupId: function() {
