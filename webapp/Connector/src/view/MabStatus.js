@@ -18,7 +18,9 @@ Ext.define('Connector.view.MabStatus', {
     initComponent : function() {
         this.items = [
             this.getHeader(),
-            this.getSubHeader()
+            this.getSubHeader(),
+            this.getSaveAsGroupBtn(),
+            this.getGroupSavePanel()
         ];
 
         this.callParent();
@@ -54,6 +56,42 @@ Ext.define('Connector.view.MabStatus', {
             subtitle: 'All mAbs',
             subcls: 'emptytext'
         }
+    },
+
+    getSaveAsGroupBtn : function() {
+        var me = this;
+        return {
+            xtype: 'container',
+            itemId: 'mabfilterSaveAsGroupBtn',
+            cls: 'filter-save-as-group-btn-container',
+            //id: 'filter-save-as-group-btn-container-id',
+            ui: 'custom',
+            hidden : true,
+            layout: {
+                type: 'hbox'
+            },
+            items: [{
+                xtype: 'button',
+                //id: 'filter-save-as-group-btn-id',
+                text: '<div>Save as a group</div>', // need to wrap in div to get the 'g' in 'group' to fully show up otherwise it is cut off in the bottom
+                ui: 'rounded-inverted-accent-small',
+                cls: 'filter-save-as-group-btn filter-hdr-btn',
+                itemId: 'mabsavegroup-cmp',
+                style: 'margin-left: 110px; margin-right: auto; margin-top: 10px;',
+                handler: function() {
+                    this.hide();
+                    me.showGroupSavePanel(true);
+                }
+            }]
+        };
+    },
+
+    showGroupSavePanel(resetForm) {
+        if(resetForm) {
+            this.groupSave.hideError();
+            this.groupSave.reset();
+        }
+        this.groupSave.show();
     },
 
     hasMabFilters: function() {
@@ -127,18 +165,32 @@ Ext.define('Connector.view.MabStatus', {
 
         var saveBtn = filterHeader.query('#savemabgroup')[0];
         var clrBtn = filterHeader.query('#clearmab')[0];
+        var saveGroupBtn = this.getComponent('mabfilterSaveAsGroupBtn');
 
         if (!this.hasMabFilters()) {
             saveBtn.hide();
             clrBtn.hide();
+            saveGroupBtn.hide();
         }
         else {
             saveBtn.show();
             clrBtn.show();
+            saveGroupBtn.show();
         }
     },
 
     clearMabFilters: function() {
         Connector.getState().clearMabFilters(false, true);
+    },
+
+    getGroupSavePanel : function() {
+        if (!this.groupSave) {
+            this.groupSave = Ext.create('Connector.view.GroupSave', {
+                hidden: true,
+                mabGroup : true,
+                itemId: 'groupsave-mab-cmp'
+            });
+        }
+        return this.groupSave;
     }
 });

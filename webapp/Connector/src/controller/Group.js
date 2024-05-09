@@ -56,7 +56,7 @@ Ext.define('Connector.controller.Group', {
             click : this.doGroupSave
         });
 
-        this.control('#mabgroupcreatesave', {
+        this.control('#mabgroupcreatesave-cmp', {
             click : this.doMabGroupSave
         });
 
@@ -209,7 +209,7 @@ Ext.define('Connector.controller.Group', {
     },
 
     doMabGroupSave: function () {
-        var view = this.getViewManager().getViewInstance('groupsave');
+        var view = this.getMabGroupSave();
         this.doMabGroupEdit(view, false);
     },
 
@@ -248,8 +248,7 @@ Ext.define('Connector.controller.Group', {
             }
             else {
                 var group, groupname, me = this;
-                if (isReplace)
-                {
+                if (isReplace) {
                     replaceFromGroup.set('description', values['mabgroupdescription']);
                     replaceFromGroup.set('shared', typeof values['mabgroupshared'] != "undefined");  // convert to boolean
 
@@ -264,15 +263,14 @@ Ext.define('Connector.controller.Group', {
                         Shared: replaceFromGroup.get('shared')
                     };
                 }
-                else
-                {
-                    groupname = values['mabgroupname'];
+                else {
+                    groupname = values['groupname'];
                     group = {
                         Label: groupname,
-                        Description: values['mabgroupdescription'],
+                        Description: values['groupdescription'],
                         Filters: this.toJsonMabFilters(state.getMabFilters()),
                         Type: 'mab',
-                        Shared: typeof values['mabgroupshared'] != "undefined"
+                        Shared: typeof values['groupshared'] != "undefined"
                     };
 
                     if (isEditMode) {
@@ -300,7 +298,7 @@ Ext.define('Connector.controller.Group', {
                     rows: [group],
                     scope: this,
                     success : isEditMode ? editSuccess : saveSuccess,
-                    failure: this.saveFailure
+                    failure: this.saveFailureMab
                 };
 
                 if (isEditMode || isReplace)
@@ -315,7 +313,11 @@ Ext.define('Connector.controller.Group', {
         return StoreCache.getStore('Connector.app.store.Group')
     },
 
-    saveFailure : function(response, isAlert) {
+    saveFailureMab : function(response, options) {
+        this.saveFailure(response, options,true);
+    },
+
+    saveFailure : function(response, options, isMab, isAlert) {
 
         this.getSavedGroupName().hide();
         this.getEditGroupBtn().hide();
@@ -323,7 +325,7 @@ Ext.define('Connector.controller.Group', {
         var json = response.responseText ? Ext.decode(response.responseText) : response;
 
         if (json.exception) {
-            var view = this.getGroupSave();
+            var view = isMab ? this.getMabGroupSave() : this.getGroupSave();
             if (json.exception.indexOf('There is already a category named') > -1 || json.exception.indexOf('There is already a group named') > -1 ||
                     json.exception.indexOf('duplicate key value violates') > -1) {
                 // custom error response for invalid name
@@ -345,8 +347,8 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
-    saveFailureAlert: function(response) {
-        this.saveFailure(response, true);
+    saveFailureAlert: function(response, options) {
+        this.saveFailure(response, options, true, true);
     },
 
     hideGroupSavePanel : function() {
@@ -602,13 +604,17 @@ Ext.define('Connector.controller.Group', {
     },
 
     onMabGroupCancel : function() {
-        this.getViewManager().hideView('groupsave');
+        this.getMabGroupSave().hide();
+        Ext.ComponentQuery.query('button#mabsavegroup-cmp')[0].show();
     },
 
     getGroupSave : function() {
         // use the xtype and itemId in the selector
-        var groupSave = Ext.ComponentQuery.query('groupsave#groupsave-cmp');
         return Ext.ComponentQuery.query('groupsave#groupsave-cmp')[0];
+    },
+
+    getMabGroupSave : function() {
+        return Ext.ComponentQuery.query('groupsave#groupsave-mab-cmp')[0];
     },
 
     getSavedGroupName : function() {

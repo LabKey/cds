@@ -32,6 +32,7 @@ Ext.define('Connector.view.GroupSave', {
     maxRecordsHeight: 13,
 
     isMabGroup: false,
+    mabGroup: false,
 
     stores: ['FilterStatus', 'MabStatus'],
 
@@ -319,11 +320,11 @@ Ext.define('Connector.view.GroupSave', {
                         style: 'padding-top: 5px',
                         items: ['->', {
                             text: 'Cancel',
-                            itemId: 'groupcancel',
+                            itemId: me.mabGroup ? 'mabgroupcancel' : 'groupcancel',
                             cls: 'group-cancel-btn groupcancelcreate'
                         }, {
                             text: 'Save group',
-                            itemId: 'groupcreatesave-cmp',
+                            itemId: me.mabGroup ? 'mabgroupcreatesave-cmp' : 'groupcreatesave-cmp',
                             disabled: true,
                             cls: 'save-group-btn groupcreatesave' // tests
                         }]
@@ -871,7 +872,8 @@ Ext.define('Connector.view.GroupSave', {
     },
 
     getGroupSaveBtnCmp : function() {
-        return Ext.ComponentQuery.query('button#groupcreatesave-cmp', this.createGroup)[0];
+        var selector = this.mabGroup ? 'button#mabgroupcreatesave-cmp' : 'button#groupcreatesave-cmp';
+        return Ext.ComponentQuery.query(selector, this.createGroup)[0];
     },
 
     onWindowResize : function(width, height)
