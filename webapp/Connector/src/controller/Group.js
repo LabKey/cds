@@ -698,9 +698,12 @@ Ext.define('Connector.controller.Group', {
         }
         this.loadDataTask.delay(300, undefined, this, [this.getGroupStore()]);
 
+        // this shouldn't be necessary, both stores referenced are now the same
+/*
         var editGroupView = this.getViewManager().getViewInstance('groupsave');
         if (editGroupView)
             editGroupView.refresh();
+*/
 
         this.clearFilter();
         this.hideGroupSaveBtns();
