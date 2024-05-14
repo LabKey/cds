@@ -775,7 +775,7 @@ Ext.define('Connector.view.GroupSave', {
             this.grouplist.getSelectionModel().deselectAll();
             this.grouplist.isMab = this.isMabGroup;
             var me = this;
-            this.grouplist.getStore().refreshData(function toggleSave() {
+    //        this.grouplist.getStore().refreshData(function toggleSave() {
                 me.grouplist.filterGroups();
                 var group = me.grouplist.getStore().getAt(0);
                 if (group)
@@ -788,7 +788,7 @@ Ext.define('Connector.view.GroupSave', {
                 {
                     me.getGroupUpdateSaveBtn().setDisabled(true);
                 }
-            }, me);
+    //        }, me);
         }
     },
 
