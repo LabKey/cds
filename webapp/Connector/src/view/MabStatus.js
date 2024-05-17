@@ -4,25 +4,34 @@
  * Licensed under the Apache License, Version 2.0: http://www.apache.org/licenses/LICENSE-2.0
  */
 Ext.define('Connector.view.MabStatus', {
-    extend: 'Ext.panel.Panel',
-    mixins: {
-        undohelper: 'Connector.utility.InfoPaneUtil'
-    },
+    extend: 'Connector.view.AbstractFilterStatus',
 
     alias: 'widget.mabstatus',
 
-    ui: 'custom',
-
     cls: 'filterstatus',
+
+    mabGroup: true,
 
     initComponent : function() {
         this.items = [
             this.getHeader(),
             this.getSubHeader(),
-            this.getSaveAsGroupBtn(),
-            this.getGroupSavePanel()
+            {
+                xtype: 'container',
+                cls: 'filterstatus-items',
+                itemId: 'filter-container',
+                hidden: !this.hasMabFilters(),
+                items: [
+                    this.getSavedGroupName('mabgroupsummary'),
+                    this.getSaveAsGroupBtn(),
+                    this.getGroupSavePanel(),
+                    this.getEditGroupBtn()
+                ]
+            }
         ];
 
+        // register listeners
+        this.on('edit-group', this.onEditGroup, this);
         this.callParent();
     },
 
@@ -64,7 +73,6 @@ Ext.define('Connector.view.MabStatus', {
             xtype: 'container',
             itemId: 'mabfilterSaveAsGroupBtn',
             cls: 'filter-save-as-group-btn-container',
-            //id: 'filter-save-as-group-btn-container-id',
             ui: 'custom',
             hidden : true,
             layout: {
@@ -72,7 +80,6 @@ Ext.define('Connector.view.MabStatus', {
             },
             items: [{
                 xtype: 'button',
-                //id: 'filter-save-as-group-btn-id',
                 text: '<div>Save as a group</div>', // need to wrap in div to get the 'g' in 'group' to fully show up otherwise it is cut off in the bottom
                 ui: 'rounded-inverted-accent-small',
                 cls: 'filter-save-as-group-btn filter-hdr-btn',
@@ -84,6 +91,15 @@ Ext.define('Connector.view.MabStatus', {
                 }
             }]
         };
+    },
+
+    onEditGroup : function() {
+        this.hideEditGroupBtn();
+        this.hideGroupLabel();
+        this.hideCancelAndSaveGroupBtns();
+        this.groupSave.hideError();
+        this.groupSave.show();
+        this.showCancelAndSaveMenuBtns();
     },
 
     showGroupSavePanel(resetForm) {
@@ -133,17 +149,12 @@ Ext.define('Connector.view.MabStatus', {
                 xtype: 'button',
                 text: 'clear',
                 ui: 'rounded-small',
-                cls: 'filter-hdr-btn mabfilterclear',
+                ui: 'rounded-small',
+                cls: 'filter-hdr-btn filter-clear-btn',
                 itemId: 'clearmab',
                 hidden: !this.hasMabFilters(),
-                handler: this.clearMabFilters
-            },{
-                xtype: 'button',
-                text: 'save',
-                ui: 'rounded-inverted-accent-small',
-                cls: 'filter-hdr-btn mabfiltersave',
-                itemId: 'savemabgroup',
-                hidden: !this.hasMabFilters()
+                handler: this.clearMabFilters,
+                scope: this
             }]
         }
     },
@@ -154,6 +165,10 @@ Ext.define('Connector.view.MabStatus', {
 
     onMabFilterChange : function() {
         this.hideMessage(true);
+        this.updateButtons();
+    },
+
+    updateButtons : function() {
         var filterHeader = this.getComponent('mab-info-header');
 
         var titleText = filterHeader.query('#title-text')[0];
@@ -163,24 +178,61 @@ Ext.define('Connector.view.MabStatus', {
         titleText.update(this.getHeaderData());
         subHeader.update(this.getSubHeaderData());
 
-        var saveBtn = filterHeader.query('#savemabgroup')[0];
         var clrBtn = filterHeader.query('#clearmab')[0];
-        var saveGroupBtn = this.getComponent('mabfilterSaveAsGroupBtn');
+        var saveGroupBtn = this.getSaveAsGroupBtnCmp();
+        var savedGroupNameCmp = this.getSavedGroupNameCmp();
 
         if (!this.hasMabFilters()) {
-            saveBtn.hide();
+            //saveBtn.hide();
             clrBtn.hide();
             saveGroupBtn.hide();
+            savedGroupNameCmp.hide();
+            this.hideEditGroupBtn();
         }
         else {
-            saveBtn.show();
+            //saveBtn.show();
             clrBtn.show();
+            this.getFilterContainerCmp().show();
             saveGroupBtn.show();
+
+            var savedGroup = this.getMabGroup();
+            if (savedGroup) {
+                this.showSavedGroup(savedGroup);
+                this.showEditGroupBtn();
+                saveGroupBtn.hide();
+            }
+        }
+    },
+
+    /**
+     * Returns the group for editing purposes
+     */
+    getMabGroup : function() {
+        var currentPage = window.location.href.split("#");
+        var mabGroup;
+        if (currentPage.length > 1 && (currentPage[1].indexOf("mabdatagrid") > -1 || currentPage[1].indexOf("mabgroupsummary") > -1)) {
+            var groupSummary = currentPage[1].split("/");
+            if (groupSummary.length === 3) {
+                mabGroup = groupSummary[groupSummary.length - 1];
+            }
+        }
+
+        if (mabGroup) {
+            var id = mabGroup + '-mab';
+            var grpStore = StoreCache.getStore('Connector.app.store.Group');
+            if (grpStore && grpStore.getCount() > 0) {
+                //display group label of a saved group
+                return grpStore.query('id', id).items[0];
+            }
         }
     },
 
     clearMabFilters: function() {
         Connector.getState().clearMabFilters(false, true);
+        this.hideGroupLabel();
+        this.hideGroupSavePanel();
+        this.hideEditGroupBtn();
+        this.getFilterContainerCmp().hide();
     },
 
     getGroupSavePanel : function() {
@@ -188,9 +240,31 @@ Ext.define('Connector.view.MabStatus', {
             this.groupSave = Ext.create('Connector.view.GroupSave', {
                 hidden: true,
                 mabGroup : true,
-                itemId: 'groupsave-mab-cmp'
+                itemId: 'groupsave-mab-cmp',
+                listeners : {
+                    groupsave_cancel : {
+                        fn : function(){this.onGroupSaveCancel();},
+                        scope : this
+                    }
+                },
             });
         }
         return this.groupSave;
+    },
+
+    onGroupSaveCancel : function() {
+        this.getSavedGroupNameCmp().show();
+        this.getEditGroupBtnCmp().show();
+    },
+
+    getSaveAsGroupBtnCmp : function() {
+        var filterContainer = this.getComponent('filter-container');
+        if (filterContainer) {
+            return filterContainer.getComponent('mabfilterSaveAsGroupBtn');
+        }
+    },
+
+    getFilterContainerCmp : function () {
+        return this.getComponent('filter-container');
     }
 });

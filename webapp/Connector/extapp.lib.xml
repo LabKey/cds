@@ -103,6 +103,7 @@
         <!-- Application Views -->
         <script path="Connector/src/view/DetailStatus.js"/>
         <script path="Connector/src/view/Selection.js"/>
+        <script path="Connector/src/view/AbstractFilterStatus.js"/>
         <script path="Connector/src/view/FilterStatus.js"/>
         <script path="Connector/src/view/InfoPane.js"/>
         <script path="Connector/src/view/GridPane.js"/>
