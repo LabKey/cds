@@ -906,13 +906,13 @@ public class CDSMAbTest extends CDSGroupBaseTest
 
         log("Compose a shared and a private mab group");
         _composeGroup();
-        cds.saveGroup(mabPrivateGroup, null, false, true, true);
+        cds.saveGroup(mabPrivateGroup, null, false, true);
 
         CDSHelper.NavigationLink.MABGRID.makeNavigationSelection(this);
         MAbDataGrid grid = new MAbDataGrid(this);
         grid.clearAllFilters();
         grid.setFacet(MAB_COL,false,"2F5", "A14");
-        cds.saveGroup(mabPublicGroup, null, true, true, true);
+        cds.saveGroup(mabPublicGroup, null, true, true);
 
         log("Verify mAb and subject groups listing");
         cds.goToAppHome();

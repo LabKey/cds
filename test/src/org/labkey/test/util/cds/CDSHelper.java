@@ -840,35 +840,15 @@ public class CDSHelper
 
     public boolean saveGroup(String name, @Nullable String description, boolean shared, boolean skipWaitForBar)
     {
-        return saveGroup(name, description, shared, skipWaitForBar, false);
-    }
-
-    public boolean saveGroup(String name, @Nullable String description, boolean shared, boolean skipWaitForBar, boolean isMab)
-    {
-        if (isMab) {
-            _test.click(Locators.cdsButtonLocator("save", "mabfiltersave"));
-        }
-        else {
-            _test.click(Locator.tagWithId("a", "filter-save-as-group-btn-id"));
-        }
+        _test.click(Locator.tagWithId("a", "filter-save-as-group-btn-id"));
 
         if (_test.isElementPresent(Locators.cdsButtonLocator("create a new group")))
         {
             _test.click(Locators.cdsButtonLocator("create a new group"));
         }
 
-        if (isMab) {
-            Locator.linkWithText("replace an existing group").waitForElement(_test.getDriver(), CDS_WAIT);
-        }
-        else {
-            _test.waitForElement(Locator.name("groupname"));
-        }
-
-        Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//input[contains(@id,'creategroupshared')]");
-
-        if (isMab) {
-            shareGroupCheckbox = Locator.xpath("//input[contains(@id,'mabcreategroupshared')]");
-        }
+        _test.waitForElement(Locator.name("groupname"));
+        Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//table[contains(@class, 'group-shared-checkbox')]/descendant::input[contains(@type, 'button')]");
         if (shared)
         {
             if (_test.isElementVisible(shareGroupCheckbox))
@@ -883,22 +863,12 @@ public class CDSHelper
             }
         }
 
-        if (isMab) {
-            _test.setFormElement(Locator.name("mabgroupname"), name);
-            if (null != description)
-                _test.setFormElement(Locator.name("mabgroupdescription"), description);
-        }
-        else {
-            _test.setFormElement(Locator.name("groupname"), name);
-            if (null != description)
-                _test.setFormElement(Locator.name("groupdescription"), description);
-        }
+        _test.setFormElement(Locator.name("groupname"), name);
+        if (null != description)
+            _test.setFormElement(Locator.name("groupdescription"), description);
 
         String saveBtnLocatorName;
-        if (isMab)
-            saveBtnLocatorName = "Save";
-        else
-            saveBtnLocatorName = "Save group";
+        saveBtnLocatorName = "Save group";
 
         _test.sleep(1000);
         if (skipWaitForBar)
@@ -915,11 +885,7 @@ public class CDSHelper
 
         // verify group save messaging
         //ISSUE 19997
-        if (isMab)
-            _test.waitForElement(Locator.xpath("//div[contains(@class, 'x-window-swmsg')]//div[contains(text(), 'saved')]"));
-        else
-            _test.waitForElement(Locator.tagWithId("div", "savedgroupname-id").notHidden());
-
+        _test.waitForElement(Locator.tagWithClass("div", "savedgroup-label-container").notHidden());
         _test.log("Saving '" + name + "' group was success!");
 
         return true;

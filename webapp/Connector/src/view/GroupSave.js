@@ -305,6 +305,7 @@ Ext.define('Connector.view.GroupSave', {
                         }, {
                             xtype: 'checkbox',
                             itemId: 'groupshared-cmp',
+                            cls: 'group-shared-checkbox',
                             name: 'groupshared',
                             boxLabel: 'Shared group',
                             checked: false,
