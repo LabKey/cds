@@ -201,7 +201,6 @@ Ext.define('Connector.view.FilterStatus', {
     getEmptyText : function() {
         if (!this.emptyText) {
             this.emptyText = Ext.create('Ext.Component', {
-                id: 'filterstatus-emptytext-id',
                 style: 'background-color: #fff;',
                 tpl: new Ext.XTemplate('<div class="emptytext">All subjects</div>'),
                 data: {}
