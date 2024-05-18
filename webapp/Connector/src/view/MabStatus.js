@@ -179,27 +179,27 @@ Ext.define('Connector.view.MabStatus', {
         subHeader.update(this.getSubHeaderData());
 
         var clrBtn = filterHeader.query('#clearmab')[0];
-        var saveGroupBtn = this.getSaveAsGroupBtnCmp();
+        var saveGroupBtnContainer = this.getSaveAsGroupBtnContainer();
+        var saveGroupBtnCmp = this.getSaveAsGroupBtnCmp();
         var savedGroupNameCmp = this.getSavedGroupNameCmp();
 
         if (!this.hasMabFilters()) {
-            //saveBtn.hide();
             clrBtn.hide();
-            saveGroupBtn.hide();
+            saveGroupBtnContainer.hide();
             savedGroupNameCmp.hide();
             this.hideEditGroupBtn();
         }
         else {
-            //saveBtn.show();
             clrBtn.show();
             this.getFilterContainerCmp().show();
-            saveGroupBtn.show();
+            saveGroupBtnContainer.show();
+            saveGroupBtnCmp.show();
 
             var savedGroup = this.getMabGroup();
             if (savedGroup) {
                 this.showSavedGroup(savedGroup);
                 this.showEditGroupBtn();
-                saveGroupBtn.hide();
+                saveGroupBtnContainer.hide();
             }
         }
     },
@@ -257,11 +257,15 @@ Ext.define('Connector.view.MabStatus', {
         this.getEditGroupBtnCmp().show();
     },
 
-    getSaveAsGroupBtnCmp : function() {
+    getSaveAsGroupBtnContainer : function() {
         var filterContainer = this.getComponent('filter-container');
         if (filterContainer) {
             return filterContainer.getComponent('mabfilterSaveAsGroupBtn');
         }
+    },
+
+    getSaveAsGroupBtnCmp : function() {
+        return Ext.ComponentQuery.query('button#mabsavegroup-cmp')[0];
     },
 
     getFilterContainerCmp : function () {

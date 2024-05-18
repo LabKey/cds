@@ -916,7 +916,6 @@ public class CDSMAbTest extends CDSGroupBaseTest
 
         log("Verify mAb and subject groups listing");
         cds.goToAppHome();
-        refresh(); //TODO: Newly saved groups should be available without refresh, this is a bug that needs to be fixed.
         waitForText("My saved groups and plots", "Curated groups and plots");
         if (isElementPresent(CDSHelper.Locators.getPrivateGroupLoc(subjectPrivateGroup)) &&
                 isElementPresent(CDSHelper.Locators.getSharedGroupLoc(mabPublicGroup)))
@@ -959,6 +958,8 @@ public class CDSMAbTest extends CDSGroupBaseTest
         Assert.assertTrue(MAB_COL + " should have been filtered", grid.isColumnFiltered(MAB_COL));
         Assert.assertFalse(STUDIES_COL + " should not have been filtered", grid.isColumnFiltered(STUDIES_COL));
 
+        // scenario no longer exists (replace an existing group)
+/*
         log("Replace a mab group");
         grid.clearAllFilters();
         grid.setFacet(SPECIES_COL,false,"llama");
@@ -986,6 +987,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         Assert.assertTrue(SPECIES_COL + " should have been filtered", grid.isColumnFiltered(SPECIES_COL));
         Assert.assertFalse(MAB_COL + " should not have been filtered", grid.isColumnFiltered(MAB_COL));
         Assert.assertFalse(STUDIES_COL + " should not have been filtered", grid.isColumnFiltered(STUDIES_COL));
+*/
     }
 
 }

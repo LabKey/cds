@@ -840,32 +840,31 @@ public class CDSHelper
 
     public boolean saveGroup(String name, @Nullable String description, boolean shared, boolean skipWaitForBar)
     {
-        _test.click(Locator.tagWithId("a", "filter-save-as-group-btn-id"));
-
+        _test.click(Ext4Helper.Locators.ext4Button("Save as a group"));
         if (_test.isElementPresent(Locators.cdsButtonLocator("create a new group")))
         {
             _test.click(Locators.cdsButtonLocator("create a new group"));
         }
 
-        _test.waitForElement(Locator.name("groupname"));
-        Locator.XPathLocator shareGroupCheckbox = Locator.xpath("//table[contains(@class, 'group-shared-checkbox')]/descendant::input[contains(@type, 'button')]");
+        _test.waitForElement(Locator.name("groupname").notHidden());
+        Locator shareGroupCheckbox = Locator.xpath("//table[contains(@class, 'group-shared-checkbox')]/descendant::input[contains(@type, 'button')]").notHidden();
         if (shared)
         {
-            if (_test.isElementVisible(shareGroupCheckbox))
+            if (_test.isElementPresent(shareGroupCheckbox))
             {
-                _test._ext4Helper.checkCheckbox(shareGroupCheckbox);
+                _test.click(shareGroupCheckbox);
             }
             else
             {
                 //Expected failure. The user attempts to save, but does not have sufficient permissions.
-                _test.click(Locators.cdsButtonLocator("Cancel", "groupcancelcreate"));
+                _test.click(Locators.cdsButtonLocator("Cancel", "groupcancelcreate").notHidden());
                 return false;
             }
         }
 
-        _test.setFormElement(Locator.name("groupname"), name);
+        _test.setFormElement(Locator.name("groupname").notHidden(), name);
         if (null != description)
-            _test.setFormElement(Locator.name("groupdescription"), description);
+            _test.setFormElement(Locator.name("groupdescription").notHidden(), description);
 
         String saveBtnLocatorName;
         saveBtnLocatorName = "Save group";
@@ -873,12 +872,12 @@ public class CDSHelper
         _test.sleep(1000);
         if (skipWaitForBar)
         {
-            _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave"));
+            _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave").notHidden());
         }
         else
         {
             applyAndMaybeWaitForBars(aVoid -> {
-                _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave"));
+                _test.click(Locators.cdsButtonLocator(saveBtnLocatorName, "groupcreatesave").notHidden());
                 return null;
             });
         }
@@ -1179,7 +1178,7 @@ public class CDSHelper
 
     public void clearFilters(boolean skipWaitForBar)
     {
-        final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filter-clear-btn"));
+        final WebElement clearButton = _test.waitForElement(Locators.cdsButtonLocator("clear", "filter-clear-btn").notHidden());
 
         if (skipWaitForBar)
         {

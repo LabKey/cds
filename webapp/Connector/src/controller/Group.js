@@ -72,10 +72,6 @@ Ext.define('Connector.controller.Group', {
             click : this.doGroupEdit
         });
 
-        this.control('#groupupdatesave', {
-            click : this.doGroupUpdateFromSavePanel
-        });
-
         this.control('#groupcancel', {
             click : this.onGroupCancel
         });
@@ -516,93 +512,6 @@ Ext.define('Connector.controller.Group', {
         }
     },
 
-    doGroupUpdateFromSavePanel : function()
-    {
-        var view = this.getViewManager().getViewInstance('groupsave');
-
-        if (view.isValid())
-        {
-            var values = view.getValues(),
-                targetGroup = view.getSelectedGroup();
-
-            if (targetGroup)
-            {
-                if (targetGroup.get('type') === 'mab')
-                {
-                    this._doMabGroupEdit(view, false, true);
-                    return;
-                }
-
-                // Ensure that the filter set is up to date
-                var state = Connector.getState();
-                state.moveSelectionToFilter();
-
-                // Update the target group
-                targetGroup.set('description', values['groupdescription']);
-                targetGroup.set('shared', typeof values['groupshared'] != "undefined");  // convert to boolean
-
-                state.onMDXReady(function(mdx) {
-
-                    var me = this;
-
-                    //
-                    // Retrieve the listing of participants matching the current filters
-                    //
-                    mdx.queryParticipantList({
-                        useNamedFilters: [Connector.constant.State.STATE_FILTER],
-                        success: function(cs) {
-
-                            var updateSuccess = function(response) {
-                                var group = Ext.decode(response.responseText);
-                                me.application.fireEvent('groupsaved', group, state.getFilters(true));
-                                view.reset();
-                                me.getGroupStore().refreshData();
-                            };
-
-                            var updateFailure = function(response) {
-                                var errors = Ext.decode(response.responseText).errors;
-                                var errorMsgs = [];
-                                Ext.each(errors, function(error) {
-                                    errorMsgs.push(error.message);
-                                });
-                                Ext.Msg.alert('Failed to update Group', errorMsgs);
-                            };
-
-                            var groupData = {};
-                            groupData.rowId = targetGroup.get('id');
-                            groupData.participantIds = Ext.Array.pluck(Ext.Array.flatten(cs.axes[1].positions), 'name');
-                            groupData.label = targetGroup.get('label');
-                            groupData.description = targetGroup.get('description');
-                            groupData.categoryLabel = targetGroup.get('label');
-                            groupData.categoryId = targetGroup.get('categoryId');
-                            groupData.categoryType = 'list';
-                            if (targetGroup.get('shared') === true)
-                            {
-                                groupData.categoryOwnerId = -1;  // shared owner ID, see ParticipantCategory.java -> OWNER_SHARED
-                            }
-                            else
-                            {
-                                groupData.categoryOwnerId = LABKEY.user.id;
-                            }
-                            groupData.filters = Connector.model.Filter.toJSON(state.getFilters(), true);
-
-                            LABKEY.Ajax.request({
-                                url: LABKEY.ActionURL.buildURL("participant-group", "saveParticipantGroup.api", null),
-                                method: 'POST',
-                                success: updateSuccess,
-                                failure: updateFailure,
-                                jsonData: groupData,
-                                headers: {
-                                    'Content-Type': 'application/json'
-                                }
-                            });
-                        }
-                    });
-                }, this);
-            }
-        }
-    },
-
     onMabGroupCancel : function() {
         this.getMabGroupSave().hide();
         Ext.ComponentQuery.query('button#mabsavegroup-cmp')[0].show();
@@ -716,11 +625,6 @@ Ext.define('Connector.controller.Group', {
             });
         }
         this.loadDataTask.delay(300, undefined, this, [this.getGroupStore()]);
-
-        var editGroupView = this.getViewManager().getViewInstance('groupsave');
-        if (editGroupView)
-            editGroupView.refresh();
-
         this.clearFilter();
         this.hideGroupSaveBtns(isMab);
 
