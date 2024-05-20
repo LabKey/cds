@@ -116,25 +116,7 @@ Ext.define('Connector.controller.Group', {
     createView : function(xtype, context) {
         var v; // the view instance to be created
 
-        if (xtype === 'groupsave') {
-
-            // this end point may no longer exist
-            console.log('createView -> groupSummary');
-            var state = Connector.getState();
-
-            v = Ext.create('Connector.view.GroupSave', {
-                hideSelectionWarning: state.hasSelections(),
-                isMabGroup: context ? context.isMabGroup : false
-            });
-
-            state.on('selectionchange', v.onSelectionChange, v);
-
-            this.application.on('groupsaved', this.onGroupSaved, this);
-            this.application.on('groupedit', this.onGroupEdit, this);
-            this.application.on('mabgroupsaved', this.onMabGroupSaved, this);
-            this.application.on('mabgroupedited', this.onMabGroupEdited, this);
-        }
-        else if (xtype === 'groupsummary') {
+        if (xtype === 'groupsummary') {
 
             v = Ext.create('Connector.view.GroupSummary', {
                 store : this.getGroupStore(),
@@ -564,47 +546,6 @@ Ext.define('Connector.controller.Group', {
         }
 
         this.getViewManager().changeView('mabgrid', 'mabdatagrid', [mabGroup]);
-    },
-
-    // delete after mab refactor
-    _groupEditSave : function(name, filters, applyFilters, isMab)
-    {
-        if (applyFilters === true)
-        {
-            Connector.getState().setFilters(filters);
-        }
-        this.getViewManager().hideView('groupsave');
-
-        var fsview = isMab ? this.getViewManager().getViewInstance('mabstatus') : this.getViewManager().getViewInstance('filterstatus');
-        if (isMab && fsview.ownerCt && fsview.ownerCt.isHidden()) // not on mab grid page
-            fsview = this.getViewManager().getViewInstance('filterstatus');
-
-        if (fsview)
-        {
-            fsview.showMessage('Group \"' + Ext.String.ellipsis(name, 15, true) + '\" saved.', true);
-        }
-    },
-
-    onGroupSaved : function(response, filters)
-    {
-        // shouldn't use category label, it doesn't get updated in the database properly after renames, but we will use it if group label is missing
-        var groupLabel = response.group ? response.group.label : response.category.label;
-        this._groupEditSave(groupLabel, filters, true);
-    },
-
-    onMabGroupSaved : function(groupLabel)
-    {
-        this._groupEditSave(groupLabel, null, false, true);
-    },
-
-    onGroupEdit : function(response)
-    {
-        this._groupEditSave(response.group.label);
-    },
-
-    onMabGroupEdited: function(groupLabel)
-    {
-        this._groupEditSave(groupLabel, null, false, true);
     },
 
     doSubjectGroupDelete : function(config) {
