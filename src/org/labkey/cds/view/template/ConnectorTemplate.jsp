@@ -101,7 +101,7 @@
         "/hopscotch/js/hopscotch.min.js",
 
         "/ext-4.2.1/ext-all" + (devMode ? "-debug" : "") + ".js",
-        "/ext-patches/ext4-patches.js",
+        "/extPatches/ext4-patches.js",
         srcPath + "/ext-patches.js",
 
         // Client API Dependencies
