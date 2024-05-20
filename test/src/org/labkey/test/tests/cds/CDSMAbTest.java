@@ -545,6 +545,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         ip.clickClose();
 
         ip.clickMabStudiesCount();
+        CDSStudyTooltipTest.dismissTooltip(this);
         log("Check Studies list.");
 
         expectedHasDataInMAbGrid = new ArrayList<>();
@@ -638,6 +639,7 @@ public class CDSMAbTest extends CDSGroupBaseTest
         ip.clickClose();
 
         ip.clickMabStudiesCount();
+        CDSStudyTooltipTest.dismissTooltip(this);
         log("Check Studies list.");
 
         expectedHasDataInMAbGrid = new ArrayList<>();

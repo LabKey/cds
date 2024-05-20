@@ -266,7 +266,7 @@ Ext.define('Connector.controller.Group', {
                     this.updateFilterLabel(groupname, true);
                 }, this, {single : true});
 
-                this.getGroupStore().refreshData();
+                this.refreshGroupStore();
             };
 
             var editSuccess = function() {
@@ -279,7 +279,7 @@ Ext.define('Connector.controller.Group', {
                     this.updateFilterLabel(groupname, true);
                 }, this, {single : true});
 
-                this.getGroupStore().refreshData();
+                this.refreshGroupStore();
             };
 
             var queryConfig = {
@@ -383,7 +383,7 @@ Ext.define('Connector.controller.Group', {
                     me.getGroupStore().on('dataloaded', function(){
                         this.updateFilterLabel(group.category.label);
                     }, me, {single : true});
-                    me.getGroupStore().refreshData();
+                    me.refreshGroupStore();
                 };
 
                 Connector.model.Filter.doGroupSave({
@@ -466,7 +466,7 @@ Ext.define('Connector.controller.Group', {
                     me.getGroupStore().on('dataloaded', function(){
                         this.updateFilterLabel(grp.label);
                     }, me, {single : true});
-                    me.getGroupStore().refreshData();
+                    me.refreshGroupStore();
                 };
 
                 var editFailure = function (response)
@@ -619,16 +619,20 @@ Ext.define('Connector.controller.Group', {
     },
 
     onDeleteSuccess: function(isMab) {
-        if (!this.loadDataTask) {
-            this.loadDataTask = new Ext.util.DelayedTask(function(store) {
-                store.refreshData();
-            });
-        }
-        this.loadDataTask.delay(300, undefined, this, [this.getGroupStore()]);
+        this.refreshGroupStore();
         this.clearFilter();
         this.hideGroupSaveBtns(isMab);
 
         this.getViewManager().changeView('home');
+    },
+
+    refreshGroupStore : function() {
+        if (!this.loadDataTask) {
+            this.loadDataTask = new Ext.util.DelayedTask(function() {
+                this.getGroupStore().refreshData();
+            });
+        }
+        this.loadDataTask.delay(300, undefined, this);
     },
 
     hideGroupSaveBtns : function(isMab) {
