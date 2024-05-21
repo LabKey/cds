@@ -184,7 +184,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 itemId: 'descDisplay',
                 margin: '0 0 20 0',
                 htmlEncode: true,
-                id: 'group-description-id',
+                cls: 'group-description',
                 value: this._getDescription(this.group)
             }]
         }];

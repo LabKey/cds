@@ -70,7 +70,7 @@ public class GroupDetailsPage extends LabKeyPage<GroupDetailsPage.ElementCache>
     protected class ElementCache extends LabKeyPage<?>.ElementCache
     {
         private final WebElement groupName = Locator.tagWithClass("div", "studyname").refindWhenNeeded(this);
-        private final WebElement groupDesc = Locator.tagWithId("table", "group-description-id").refindWhenNeeded(this);
+        private final WebElement groupDesc = Locator.tagWithClass("table", "group-description").refindWhenNeeded(this);
         private final Locator.XPathLocator groupModuleGrid = Locator.tagWithClassContaining("div", "groupslearnmodulegrid");
 
         private final WebElement editDetails = Locator.linkWithText("Edit details").findWhenNeeded(this);
