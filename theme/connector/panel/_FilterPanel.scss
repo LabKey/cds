@@ -278,10 +278,11 @@ ul.indent li {
 .groupsave-cancel-save-btns {
 
   display: flex;
-  height: 24px;
+  height: 25px;
   justify-content: center;
   align-items: center;
   gap: 5px;
+  background: #ebebeb;
 
   .cancel-save-btns {
     width: 71px;
@@ -300,14 +301,13 @@ ul.indent li {
   color: #FFF !important;
   display: flex;
   width: 72px;
-  height: 25px;
+  height: 24px;
   justify-content: center;
   align-items: center;
 
   .x-btn-inner {
     color: #FFF !important;
     text-align: center;
-    height: 25px;
     font-size: 11px;
     font-style: normal;
     font-weight: 400;
