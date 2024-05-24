@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.labkey.test.Locator;
+import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.LearnGrid.LearnTab;
@@ -133,13 +134,13 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
                 .ifPresent(WebElement::click);
 
         // Move the mouse off of the element that shows the tool tip, and then wait for the tool tip to disappear.
-        dismissTooltip();
+        dismissTooltip(this);
     }
 
     private String triggerToolTip(WebElement el)
     {
         // Move the mouse to the top left corner of the page and make sure there are no popups visible.
-        dismissTooltip();
+        dismissTooltip(this);
 
         return waitFor(() -> {
             // Move the mouse over the element.
@@ -157,11 +158,11 @@ public class CDSStudyTooltipTest extends CDSReadOnlyTest
         }, 2_000);
     }
 
-    public void dismissTooltip()
+    public static void dismissTooltip(WebDriverWrapper webDriver)
     {
-        shortWait().withMessage("Failed to dismiss tooltip").until(wd -> {
-        mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
-            WebElement bubble = Locator.css(".hopscotch-bubble").findWhenNeeded(getDriver());
+        webDriver.shortWait().withMessage("Failed to dismiss tooltip").until(wd -> {
+        webDriver.mouseOver(Locator.xpath(CDSHelper.LOGO_IMG_XPATH));
+            WebElement bubble = Locator.css(".hopscotch-bubble").findWhenNeeded(webDriver.getDriver());
             return !bubble.isDisplayed() || bubble.getLocation().getY() <= 0; // Hidden, non-existent, or in the corner will suffice
         });
     }

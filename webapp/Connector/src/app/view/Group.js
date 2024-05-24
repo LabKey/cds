@@ -304,10 +304,16 @@ Ext.define('Connector.app.view.Group', {
 
         this.on('show', function(){
             if (this.reloadStoreOnShow){
-                //console.log('reloading group slice');
-                this.getStore().loadSlice();
-                this.renderLoadingMask();
-                this.reloadStoreOnShow = false;
+                if (!this.loadDataTask) {
+                    this.loadDataTask = new Ext.util.DelayedTask(function() {
+                        //console.log('reloading group slice');
+                        this.getStore().removeAll();
+                        this.getStore().loadSlice();
+                        this.renderLoadingMask();
+                        this.reloadStoreOnShow = false;
+                    });
+                }
+                this.loadDataTask.delay(300, undefined, this);
             }
         }, this);
 

@@ -247,6 +247,7 @@
             // Application Views
             srcPath + "/view/Selection.js",
             srcPath + "/view/DetailStatus.js",
+            srcPath + "/view/AbstractFilterStatus.js",
             srcPath + "/view/FilterStatus.js",
             srcPath + "/view/InfoPane.js",
             srcPath + "/view/GridPane.js",

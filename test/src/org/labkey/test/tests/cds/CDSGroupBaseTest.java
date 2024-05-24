@@ -67,9 +67,9 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         //Create a group.
         _composeGroup();
         //saveGroup verifies that the shared group checkbox is not present.
-        boolean result = cds.saveGroup(privateGroupOneName, PRIVATE_GROUP_NAME_DESCRIPTION[0], true, false, isMab());
+        boolean result = cds.saveGroup(privateGroupOneName, PRIVATE_GROUP_NAME_DESCRIPTION[0], true, false);
         assertFalse("Updating shared status of " + (isMab() ? "mab " : "") + "group should fail.", result);
-        result = cds.saveGroup(privateGroupOneName, PRIVATE_GROUP_NAME_DESCRIPTION[0], false, false, isMab());
+        result = cds.saveGroup(privateGroupOneName, PRIVATE_GROUP_NAME_DESCRIPTION[0], false, false);
         assertTrue("Failed to update " + (isMab() ? "mab " : "") + "group", result);
         cds.goToAppHome();
         cds.deleteGroupFromSummaryPage(privateGroupOneName);
@@ -77,7 +77,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
 
         _impersonateRole("Editor");
         _composeGroup();
-        result = cds.saveGroup(privateGroupTwoName, PRIVATE_GROUP_NAME_DESCRIPTION[1], true, false, isMab());
+        result = cds.saveGroup(privateGroupTwoName, PRIVATE_GROUP_NAME_DESCRIPTION[1], true, false);
         assertTrue("Failed to create new shared " + (isMab() ? "mab " : "") + "group as Editor.", result);
         cds.goToAppHome();
         cds.deleteGroupFromSummaryPage(privateGroupTwoName);
@@ -111,7 +111,7 @@ public abstract class CDSGroupBaseTest extends CDSReadOnlyTest
         //As an editor, make a shared group and a private group
         _impersonateUser(NEW_USER_ACCOUNTS[0]);
         _composeGroup();
-        cds.saveGroup(privateGroupOneName, PRIVATE_GROUP_NAME_DESCRIPTION[0], false, false, isMab());
+        cds.saveGroup(privateGroupOneName, PRIVATE_GROUP_NAME_DESCRIPTION[0], false, false);
 
         // TODO: Fix/Update with the new Active filters workflow -- Use 'Edit group', update the group name with sharedGroupName, make it shared > Save menu > Update this group
 //        cds.saveGroup(sharedGroupName, "", true, false, isMab());

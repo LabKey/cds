@@ -228,7 +228,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
 
         detailsPage.deleteGroup();
         cds.viewLearnAboutPage(LearnTab.GROUPS);
-        refresh();
         Assert.assertFalse("Deleted group is still present " + ASSAY_GROUP_NAME,
                 isElementPresent(Locator.tagWithText("h2", ASSAY_GROUP_NAME)));
     }
@@ -282,7 +281,6 @@ public class CDSGroupTest extends CDSGroupBaseTest
                 .saveGroup();
 
         log("Verifying Multi filter group");
-        refresh();
         cds.viewLearnAboutPage(LearnTab.GROUPS);
         click(Locator.tagWithText("h2", multiFilterGroup));
         detailsPage = new GroupDetailsPage(getDriver());

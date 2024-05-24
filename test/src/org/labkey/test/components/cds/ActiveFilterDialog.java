@@ -151,6 +151,7 @@ public class ActiveFilterDialog extends BaseCdsComponent<ActiveFilterDialog.Elem
         final Locator errorMsg = Locator.tagWithClass("div", "errormsg");
         Input groupName = new Input(Locator.name("groupname").findWhenNeeded(_activeFilterDialogEl), getDriver());
         Input groupDescription = new Input(Locator.textarea("groupdescription").findWhenNeeded(_activeFilterDialogEl), getDriver());
-        Checkbox sharedGroup = new Checkbox(Locator.xpath("//input[contains(@id,'creategroupshared')]").findWhenNeeded(getDriver()));
+        Checkbox sharedGroup = new Checkbox(Locator.xpath("//table[contains(@class, 'group-shared-checkbox')]/descendant::input[contains(@type, 'button')]")
+                .findWhenNeeded(getDriver()));
     }
 }

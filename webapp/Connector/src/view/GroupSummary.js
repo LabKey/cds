@@ -83,12 +83,6 @@ Ext.define('Connector.view.GroupSummary', {
             }],
             buttons: [{
                 xtype: 'button',
-                text: 'Edit details',
-                ui: 'linked',
-                itemId: 'editgroupdetails',
-                group: group
-            },{
-                xtype: 'button',
                 text: 'Delete',
                 ui: 'linked',
                 handler: this.onDelete,
@@ -190,7 +184,7 @@ Ext.define('Connector.view.GroupSummaryBody', {
                 itemId: 'descDisplay',
                 margin: '0 0 20 0',
                 htmlEncode: true,
-                id: 'group-description-id',
+                cls: 'group-description',
                 value: this._getDescription(this.group)
             }]
         }];
