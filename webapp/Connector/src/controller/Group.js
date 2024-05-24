@@ -129,6 +129,13 @@ Ext.define('Connector.controller.Group', {
                 store: this.getGroupStore(),
                 groupId: context.groupId
             });
+
+            var vm = this.getViewManager();
+            vm.on('beforechangeview', function(controller, view, currentContext) {
+                if (currentContext.view === "mabgroupsummary") {
+                    Connector.getService('FilterStatus').activateContainer('filterstatuscontainer');
+                }
+            });
         }
 
         return v;
