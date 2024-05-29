@@ -3675,7 +3675,7 @@ Ext.define('Connector.view.Chart', {
     onPlotSelectionRemoved : function(filterId, measureIdx) {
         var curExtent = this.plot.getBrushExtent();
         if (curExtent) {
-            if (curExtent[0][0] === null || curExtent[0][1] === null) {
+            if (!Number.isFinite(curExtent[0][0]) || !Number.isFinite(curExtent[0][1])) {
                 // 1D, just clear the selection.
                 this.clearAllBrushing();
             }
