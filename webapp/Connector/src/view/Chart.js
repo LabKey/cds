@@ -1382,8 +1382,8 @@ Ext.define('Connector.view.Chart', {
 
                 onBrush.call(this, event, layerData, extent, plot);
 
-                var xIsNull = extent[0][0] === null && extent[1][0] === null,
-                    yIsNull = extent[0][1] === null && extent[1][1] === null;
+                var xIsNull = !Number.isFinite(extent[0][0]),
+                    yIsNull = !Number.isFinite(extent[0][1]);
 
                 if (yIsNull && !xIsNull && xGutterPlot) {
                     xGutterPlot.setBrushExtent(brushingExtent);

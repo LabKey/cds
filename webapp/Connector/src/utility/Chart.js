@@ -171,7 +171,7 @@ Ext.define('Connector.utility.Chart', {
             subjects = {}; // Stash all of the selected subjects so we can highlight associated points.
 
         // convert extent x/y values into aes scale as bins don't really have x/y values
-        if (extent[0][0] !== null && extent[1][0] !== null) {
+        if (Number.isFinite(extent[0][0]) && Number.isFinite(extent[1][0])) {
             if (plot.scales.xTop) {
                 extent[0][0] = plot.scales.xTop.scale(extent[0][0]);
                 extent[1][0] = plot.scales.xTop.scale(extent[1][0]);
@@ -181,7 +181,7 @@ Ext.define('Connector.utility.Chart', {
                 extent[1][0] = plot.scales.x.scale(extent[1][0]);
             }
         }
-        if (extent[0][1] !== null && extent[1][1] !== null) {
+        if (Number.isFinite(extent[0][1]) && Number.isFinite(extent[1][1])) {
             // TODO: the min/max y values are flipped for bins vs points, why?
             if (plot.scales.yRight) {
                 max = plot.scales.yRight.scale(extent[0][1]);
@@ -195,8 +195,8 @@ Ext.define('Connector.utility.Chart', {
             extent[1][1] = max;
         }
 
-        isXExtent = extent[0][0] !== null && extent[1][0] !== null;
-        isYExtent = extent[0][1] !== null && extent[1][1] !== null;
+        isXExtent = Number.isFinite(extent[0][0]) && Number.isFinite(extent[1][0]);
+        isYExtent = Number.isFinite(extent[0][1]) && Number.isFinite(extent[1][1]);
 
         // first we go through and get the selected bins/subjects for the main plot and both gutters
         ChartUtils._brushSelectedBinsByCanvas(this.plot.renderer.canvas, extent, (isXExtent || isYExtent), subjects);
@@ -313,7 +313,7 @@ Ext.define('Connector.utility.Chart', {
             sqlFilters = [null, null, null, null],
             yMin, yMax, xMin, xMax;
 
-        if (xMeasure && xExtent[0] !== null && xExtent[1] !== null)
+        if (xMeasure && Number.isFinite(xExtent[0]) && Number.isFinite(xExtent[1]))
         {
             var minValidXVal = this.requireYLogGutter ? this.minXPositiveValue : null;
             xMin = ChartUtils.transformVal(xExtent[0], xMeasure.type, true, minValidXVal);
@@ -340,7 +340,7 @@ Ext.define('Connector.utility.Chart', {
             }
         }
 
-        if (yMeasure && yExtent[0] !== null && yExtent[1] !== null)
+        if (yMeasure && Number.isFinite(yExtent[0]) && Number.isFinite(yExtent[1]))
         {
             var minValidYVal = this.requireXLogGutter ? this.minYPositiveValue : null;
             yMin = ChartUtils.transformVal(yExtent[0], yMeasure.type, true, minValidYVal);
@@ -532,23 +532,10 @@ Ext.define('Connector.utility.Chart', {
 
     isSelectedWithBrush : function(extent, x, y) {
         var xExtent = [extent[0][0], extent[1][0]],
-            yExtent = [extent[0][1], extent[1][1]],
-            isX = xExtent[0] !== null && xExtent[1] !== null,
-            isY = yExtent[0] !== null && yExtent[1] !== null;
+            yExtent = [extent[0][1], extent[1][1]];
 
-        // Issue 20116
-        if (isX && isY) { // 2D
-            return x != null && x > xExtent[0] && x < xExtent[1] &&
-                   y != null && y > yExtent[0] && y < yExtent[1];
-        }
-        else if (isX) { // 1D
-            return x != null && x > xExtent[0] && x < xExtent[1];
-        }
-        else if (isY) { // 1D
-            return y != null && y > yExtent[0] && y < yExtent[1];
-        }
-
-        return false;
+        return x != null && x > xExtent[0] && x < xExtent[1] &&
+               y != null && y > yExtent[0] && y < yExtent[1];
     },
 
     transformVal : function(val, type, isMin, minVal) {
