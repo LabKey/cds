@@ -764,14 +764,13 @@
             <column columnName="mab_isotype">
                 <description>A classification indicating the type of the antibody.</description>
             </column>
-            <column columnName="mab_donorid">
+            <column columnName="donor_id">
                 <description>Unique ID assigned to the donor of the mab.</description>
-            </column>
-            <column columnName="mab_donor_species">
-                    <description>The species of the donor of the mab. The species in which the immune response was stimulated.</description>
-            </column>
-            <column columnName="mab_donor_clade">
-                <description>The clade of the virus strain (subtype) that infected the donor.</description>
+                <fk>
+                    <fkDbSchema>cds</fkDbSchema>
+                    <fkTable>donor_metadata</fkTable>
+                    <fkColumnName>donor_id</fkColumnName>
+                </fk>
             </column>
             <column columnName="mab_class_id">
                 <description>A reference ID to the `antibody_class` table, which indicates the class of the antibody.</description>
@@ -1801,6 +1800,8 @@
             <column columnName="sequence_nt">
                 <description>The sequence as nucleotides.</description>
             </column>
+            <column columnName="sequence_aa"/>
+            <column columnName="chain"/>
             <column columnName="container"/>
         </columns>
     </table>
@@ -1871,8 +1872,10 @@
             <column columnName="container"/>
         </columns>
     </table>
-    <table tableName="antibody_sequence" tableDbType="TABLE">
+    <table tableName="donor_mab_sequence" tableDbType="TABLE">
         <columns>
+            <column columnName="row_id"/>
+            <column columnName="container"/>
             <column columnName="mab_id">
                 <description>The CDS mAb ID.</description>
                 <fk>
@@ -1883,11 +1886,19 @@
             </column>
             <column columnName="sequence_id">
                 <description>The sequence ID associated with a given mAB ID and chain.</description>
+                <fk>
+                    <fkDbSchema>cds</fkDbSchema>
+                    <fkTable>sequence</fkTable>
+                    <fkColumnName>sequence_id</fkColumnName>
+                </fk>
             </column>
-            <column columnName="lineage">
-                <description>True if the sequence is a lineage sequence.</description>
+            <column columnName="donor_id">
+                <fk>
+                    <fkDbSchema>cds</fkDbSchema>
+                    <fkTable>donor_metadata</fkTable>
+                    <fkColumnName>donor_id</fkColumnName>
+                </fk>
             </column>
-            <column columnName="container"/>
         </columns>
     </table>
     <table tableName="alignment" tableDbType="TABLE">
@@ -1895,9 +1906,6 @@
             <column columnName="alignment_id"/>
             <column columnName="sequence_id">
                 <description>The CDS sequence ID.</description>
-            </column>
-            <column columnName="locus">
-                <description>Gene locus (chain type). Note that this field uses a controlled vocabulary that is meant to provide a generic classification of the locus, not necessarily the correct designation according to a specific nomenclature.</description>
             </column>
             <column columnName="stop_codon">
                 <description>True if the aligned sequence contains a stop codon.</description>
@@ -2218,6 +2226,16 @@
             <column columnName="note">
                 <description>A note for the source</description>
             </column>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="donor_metadata" tableDbType="TABLE">
+        <columns>
+            <column columnName="donor_id"/>
+            <column columnName="donor_lanl_id"/>
+            <column columnName="donor_code"/>
+            <column columnName="donor_species"/>
+            <column columnName="donor_clade"/>
             <column columnName="container"/>
         </columns>
     </table>
