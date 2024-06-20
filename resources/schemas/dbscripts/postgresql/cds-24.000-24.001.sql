@@ -17,7 +17,7 @@ ALTER TABLE cds.MAbMetadata DROP COLUMN mab_donor_clade;
 ALTER TABLE cds.MAbMetadata ADD COLUMN donor_id VARCHAR(250);
 ALTER TABLE cds.MAbMetadata ADD CONSTRAINT FK_MAbMetadata_donor_id
     FOREIGN KEY (donor_id, container) REFERENCES cds.donor_metadata(donor_id, container);
-CREATE INDEX IX_MAbMetadata_donor_id ON cds.MAbMetadata(donor_id, container);
+CREATE INDEX IX_MAbMetadata_donor_id ON cds.MAbMetadata(donor_id);
 
 CREATE TABLE cds.donor_mab_sequence
 (
