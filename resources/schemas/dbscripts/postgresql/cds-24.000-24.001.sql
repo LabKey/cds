@@ -28,9 +28,9 @@ CREATE TABLE cds.donor_mab_sequence
     container   ENTITYID NOT NULL,
 
     CONSTRAINT PK_donor_mab_sequence PRIMARY KEY (row_id),
-    CONSTRAINT FK_donor_mab_sequence_mab_id FOREIGN KEY (mab_id) REFERENCES cds.MabMetadata (mab_id),
+    CONSTRAINT FK_donor_mab_sequence_mab_id FOREIGN KEY (mab_id, container) REFERENCES cds.MabMetadata (mab_id, container),
     CONSTRAINT FK_donor_mab_sequence_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence (sequence_id),
-    CONSTRAINT FK_donor_mab_sequence_donor_id FOREIGN KEY (donor_id) REFERENCES cds.donor_metadata (donor_id)
+    CONSTRAINT FK_donor_mab_sequence_donor_id FOREIGN KEY (donor_id, container) REFERENCES cds.donor_metadata (donor_id, container)
 );
 CREATE INDEX IX_donor_mab_sequence_mab_id ON cds.donor_mab_sequence(mab_id);
 CREATE INDEX IX_donor_mab_sequence_sequence_id ON cds.donor_mab_sequence(sequence_id);

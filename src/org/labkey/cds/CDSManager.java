@@ -221,8 +221,9 @@ public class CDSManager
 
                     "sequence_header",
                     "sequence_germline",
-                    "antibody_sequence",
+                    "donor_mab_sequence",
                     "MAbMetadata",
+                    "donor_metadata",
                     "alignment",
                     "preferred_allele",
                     "sequence",

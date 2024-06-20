@@ -22,8 +22,9 @@ SELECT
   mabmeta.mab_hxb2_location,
   mabmeta.mab_ab_binding_type,
   mabmeta.mab_isotype,
-  mabmeta.mab_donor_species
+  donormeta.donor_species AS mab_donor_species
 
 FROM cds.MAbMix mix
 JOIN cds.MAbMixMetadata mixmeta ON (mixmeta.container = mix.container AND mixmeta.mab_mix_id = mix.mab_mix_id)
 JOIN cds.MAbMetadata mabmeta ON (mabmeta.container = mix.container AND mabmeta.mab_id = mix.mab_id)
+LEFT JOIN cds.donor_metadata donormeta ON (donormeta.container = mix.container AND donormeta.donor_id = mabmeta.donor_id)

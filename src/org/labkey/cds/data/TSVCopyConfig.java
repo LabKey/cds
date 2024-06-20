@@ -24,21 +24,19 @@ import java.io.IOException;
 
 public class TSVCopyConfig extends CDSImportCopyConfig
 {
-    public TSVCopyConfig(String table, String fileName)
+    public TSVCopyConfig(String table, String fileName, boolean copyToImportTable)
     {
-        // With the current setup, there are 2 steps:
-        // Step 1: ETL data from a tab separated .txt or a .csv file to an "import_table".
-        // Step 2: Run another ETL to copy data from an "import_table" to its corresponding actual table.
-        // This causes an issue when importing BCR data (via Step 1) since a BCR table (cds.antibody_sequence) has a FK
-        // to the mabmetadata table, but the mabmetadata table is not populated during Step 1 and it errors in FK not found.
-        // To get around this, we are going to ETL data from mabmetadata.txt directly into the mabmetadata table during Step 1
-        // (and drop import_mabmetadata table altogether since it is not referenced in any queries or reports).
-        super("#TSV#", table, "cds", (table.equalsIgnoreCase("mabmetadata") ? table : ("import_" + table)), fileName);
+        super("#TSV", table, "cds", fileName, copyToImportTable);
     }
 
     public TSVCopyConfig(String table)
     {
-        this(table, table);
+        this(table, true);
+    }
+
+    public TSVCopyConfig(String table, boolean copyToImportTable)
+    {
+        super("#TSV", table, "cds", table, copyToImportTable);
     }
 
     @Override
