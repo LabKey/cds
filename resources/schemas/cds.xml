@@ -2239,4 +2239,32 @@
             <column columnName="container"/>
         </columns>
     </table>
+    <table tableName="pab_sequence" tableDbType="TABLE">
+        <columns>
+            <column columnName="pab_id"/>
+            <column columnName="sequence_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="pab_sequence_study" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="prot"/>
+            <column columnName="subject_id"/>
+            <column columnName="study_day"/>
+            <column columnName="specimen_type"/>
+            <column columnName="pab_id"/>
+            <column columnName="lab_code"/>
+            <column columnName="seq_method"/>
+            <column columnName="assay_identifier"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="antibody_structure" tableDbType="TABLE">
+        <columns>
+            <column columnName="structure_id"/>
+            <column columnName="mab_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
 </tables>

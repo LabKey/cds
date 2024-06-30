@@ -1,0 +1,4 @@
+prot,subject_id,study_day,specimen_type,pab_id,lab_code,seq_method,assay_identifier
+q2,q2-044,1,human,pab_id_1,LC1,NA,AI-1
+r1,r1-032,2,human,pab_id_2,LC2,NA,AI-1
+z101,z101-041,3,human,pab_id_3,LC3,NA,AI-1

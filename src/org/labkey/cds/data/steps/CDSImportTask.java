@@ -33,6 +33,8 @@ public class CDSImportTask extends ImportTask
         new CSVCopyConfig("sequence_germline"),
         new CSVCopyConfig("preferred_allele"),
         new CSVCopyConfig("antibody_class"),
+        new CSVCopyConfig("pab_sequence"),
+        new CSVCopyConfig("pab_sequence_study"),
 
             // Core Tables
         new TSVCopyConfig("Study"),
@@ -47,7 +49,9 @@ public class CDSImportTask extends ImportTask
         new TSVCopyConfig("MAbMetadata", false),
         new TSVCopyConfig("MAbMixMetadata"),
 
-        new CSVCopyConfig("donor_mab_sequence"), // bcr data, order matters due to FKs
+        // BCR data
+        new CSVCopyConfig("donor_mab_sequence"),
+        new CSVCopyConfig("antibody_structure"),
 
         // Dependent Tables
         new TSVCopyConfig("StudyPartGroupArm"),
