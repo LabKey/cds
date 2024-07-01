@@ -33,6 +33,8 @@ public class CDSImportTask extends ImportTask
         new CSVCopyConfig("sequence_germline"),
         new CSVCopyConfig("preferred_allele"),
         new CSVCopyConfig("antibody_class"),
+        new CSVCopyConfig("pab_sequence"),
+        new CSVCopyConfig("pab_sequence_study"),
 
             // Core Tables
         new TSVCopyConfig("Study"),
@@ -43,10 +45,13 @@ public class CDSImportTask extends ImportTask
         new TSVCopyConfig("StudySubject"), // a.k.a Demographics, SubjectCharacteristics
         new TSVCopyConfig("Document"),
         new TSVCopyConfig("Publication"),
-        new TSVCopyConfig("MAbMetadata"),
+        new TSVCopyConfig("donor_metadata", false),
+        new TSVCopyConfig("MAbMetadata", false),
         new TSVCopyConfig("MAbMixMetadata"),
 
-        new CSVCopyConfig("antibody_sequence"), // bcr data, order matters due to FKs
+        // BCR data
+        new CSVCopyConfig("donor_mab_sequence"),
+        new CSVCopyConfig("antibody_structure"),
 
         // Dependent Tables
         new TSVCopyConfig("StudyPartGroupArm"),
@@ -54,7 +59,7 @@ public class CDSImportTask extends ImportTask
         new TSVCopyConfig("StudyPartGroupArmVisit"),
         new TSVCopyConfig("StudyPartGroupArmVisitProduct"),
         new TSVCopyConfig("StudyPartGroupArmVisitTime"),
-        new TSVCopyConfig("ProductInsert", "ProductInsertClade"),
+        new TSVCopyConfig("ProductInsert", "ProductInsertClade", true),
         new TSVCopyConfig("StudyRelationshipOrder"),
         new TSVCopyConfig("StudyRelationship"),
         new TSVCopyConfig("MAbMix"),
@@ -74,22 +79,22 @@ public class CDSImportTask extends ImportTask
         new TSVCopyConfig("AssayReport"),
 
         //AntigenMetadata
-        new TSVCopyConfig("ICSAntigen", "AssayICSAntigen_Metadata"),
-        new TSVCopyConfig("ELISpotAntigen", "AssayELSAntigen_Metadata"),
-        new TSVCopyConfig("NAbAntigen", "AssayNABAntigen_Metadata"),
-        new TSVCopyConfig("BAMAAntigen", "AssayBAMAAntigen_Metadata"),
-        new TSVCopyConfig("antigenPanelMeta", "AntigenPanel_Metadata"),
-        new TSVCopyConfig("antigenPanel", "AntigenPanel"),
-        new TSVCopyConfig("virusPanel", "VirusPanel"),
-        new TSVCopyConfig("assay_combined_antigen_metadata", "AssayCombinedAntigenMetadata"),
+        new TSVCopyConfig("ICSAntigen", "AssayICSAntigen_Metadata", true),
+        new TSVCopyConfig("ELISpotAntigen", "AssayELSAntigen_Metadata", true),
+        new TSVCopyConfig("NAbAntigen", "AssayNABAntigen_Metadata", true),
+        new TSVCopyConfig("BAMAAntigen", "AssayBAMAAntigen_Metadata", true),
+        new TSVCopyConfig("antigenPanelMeta", "AntigenPanel_Metadata", true),
+        new TSVCopyConfig("antigenPanel", "AntigenPanel", true),
+        new TSVCopyConfig("virusPanel", "VirusPanel", true),
+        new TSVCopyConfig("assay_combined_antigen_metadata", "AssayCombinedAntigenMetadata", true),
 
         // Datasets
-        new TSVCopyConfig("ICS", "AssayICS"),
-        new TSVCopyConfig("ELS_IFNg", "AssayELS_IFNg"),
-        new TSVCopyConfig("NAB", "AssayNAB"),
-        new TSVCopyConfig("BAMA", "AssayBAMA"),
-        new TSVCopyConfig("NABMAb", "AssayNABMAb"),
-        new TSVCopyConfig("PKMAb", "AssayPKMAb"),
+        new TSVCopyConfig("ICS", "AssayICS", true),
+        new TSVCopyConfig("ELS_IFNg", "AssayELS_IFNg", true),
+        new TSVCopyConfig("NAB", "AssayNAB", true),
+        new TSVCopyConfig("BAMA", "AssayBAMA", true),
+        new TSVCopyConfig("NABMAb", "AssayNABMAb", true),
+        new TSVCopyConfig("PKMAb", "AssayPKMAb", true),
 
         // Virus data
         new TSVCopyConfig("Virus_Metadata_All"),

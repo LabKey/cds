@@ -1,0 +1,7 @@
+sequence_id,pab_id
+cds_seq_1,pab_id-1
+cds_seq_1,pab_id-2
+cds_seq_10,pab_id-1
+cds_seq_10,pab_id-2
+cds_seq_100,pab_id-1
+cds_seq_100,pab_id-2

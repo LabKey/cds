@@ -32,11 +32,13 @@ SELECT
   mab_hxb2_location,
   mab_ab_binding_type,
   mab_isotype,
-  mab_donorid,
-  mab_donor_species,
-  mab_donor_clade
+  mabmeta.donor_id AS mab_donorid,
+-- donor meta
+  donormeta.donor_species AS mab_donor_species,
+  donormeta.donor_clade AS mab_donor_clade
 
 FROM MAbMix mix
 
 LEFT JOIN MAbMixMetadata mixmeta ON mix.mab_mix_id = mixmeta.mab_mix_id
 LEFT JOIN MAbMetadata mabmeta ON mix.mab_id = mabmeta.mab_id
+LEFT JOIN donor_metadata donormeta ON mabmeta.donor_id = donormeta.donor_id

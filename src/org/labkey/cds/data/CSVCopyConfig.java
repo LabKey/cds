@@ -26,7 +26,7 @@ public class CSVCopyConfig extends CDSImportCopyConfig
 {
     public CSVCopyConfig(String table)
     {
-        super("#CSV#", table, "cds", table, table);
+        super("#CSV#", table, "cds", table, false);
     }
 
     @Override

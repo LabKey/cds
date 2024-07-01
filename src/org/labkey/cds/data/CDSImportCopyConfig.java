@@ -48,9 +48,19 @@ public abstract class CDSImportCopyConfig extends CopyConfig
     private final String _fileName;
     QueryUpdateService.InsertOption _option = QueryUpdateService.InsertOption.IMPORT;
 
-    CDSImportCopyConfig(String sourceSchema, String source, String targetSchema, String target, String fileName)
+    /**
+     *
+     * @param sourceSchema Describes whether the source is TSV or CSV delimited
+     * @param target The target table name
+     * @param targetSchema The target schema name
+     * @param fileName The filename containing the data to be imported
+     * @param copyToImportTable Copy into an intermediate table with an import_ prefix, this can be useful if further transformation
+     *                          needs to be performed before copying to the final destination. Otherwise, set false to
+     *                          copy directly into the destination table.
+     */
+    CDSImportCopyConfig(String sourceSchema, String target, String targetSchema, String fileName, boolean copyToImportTable)
     {
-        super(sourceSchema, source, targetSchema, target);
+        super(sourceSchema, target, targetSchema, copyToImportTable ? "import_" + target : target);
         _fileName = fileName;
     }
 
