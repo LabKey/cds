@@ -19,6 +19,7 @@ import org.labkey.test.Locator;
 import org.labkey.test.WebDriverWrapper;
 import org.labkey.test.components.cds.BaseCdsComponent;
 import org.labkey.test.util.LogMethod;
+import org.labkey.test.util.cds.CDSHelper;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -57,6 +58,7 @@ public class LearnDetailsPage extends BaseCdsComponent
         backButtonElement.click();
         getWrapper().shortWait().until(ExpectedConditions.invisibilityOf(backButtonElement));
         getWrapper().shortWait().until(ExpectedConditions.visibilityOfElementLocated(LearnGrid.Locators.searchBox));
+        WebDriverWrapper.sleep(CDSHelper.CDS_WAIT_LEARN);
     }
 
     public static class Locators
