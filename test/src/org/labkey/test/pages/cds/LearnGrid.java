@@ -154,7 +154,7 @@ public class LearnGrid extends BaseCdsComponent<LearnGrid.ElementCache>
 
     public LearnDetailsPage clickItem(int index)
     {
-        WebElement link = Locators.rowDescriptionLink.index(index).findElement(getGrid());
+        WebElement link = Locators.rowDescriptionLink.index(index).refindWhenNeeded(getGrid());
         return clickDetailsLink(link, link.getText());
     }
 
