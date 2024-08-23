@@ -46,7 +46,7 @@ public class CDSImportTask extends ImportTask
         new TSVCopyConfig("Document"),
         new TSVCopyConfig("Publication"),
         new TSVCopyConfig("donor_metadata", false),
-        new TSVCopyConfig("MAbMetadata", false),
+        new TSVCopyConfig("mab_metadata", false),
         new TSVCopyConfig("MAbMixMetadata"),
 
         // BCR data

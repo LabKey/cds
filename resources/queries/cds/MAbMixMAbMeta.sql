@@ -25,7 +25,7 @@ SELECT
   mab_mix_lanlid,
 --  mab meta
   mab_name_std,
-  mab_lanlid,
+  mabmeta.mab_lanl_id AS mab_lanlid,
   mab_hxb2_location,
   mab_ab_binding_type,
   mab_isotype,
@@ -37,5 +37,5 @@ SELECT
 FROM MAbMix mix
 
 LEFT JOIN MAbMixMetadata mixmeta ON mix.mab_mix_id = mixmeta.mab_mix_id
-LEFT JOIN MAbMetadata mabmeta ON mix.mab_id = mabmeta.mab_id
+LEFT JOIN mab_metadata mabmeta ON mix.mab_id = mabmeta.mab_id
 LEFT JOIN donor_metadata donormeta ON mabmeta.donor_id = donormeta.donor_id
