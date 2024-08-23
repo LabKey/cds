@@ -37,7 +37,7 @@ Ext.define('Connector.view.MabReport', {
                             cls: 'mabreportheader learnheader',
                             flex: 1,
                             renderTpl: new Ext.XTemplate(
-                                    '<div class="title-and-back-panel" style="white-space: nowrap">',
+                                    '<div class="title-and-back-panel" style="white-space: nowrap; width: 100%">',
                                     '<div class="iarrow">&nbsp;</div>',
                                     '<div class="breadcrumb">Monoclonal antibodies / </div>',
                                     '<div class="studyname">{title:htmlEncode}</div>',
