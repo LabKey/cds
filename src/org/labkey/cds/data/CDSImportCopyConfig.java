@@ -103,7 +103,7 @@ public class CDSImportCopyConfig extends CopyConfig
             _importFile = getImportFile(dir);
             if (null == _importFile || !_importFile.exists())
             {
-                context.getErrors().addRowError(new ValidationException("Could not find data file: '" + _fileName + "' (xls, xlsx, csv, tsv, txt)."));
+                context.getErrors().addRowError(new ValidationException("Could not find data file: '" + _fileName + "' (" + String.join(",", VALID_EXTENSIONS) + ")."));
                 return null;
             }
 
