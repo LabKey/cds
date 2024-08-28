@@ -33,35 +33,54 @@ import org.labkey.api.query.QuerySchema;
 import org.labkey.api.query.QueryService;
 import org.labkey.api.query.QueryUpdateService;
 import org.labkey.api.query.ValidationException;
+import org.labkey.api.reader.DataLoaderFactory;
+import org.labkey.api.reader.DataLoaderService;
 import org.labkey.api.security.User;
 import org.labkey.api.util.FileUtil;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
+import java.util.List;
 
-public abstract class CDSImportCopyConfig extends CopyConfig
+public class CDSImportCopyConfig extends CopyConfig
 {
-    public abstract String getFileExtension();
-    public abstract DataIteratorBuilder getTabLoader(File file) throws IOException;
-
     private final String _fileName;
+    private File _importFile;
+    private static final List<String> VALID_EXTENSIONS = List.of(".xls", ".xlsx", ".csv", ".tsv", ".txt");
+
     QueryUpdateService.InsertOption _option = QueryUpdateService.InsertOption.IMPORT;
 
     /**
-     *
-     * @param sourceSchema Describes whether the source is TSV or CSV delimited
-     * @param target The target table name
-     * @param targetSchema The target schema name
-     * @param fileName The filename containing the data to be imported
-     * @param copyToImportTable Copy into an intermediate table with an import_ prefix, this can be useful if further transformation
-     *                          needs to be performed before copying to the final destination. Otherwise, set false to
-     *                          copy directly into the destination table.
+     * Constructor which imports a text file into a table in the CDS schema.
+     * @param targetQuery the target table
+     * @param fileName the name of the file, without the extension
      */
-    CDSImportCopyConfig(String sourceSchema, String target, String targetSchema, String fileName, boolean copyToImportTable)
+    public CDSImportCopyConfig(String targetQuery, String fileName)
     {
-        super(sourceSchema, target, targetSchema, copyToImportTable ? "import_" + target : target);
+        super(null, null, "cds", targetQuery);
         _fileName = fileName;
+    }
+
+    /**
+     * Constructor which imports a text file into a table (of the same name) in the CDS schema.
+     * @param fileName the name of the file, without the extension
+     */
+    public CDSImportCopyConfig(String fileName)
+    {
+        super(null, null, "cds", fileName);
+        _fileName = fileName;
+    }
+
+    public File getImportFile()
+    {
+        return _importFile;
+    }
+
+    private DataIteratorBuilder getDataLoader(File file) throws IOException
+    {
+        DataLoaderFactory factory = DataLoaderService.get().findFactory(file, null);
+        return factory.createLoader(file, true);
     }
 
     public DataIteratorBuilder selectFromSource(Container container, User user, DataIteratorContext context,
@@ -81,17 +100,17 @@ public abstract class CDSImportCopyConfig extends CopyConfig
         }
         else
         {
-            File file = getByExtension(dir, getFileExtension(), ".txt");
-            if (null == file || !file.exists())
+            _importFile = getImportFile(dir);
+            if (null == _importFile || !_importFile.exists())
             {
-                context.getErrors().addRowError(new ValidationException("Could not find data file: \'" + _fileName + "\' (" + getFileExtension() + ", .txt)."));
+                context.getErrors().addRowError(new ValidationException("Could not find data file: '" + _fileName + "' (" + String.join(",", VALID_EXTENSIONS) + ")."));
                 return null;
             }
 
-            if (file.length() == 0)
+            if (_importFile.length() == 0)
                 return null;
 
-            return getTabLoader(file);
+            return getDataLoader(_importFile);
         }
     }
 
@@ -116,10 +135,10 @@ public abstract class CDSImportCopyConfig extends CopyConfig
     }
 
     @Nullable
-    public File getByExtension(File dir, String... extensions)
+    private File getImportFile(File dir)
     {
         File file = null;
-        for (String ext : extensions)
+        for (String ext : VALID_EXTENSIONS)
         {
             String fileName = _fileName + ext;
             file = FileUtil.getAbsoluteCaseSensitiveFile(new File(dir, fileName));
