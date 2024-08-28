@@ -127,7 +127,7 @@ public abstract class ImportTask extends TaskRefTaskImpl
                 }
                 else
                 {
-                    logger.info("Copying data from " + dir + " to " +
+                    logger.info("Copying data from " + config.getImportFile().getAbsolutePath() + " to " +
                             config.getTargetSchema() + "." + config.getTargetQuery());
                 }
 
@@ -166,7 +166,6 @@ public abstract class ImportTask extends TaskRefTaskImpl
         }
         return true;
     }
-
 
     private boolean executeTruncate(CDSImportCopyConfig[] configs, Logger logger)
     {
