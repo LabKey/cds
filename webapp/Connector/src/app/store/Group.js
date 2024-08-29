@@ -274,7 +274,9 @@ Ext.define('Connector.app.store.Group', {
                         let val = parts[idx];
                         val = val.replace('[', '').replace(']', '');
 
-                        colMap[idx].push(val);
+                        // check for duplicates
+                        if (!colMap[idx].includes(val))
+                            colMap[idx].push(val);
                     }
                 }
             }

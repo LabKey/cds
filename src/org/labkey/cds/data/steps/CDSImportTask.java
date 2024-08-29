@@ -44,7 +44,7 @@ public class CDSImportTask extends ImportTask
         new CDSImportCopyConfig("import_Document", "Document"),
         new CDSImportCopyConfig("import_Publication", "Publication"),
         new CDSImportCopyConfig("donor_metadata"),
-        new CDSImportCopyConfig("MAbMetadata"),
+        new CDSImportCopyConfig("mab_metadata"),
         new CDSImportCopyConfig("import_MAbMixMetadata", "MAbMixMetadata"),
 
         // BCR data

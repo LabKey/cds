@@ -743,7 +743,7 @@
             <column columnName="video_thumbnail_label"/>
         </columns>
     </table>
-    <table tableName="MAbMetadata" tableDbType="TABLE">
+    <table tableName="mab_metadata" tableDbType="TABLE">
         <columns>
             <column columnName="container"/>
             <column columnName="mab_id">
@@ -752,7 +752,7 @@
             <column columnName="mab_name_std">
                 <description>A standardized name assigned to an individual mAb.</description>
             </column>
-            <column columnName="mab_lanlid">
+            <column columnName="mab_lanl_id">
                 <description>Unique ID of the mAb assigned by LANL and used in the LANL database.</description>
             </column>
             <column columnName="mab_hxb2_location">
@@ -1880,7 +1880,7 @@
                 <description>The CDS mAb ID.</description>
                 <fk>
                     <fkDbSchema>cds</fkDbSchema>
-                    <fkTable>MAbMetadata</fkTable>
+                    <fkTable>mab_metadata</fkTable>
                     <fkColumnName>mab_id</fkColumnName>
                 </fk>
             </column>

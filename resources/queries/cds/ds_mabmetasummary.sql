@@ -26,5 +26,5 @@ SELECT
 
 FROM cds.MAbMix mix
 JOIN cds.MAbMixMetadata mixmeta ON (mixmeta.container = mix.container AND mixmeta.mab_mix_id = mix.mab_mix_id)
-JOIN cds.MAbMetadata mabmeta ON (mabmeta.container = mix.container AND mabmeta.mab_id = mix.mab_id)
+JOIN cds.mab_metadata mabmeta ON (mabmeta.container = mix.container AND mabmeta.mab_id = mix.mab_id)
 LEFT JOIN cds.donor_metadata donormeta ON (donormeta.container = mix.container AND donormeta.donor_id = mabmeta.donor_id)
