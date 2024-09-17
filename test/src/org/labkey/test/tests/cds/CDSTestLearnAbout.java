@@ -439,7 +439,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         final String labelStandardname = "Standard name";
         final String labelAntibodyType = "Antibody type";
-        final String labelLanlid = "LANLID";
+        final String labelLanlid = "LANL ID";
         final String labelOthernames = "Other names";
         final String labelIsotype = "Isotype";
         final String labelHXB2 = "HXB2 Location";
@@ -464,7 +464,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         verifySectionHeaders(infoHeader, dataHeader, mAbName + " details");
 
         log("Verify external LANL link");
-        String lanlLinkLoc = "//a[contains(@href, 'https://www.hiv.lanl.gov/content/immunology/ab_search?results=Search&id=$')]";
+        String lanlLinkLoc = "//a[contains(@href, 'https://www.hiv.lanl.gov/mojo/immunology/search/ab/results?Search&id=$')]";
         assertElementPresent(Locator.xpath(lanlLinkLoc.replace("$", "815")));
 
         log("Verify mAb detail field labels");

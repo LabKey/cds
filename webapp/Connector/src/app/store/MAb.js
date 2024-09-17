@@ -7,10 +7,6 @@ Ext.define('Connector.app.store.MAb', {
 
     extend : 'Connector.app.store.SavedReports',
 
-    statics: {
-        LANL_URL_PREFIX: 'https://www.hiv.lanl.gov/content/immunology/ab_search?results=Search&id='
-    },
-
     mixins: {
         studyAccessHelper: 'Connector.app.store.PermissionedStudy'
     },
@@ -218,8 +214,8 @@ Ext.define('Connector.app.store.MAb', {
 
     getLanlLink: function(id)
     {
-        if (!id)
+        if (!id || !LABKEY.moduleContext.cds)
             return '';
-        return Connector.app.store.MAb.LANL_URL_PREFIX + id;
+        return LABKEY.moduleContext.cds.LANLUrlPrefix + id;
     }
 });
