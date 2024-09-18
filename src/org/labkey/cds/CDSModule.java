@@ -59,7 +59,6 @@ public class CDSModule extends DefaultModule
     public static final String BLOG_PATH = "BlogPath";
     public static final String ALL_BLOGS_PATH = "AllBlogsPath";
     public static final String STATIC_PATH = "StaticPath";
-    public static final String CMS = "CMS";
     public static final String GETTING_STARTED_VIDEO_URL = "GettingStartedVideoURL";
     public static final String STUDY_DOCUMENT_PATH = "StudyDocumentPath";
     public static final String ASSAY_DOCUMENT_PATH = "AssayDocumentPath";
@@ -73,106 +72,29 @@ public class CDSModule extends DefaultModule
     private static final String TOURS_WIKI_DEFAULT = "tour-default-wiki";
     private static final String WHATYOUNEEDTOKNOW_WIKI_DEFAULT = "needtoknow-default-wiki";
     public static final String CDS_PUBLIC_PAGE_URL = "CDSPublicPageUrl";
-
-    final ModuleProperty _showHiddenVariables;
-    final ModuleProperty _blogPath;
-    final ModuleProperty _allBlogsPath;
-    final ModuleProperty _staticPath;
-    final ModuleProperty _startedVideoURL;
-    final ModuleProperty _studyDocumentPath;
-    final ModuleProperty _assayDocumentPath;
-    final ModuleProperty _importFolderPath;
-
-    final ModuleProperty _mabReport1ID;
-    final ModuleProperty _mabReport1Label;
-    final ModuleProperty _mabReport2ID;
-    final ModuleProperty _mabReport2Label;
-
-    //wiki properties for the front page
-    final ModuleProperty _whatYouNeedToKnowWiki;
-    final ModuleProperty _takeATourWiki;
+    public static final String LANL_URL_PREFIX = "LANLUrlPrefix";
+    private static final String LANL_URL_PREFIX_DEFAULT = "https://www.hiv.lanl.gov/mojo/immunology/search/ab/results?Search&id=";
 
     public CDSModule()
     {
-        _showHiddenVariables = new ModuleProperty(this, SHOW_HIDDEN_VARIABLES);
-        _showHiddenVariables.setDescription("If 'true', show all variables (including hidden) in the variable selector in devMode.");
-        _showHiddenVariables.setCanSetPerContainer(true);
-        addModuleProperty(_showHiddenVariables);
-
-        _blogPath = new ModuleProperty(this, BLOG_PATH);
-        _blogPath.setDescription("Full or relative webdav path to the blog files");
-        _blogPath.setCanSetPerContainer(false);
-        addModuleProperty(_blogPath);
-
-        _allBlogsPath = new ModuleProperty(this, ALL_BLOGS_PATH);
-        _allBlogsPath.setDescription("Full path to all blog posts");
-        _allBlogsPath.setCanSetPerContainer(false);
-        addModuleProperty(_allBlogsPath);
-
-        _staticPath = new ModuleProperty(this, STATIC_PATH);
-        _staticPath.setDescription("Full webdav path to which the short-cut '/static/' will point");
-        _staticPath.setCanSetPerContainer(false);
-        addModuleProperty(_staticPath);
-
-        // TODO would be nice to have a addPropertyChangeListener()
-
-        _startedVideoURL = new ModuleProperty(this, GETTING_STARTED_VIDEO_URL);
-        _startedVideoURL.setDescription("The full URL of the intro video. This can include whatever parameters are needed for embedding.");
-        _startedVideoURL.setCanSetPerContainer(false);
-        addModuleProperty(_startedVideoURL);
-
-        _studyDocumentPath = new ModuleProperty(this, STUDY_DOCUMENT_PATH);
-        _studyDocumentPath.setDescription("Full webdav path to which study documents are located");
-        _studyDocumentPath.setCanSetPerContainer(false);
-        addModuleProperty(_studyDocumentPath);
-
-        _assayDocumentPath = new ModuleProperty(this, ASSAY_DOCUMENT_PATH);
-        _assayDocumentPath.setDescription("Full webdav path to which assay documents are located");
-        _assayDocumentPath.setCanSetPerContainer(false);
-        addModuleProperty(_assayDocumentPath);
-
-        _importFolderPath = new ModuleProperty(this, CDS_IMPORT_PATH);
-        _importFolderPath.setDescription("File path that cds import files are located");
-        _importFolderPath.setCanSetPerContainer(false);
-        addModuleProperty(_importFolderPath);
-
-        _mabReport1ID = new ModuleProperty(this, REPORT_1_ID);
-        _mabReport1ID.setDescription("Report Id for the 1st MAb R report, should start with 'db:'");
-        _mabReport1ID.setCanSetPerContainer(false);
-        addModuleProperty(_mabReport1ID);
-
-        _mabReport1Label = new ModuleProperty(this, REPORT_1_LABEL);
-        _mabReport1Label.setDescription("Button display label for the 1st MAb R report on MAb grid");
-        _mabReport1Label.setCanSetPerContainer(false);
-        addModuleProperty(_mabReport1Label);
-
-        _mabReport2ID = new ModuleProperty(this, REPORT_2_ID);
-        _mabReport2ID.setDescription("Report Id for the 2nd MAb R report, should start with 'db:'");
-        _mabReport2ID.setCanSetPerContainer(false);
-        addModuleProperty(_mabReport2ID);
-
-        _mabReport2Label = new ModuleProperty(this, REPORT_2_LABEL);
-        _mabReport2Label.setDescription("Button display label for the 1st MAb R report on MAb grid");
-        _mabReport2Label.setCanSetPerContainer(false);
-        addModuleProperty(_mabReport2Label);
-
-        _whatYouNeedToKnowWiki = new ModuleProperty(this, WHATYOUNEEDTOKNOW_WIKI_LABEL);
-        _whatYouNeedToKnowWiki.setDescription("Source wiki page for 'What You Need to Know' on the front page. The wiki needs to be created in the shared folder.");
-        _whatYouNeedToKnowWiki.setCanSetPerContainer(false);
-        _whatYouNeedToKnowWiki.setDefaultValue(WHATYOUNEEDTOKNOW_WIKI_DEFAULT);
-        addModuleProperty(_whatYouNeedToKnowWiki);
-
-        _takeATourWiki = new ModuleProperty(this, TOURS_WIKI_LABEL);
-        _takeATourWiki.setDescription("Source wiki page for 'Tours' on the front page. The wiki needs to be created in the shared folder.");
-        _takeATourWiki.setCanSetPerContainer(false);
-        _takeATourWiki.setDefaultValue(TOURS_WIKI_DEFAULT);
-        addModuleProperty(_takeATourWiki);
-
-        // public page root
-        ModuleProperty publicPageUrl = new ModuleProperty(this, CDS_PUBLIC_PAGE_URL);
-        publicPageUrl.setDescription("The webdav URL to the main public page.");
-        publicPageUrl.setCanSetPerContainer(false);
-        addModuleProperty(publicPageUrl);
+        // module properties
+        addModuleProperty(SHOW_HIDDEN_VARIABLES, "If 'true', show all variables (including hidden) in the variable selector in devMode.", null)
+                .setCanSetPerContainer(true);
+        addModuleProperty(BLOG_PATH, "Full or relative webdav path to the blog files", null);
+        addModuleProperty(ALL_BLOGS_PATH, "Full path to all blog posts", null);
+        addModuleProperty(STATIC_PATH, "Full webdav path to which the short-cut '/static/' will point", null);
+        addModuleProperty(GETTING_STARTED_VIDEO_URL, "The full URL of the intro video. This can include whatever parameters are needed for embedding.", null);
+        addModuleProperty(STUDY_DOCUMENT_PATH, "Full webdav path to which study documents are located", null);
+        addModuleProperty(ASSAY_DOCUMENT_PATH, "Full webdav path to which assay documents are located", null);
+        addModuleProperty(CDS_IMPORT_PATH, "File path that cds import files are located", null);
+        addModuleProperty(REPORT_1_ID, "Report Id for the 1st MAb R report, should start with 'db:'", null);
+        addModuleProperty(REPORT_1_LABEL, "Button display label for the 1st MAb R report on MAb grid", null);
+        addModuleProperty(REPORT_2_ID, "Report Id for the 2nd MAb R report, should start with 'db:'", null);
+        addModuleProperty(REPORT_2_LABEL, "Button display label for the 1st MAb R report on MAb grid", null);
+        addModuleProperty(WHATYOUNEEDTOKNOW_WIKI_LABEL, "Source wiki page for 'What You Need to Know' on the front page. The wiki needs to be created in the shared folder.", WHATYOUNEEDTOKNOW_WIKI_DEFAULT);
+        addModuleProperty(TOURS_WIKI_LABEL, "Source wiki page for 'Tours' on the front page. The wiki needs to be created in the shared folder.", TOURS_WIKI_DEFAULT);
+        addModuleProperty(CDS_PUBLIC_PAGE_URL, "The webdav URL to the main public page.", null);
+        addModuleProperty(LANL_URL_PREFIX, "The URL prefix for MAb Learn LANL ID links", LANL_URL_PREFIX_DEFAULT);
     }
 
     @Override
@@ -237,8 +159,8 @@ public class CDSModule extends DefaultModule
 
     public synchronized void ensureShortcuts(boolean force)
     {
-        lastStaticPath = ensureShortcut(_staticPath, lastStaticPath, "/static/", force);
-        lastBlogPath = ensureShortcut(_blogPath, lastBlogPath, "/blog/", force);
+        lastStaticPath = ensureShortcut(getModuleProperty(STATIC_PATH), lastStaticPath, "/static/", force);
+        lastBlogPath = ensureShortcut(getModuleProperty(BLOG_PATH), lastBlogPath, "/blog/", force);
     }
 
     private String ensureShortcut(ModuleProperty prop, String prevTarget, String source, boolean force)
@@ -278,14 +200,33 @@ public class CDSModule extends DefaultModule
         return target;
     }
 
+    private ModuleProperty addModuleProperty(String name, String description, @Nullable String defaultValue)
+    {
+        var moduleProperty = new ModuleProperty(this, name);
+        moduleProperty.setDescription(description);
+        moduleProperty.setCanSetPerContainer(false);
+        if (defaultValue != null)
+            moduleProperty.setDefaultValue(defaultValue);
+        addModuleProperty(moduleProperty);
 
-    String getPropertyValue(ModuleProperty mp, @Nullable Container c)
+        return moduleProperty;
+    }
+
+    private ModuleProperty getModuleProperty(String name)
+    {
+        Map<String, ModuleProperty> moduleProperties = getModuleProperties();
+        if (!moduleProperties.containsKey(name))
+            throw new IllegalStateException("The module property for " + name + " has not been set");
+
+        return moduleProperties.get(name);
+    }
+
+    private String getPropertyValue(ModuleProperty mp, @Nullable Container c)
     {
         if (!mp.isCanSetPerContainer() || null==c)
             c = ContainerManager.getRoot();
         return mp.getEffectiveValue(c);
     }
-
 
     @NotNull
     @Override
