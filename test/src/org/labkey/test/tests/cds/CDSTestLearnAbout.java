@@ -445,7 +445,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         final String labelHXB2 = "HXB2 Location";
         final String labelBindingType = "Antibody binding type";
         final String labelSpecies = "Species";
-        final String labelDonorId = "Donor ID";
+        final String labelDonorCode = "Donor code";
         final String labelDonarClade = "Donor clade";
 
         LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.MABS);
@@ -497,13 +497,13 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
 
         log("Verify mAb detail field labels");
         verifyDetailFieldLabels(labelStandardname, labelAntibodyType, labelOthernames, labelIsotype,
-                labelHXB2, labelBindingType, labelLanlid, labelSpecies, labelDonorId, labelDonarClade);
+                labelHXB2, labelBindingType, labelLanlid, labelSpecies, labelDonorCode, labelDonarClade);
 
         log("Verify mab detail field values");
         verifyDetailFieldValues(mAbName, "Bispecific mAb mixture", "PGT128/3BNC117 + PGDM1400 (other)",
-                "IgG", "gp160", "gp120 CD4BS", "2586", "human", "Patient 3", "B",
-                "Env", "gp120 V2", "3201", "Donor 84", "C",
-                "IgG1", "gp120 V3", "2642", "Donor 36", "CRF02_AG");
+                "IgG", "gp160", "gp120 CD4BS", "2586", "human", "M1217", "B",
+                "Env", "gp120 V2", "3201", "C",
+                "IgG1", "gp120 V3", "2642", "3053", "CRF02_AG");
     }
 
     private void verifySectionHeaders(String... headers)

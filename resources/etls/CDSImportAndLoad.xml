@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<etl xmlns="http://labkey.org/etl/xml">
+    <name>Import Dataspace Archive and Load Application</name>
+    <description>Combines the import archive and load application tables ETLs</description>
+    <transforms>
+        <transform id="import" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.di.steps.QueueJobTask">
+                <settings>
+                    <setting name="transformId" value="{CDS}/CDSImport"/>
+                </settings>
+            </taskref>
+        </transform>
+        <transform id="load application" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.di.steps.QueueJobTask">
+                <settings>
+                    <setting name="transformId" value="{CDS}/LoadApplication"/>
+                </settings>
+            </taskref>
+        </transform>
+    </transforms>
+</etl>
