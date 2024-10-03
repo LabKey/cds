@@ -124,7 +124,8 @@ Ext.define('Connector.app.store.MAb', {
                         bindingType: mix.mab_ab_binding_type,
                         donorSpecies: donorSpecies,
                         donorId: mix.mab_donorid,
-                        donorClade: mix.mab_donor_clade
+                        donorClade: mix.mab_donor_clade,
+                        donorCode: mix.mab_donor_code
                     };
                 }, this);
 
