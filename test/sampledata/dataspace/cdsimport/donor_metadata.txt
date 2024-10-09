@@ -1,26 +1,26 @@
-donor_id	donor_species	donor_clade
-Donor 36	human	CRF02_AG
-Donor 31	human	
-Donor b	human	
-3065	human	
-N70	human	
-Donor 24	human	A1
-Donor 17	human	A
-Donor 39	human	C
-Donor 84	human	C
-Donor L1	llama	
-NIH45	human	B
-L9	human	
-donor_uncoded_1	human	B
-Donor M1	mouse	
-Patient 1	human	B
-Patient 3	human	B
-Donor CH505	human	C
-Donor N152	human	B
-44	human	B
-CAP256	human	C
-Donore N152	human	B
-347759	human	
-CH0457	human	C
-CH0219	human	A
-CH0210	human	C
+donor_id	donor_species	donor_clade	donor_code
+Donor 36	human	CRF02_AG	3053
+Donor 31	human		3054
+Donor b	human		3055
+3065	human		
+N70	human		
+Donor 24	human	A1	M1214
+Donor 17	human	A	M1215
+Donor 39	human	C	M1216
+Donor 84	human	C	M1217
+Donor L1	llama		M1218
+NIH45	human	B	M1219
+L9	human		M1210
+donor_uncoded_1	human	B	
+Donor M1	mouse		
+Patient 1	human	B	
+Patient 3	human	B	
+Donor CH505	human	C	
+Donor N152	human	B	
+44	human	B	
+CAP256	human	C	
+Donore N152	human	B	
+347759	human		
+CH0457	human	C	
+CH0219	human	A	
+CH0210	human	C	

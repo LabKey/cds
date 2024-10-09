@@ -32,7 +32,8 @@ SELECT
   mabmeta.donor_id AS mab_donorid,
 -- donor meta
   donormeta.donor_species AS mab_donor_species,
-  donormeta.donor_clade AS mab_donor_clade
+  donormeta.donor_clade AS mab_donor_clade,
+  donormeta.donor_code AS mab_donor_code
 
 FROM MAbMix mix
 
