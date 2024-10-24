@@ -5,7 +5,7 @@ webapp/temp
 CDS.iml
 
 # test logs
-test/sampledata/dataspace/*.log
+test/sampledata/**/*.log
 
 # generated theme artifacts
 app/Connector/bootstrap.css
