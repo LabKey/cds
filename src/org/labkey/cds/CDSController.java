@@ -1070,41 +1070,6 @@ public class CDSController extends SpringActionController
         }
     }
 
-    @RequiresSiteAdmin
-    public static class MailMergeAction extends SimpleViewAction<Object>
-    {
-        @Override
-        public ModelAndView getView(Object o, BindException errors) throws SQLException, IOException
-        {
-            if ("GET".equals(getViewContext().getRequest().getMethod()))
-            {
-                String csrf = new CsrfInput(getViewContext()).toString();
-                return new HtmlView("<form method=POST><input type=submit value=submit>" + csrf + "</form>");
-            }
-            else if ("POST".equals(getViewContext().getRequest().getMethod()))
-            {
-                String sql = "SELECT L.email, U.lastlogin, L.verification, U.displayname, U.firstname, U.lastname FROM core.logins L INNER JOIN core.principals P ON L.email = P.name INNER JOIN core.usersdata U ON P.userid = U.userid";
-                try (StashingResultsFactory factory = new StashingResultsFactory(()->new ResultsImpl(new SqlSelector(CoreSchema.getInstance().getScope(), sql).getResultSet())))
-                {
-                    Results results = factory.get();
-                    List<DisplayColumn> list = new ArrayList<>();
-                    for (String s : Arrays.asList("email", "displayname", "firstname", "lastname", "lastlogin", "verification"))
-                        list.add(new DataColumn(new BaseColumnInfo(s, JdbcType.valueOf(results.getMetaData().getColumnType(results.findColumn(s))))));
-                    ExcelWriter xl = new ExcelWriter(factory, list);
-                    xl.setFilenamePrefix("mailmerge");
-                    xl.setAutoSize(true);
-                    xl.renderWorkbook(getViewContext().getResponse());
-                }
-            }
-            return null;
-        }
-
-        @Override
-        public void addNavTrail(NavTree root)
-        {
-        }
-    }
-
     @RequiresPermission(ReadPermission.class)
     @MethodsAllowed({Method.POST, Method.DELETE})
     public class UserPropertyAction extends MutatingApiAction<SimpleApiJsonForm>
