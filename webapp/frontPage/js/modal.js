@@ -298,7 +298,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
               var newLocation = LABKEY.ActionURL.buildURL('cds', 'app.view', null, {
                 'change_password': true,
                 'message': params.message,
-                'email': $sign_in_email.val()
+                'userId': params.userId
               });
               window.location = newLocation;
               return;
@@ -429,7 +429,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
           return false;
         }
 
-        var emailVal = LABKEY.ActionURL.getParameter('email');
+        var userIdVal = LABKEY.ActionURL.getParameter('userId');
         var prevPassword = document.getElementById('prevPassword');
         $.ajax({
           url: LABKEY.ActionURL.buildURL("login", "changePasswordAPI.api"),
@@ -438,7 +438,7 @@ define(['jquery', 'magnific', 'util'], function($, magnific, util) {
             oldPassword: prevPassword.value,
             password: pw1.value,
             password2: pw2.value,
-            email: emailVal,
+            userId: userIdVal,
             'X-LABKEY-CSRF': LABKEY.CSRF
           },
           success: function() {
