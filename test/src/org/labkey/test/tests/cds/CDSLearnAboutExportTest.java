@@ -18,6 +18,8 @@ import org.labkey.test.pages.cds.LearnDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.util.cds.CDSHelper;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -109,7 +111,8 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         LearnGrid learnGrid = new LearnGrid(LearnTab.ANTIGENS, this);
         learnGrid.setSearch("HIV-1 D");
         assertEquals("Incorrect number of rows after antigen filter", 1, learnGrid.getRowCount());
-        File filteredData = clickExportExcel(LearnTab.ANTIGENS, null);
+        click(Locator.tagWithId("span", "learn-grid-export-button-id-btnIconEl"));
+        File filteredData = clickAndWaitForDownload(Locator.linkWithText("Excel (*.XLS)"));
         assertEquals("Antigen : Incorrect number of rows imported", 1, getRowCount(filteredData));
         assertEquals("Incorrect Antigen imported after filter", "HIV-1 D.99986.B12 [gx120.D7.avi]", getRowFromExcel(filteredData, 1).get(2)); //getting short name column data
 
@@ -117,7 +120,8 @@ public class CDSLearnAboutExportTest extends CDSReadOnlyTest
         learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
         learnGrid.setSearch("RED 1");
         assertEquals("Incorrect number of rows after study filter", 1, learnGrid.getRowCount());
-        filteredData = clickExportExcel(LearnTab.STUDIES, null);
+        click(Locator.tagWithId("span", "learn-grid-export-button-id-btnIconEl"));
+        filteredData = clickAndWaitForDownload(Locator.linkWithText("Excel (*.XLS)"));
         assertEquals("Incorrect number of rows imported", 1, getRowCount(filteredData));
         assertEquals("Incorrect study name", "RED 1", getRowFromExcel(filteredData, 1).get(2));
     }

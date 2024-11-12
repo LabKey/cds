@@ -574,7 +574,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
         waitForText("Heatmap on");
 
         log("Validate that there are bin squares in the plot.");
-        int squareCount = getElementCount(Locator.css("svg g.layer a.vis-bin-square"));
+        int squareCount = Locator.tagWithClass("a","vis-bin vis-bin-square").findElements(getDriver()).size();
         assertTrue("Expected over 2000 bin squares found: " + squareCount, squareCount > 2000);
 
         cds.ensureNoFilter();
