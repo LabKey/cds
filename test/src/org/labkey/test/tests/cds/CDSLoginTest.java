@@ -106,8 +106,8 @@ public class CDSLoginTest extends CDSReadOnlyTest
                 DbLoginUtils.PasswordExpiration.Never);
 
         log("Creating a user with password strength as Good");
-        _userHelper.createUser(CDS_LOGIN_TESTUSER);
-        SetPasswordForm.goToInitialPasswordForUser(this, CDS_LOGIN_TESTUSER)
+        int userId = _userHelper.createUser(CDS_LOGIN_TESTUSER).getUserId();
+        SetPasswordForm.goToInitialPasswordForUser(this, userId)
                 .setNewPassword(goodPwd)
                 .clickSubmit();
         log("Make the user as folder admin for CDS");
