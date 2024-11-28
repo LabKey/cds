@@ -1011,7 +1011,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
 
     private String[] getWelcomeLinks()
     {
-        String usrEmail = "", msgSubject = " : Welcome to the Demo Installation LabKey Server Web Site new user registration";
+        String msgSubject = " : Welcome to the Demo Installation LabKey Server Web Site new user registration";
         String[] urls = new String[_newUserAccounts.length];
 
         goToModule("Dumbster");
@@ -1021,8 +1021,8 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         for (int index = 0; index < _newUserAccounts.length; index++)
         {
             emailRecordTable.clickSubject(_newUserAccounts[index] + msgSubject);
-            usrEmail = _newUserAccounts[index].substring(0, _newUserAccounts[index].indexOf("@"));
-            urls[index] = getAttribute(Locator.css("a[href*='&email=" + usrEmail + "']"), "href");
+            String emailBody = emailRecordTable.getMessage(_newUserAccounts[index] + msgSubject).getBody();
+            urls[index] = emailBody.substring(emailBody.indexOf("http:"),emailBody.lastIndexOf("\n")); //Extracting the URL from email body.
         }
 
         return urls;
