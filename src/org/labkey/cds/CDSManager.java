@@ -18,6 +18,7 @@ package org.labkey.cds;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.labkey.api.data.Container;
 import org.labkey.api.data.ContainerManager;
 import org.labkey.api.data.CoreSchema;
@@ -53,7 +54,6 @@ import org.labkey.api.security.ValidEmail;
 import org.labkey.api.settings.AppProps;
 import org.labkey.api.util.ContainerUtil;
 import org.labkey.api.util.PageFlowUtil;
-import org.labkey.api.view.NotFoundException;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -353,13 +353,12 @@ public class CDSManager
         return PageFlowUtil.decode(mp.getEffectiveValue(container));
     }
 
-    public TableInfo getSiteUserTableInfo(User user)
+    @Nullable
+    public Domain getSiteUserDomain(User user)
     {
         UserSchema coreSchema = QueryService.get().getUserSchema(user, getUserTableContainer(), "core");
-        TableInfo tableInfo = coreSchema.getTable("SiteUsers");
-        if (tableInfo == null)
-            throw new NotFoundException("SiteUsers table not available. You don't have permission to the project.");
-        return tableInfo;
+        TableInfo userTable = coreSchema.getTable("SiteUsers");
+        return  userTable != null ? userTable.getDomain() : null;
     }
 
     private Container getUserTableContainer()
@@ -370,7 +369,7 @@ public class CDSManager
     public boolean isNeedSurvey(User user)
     {
         String needSurveyProp = "NeedSurvey";
-        Domain domain = getSiteUserTableInfo(user).getDomain();
+        Domain domain = getSiteUserDomain(user);
         if (domain == null)
             return false;
 
@@ -392,7 +391,7 @@ public class CDSManager
 
     public void setNeedSurvey(User user, boolean needSurvey) throws ValidEmail.InvalidEmailException, SQLException, BatchValidationException, InvalidKeyException, QueryUpdateServiceException, ValidationException
     {
-        Domain domain = getSiteUserTableInfo(user).getDomain();
+        Domain domain = getSiteUserDomain(user);
         if (domain == null)
             return;
 
@@ -408,7 +407,7 @@ public class CDSManager
         //TODO simplify code once "Issue 34721: UsersTable permission handling improvement" is fixed
         updateUserName(user, firstName, lastName);
 
-        Domain domain = getSiteUserTableInfo(user).getDomain();
+        Domain domain = getSiteUserDomain(user);
         if (domain == null)
             return;
 

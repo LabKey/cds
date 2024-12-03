@@ -741,7 +741,7 @@ public class CDSSecurityTest extends CDSReadOnlyTest
         log("Validate behavior with the deleted user.");
         getDriver().navigate().to(welcomeUrls[2]);
         handleCreateAccount(true);
-        waitForText("This email address is not associated with an account.");
+        waitForText("Verification failed. You may have already verified.");
 
         log("Validate behavior with the user who does not have permissions to CDS.");
         getDriver().navigate().to(welcomeUrls[1]);
