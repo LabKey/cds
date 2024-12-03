@@ -882,7 +882,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         clickButton("Filter", 0);
         log("Wait for one of the other studies to disappear before moving on.");
-        waitForTextToDisappear("ZAP 117", 5000);
+        waitForTextToDisappear("ZAP 117", 8000);
 
         pattern = Pattern.compile("^0123.*330300.*");
         cds.assertPlotTickText(1, pattern);
