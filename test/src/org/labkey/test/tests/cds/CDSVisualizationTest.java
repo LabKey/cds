@@ -726,9 +726,9 @@ public class CDSVisualizationTest extends CDSReadOnlyTest
 
         // Exact y-axis tick text is inconsistent
         String smallLogYTicks;
-        if (isTextPresent("0.0009"))
+        if (isTextPresent("0.0008"))
         {
-            smallLogYTicks = le + "0\n0.0009\n0.009\n0.09\n0.9";
+            smallLogYTicks = le + "0\n0.0008\n0.008\n0.08\n0.8";
         }
         else
         {

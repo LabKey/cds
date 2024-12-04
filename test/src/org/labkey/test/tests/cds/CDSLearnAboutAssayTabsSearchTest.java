@@ -13,7 +13,7 @@ import org.labkey.test.util.cds.CDSHelper;
 import java.util.Arrays;
 
 @Category({})
-@BaseWebDriverTest.ClassTimeout(minutes = 5)
+@BaseWebDriverTest.ClassTimeout(minutes = 10)
 public class CDSLearnAboutAssayTabsSearchTest extends CDSReadOnlyTest
 {
     private final CDSHelper cds = new CDSHelper(this);

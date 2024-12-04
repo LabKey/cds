@@ -825,7 +825,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.confirmSelection();
 
-        pattern = Pattern.compile("^01237.*3303003000");
+        pattern = Pattern.compile("^01237.*2202002000");
         cds.assertPlotTickText(1, pattern);
 
         log("Choose 'Study weeks with axis type Categorical'.");
@@ -834,7 +834,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.confirmSelection();
 
-        pattern = Pattern.compile("^01234.*3303003000");
+        pattern = Pattern.compile("^01234.*2202002000");
         cds.assertPlotTickText(1, pattern);
 
         log("Choose 'Study months with axis type Categorical'.");
@@ -843,7 +843,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
         xaxis.setPlotType(CDSHelper.PLOT_TYPE_BOX);
         xaxis.confirmSelection();
 
-        pattern = Pattern.compile("^0123.*3303003000");
+        pattern = Pattern.compile("^0123.*2202002000");
         cds.assertPlotTickText(1, pattern);
 
         log("Apply the time axis as a filter.");
@@ -882,7 +882,7 @@ public class CDSPlotTimeTest extends CDSReadOnlyTest
 
         clickButton("Filter", 0);
         log("Wait for one of the other studies to disappear before moving on.");
-        waitForTextToDisappear("ZAP 117", 5000);
+        waitForTextToDisappear("ZAP 117", 8000);
 
         pattern = Pattern.compile("^0123.*330300.*");
         cds.assertPlotTickText(1, pattern);

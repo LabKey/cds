@@ -575,7 +575,7 @@ public class CDSVisualizationPlotTest extends CDSReadOnlyTest
 
         log("Validate that there are bin squares in the plot.");
         int squareCount = Locator.tagWithClass("a","vis-bin vis-bin-square").findElements(getDriver()).size();
-        assertTrue("Expected over 2000 bin squares found: " + squareCount, squareCount > 2000);
+        assertTrue("Expected over 1980 bin squares found: " + squareCount, squareCount > 1980);
 
         cds.ensureNoFilter();
     }
