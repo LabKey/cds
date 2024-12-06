@@ -15,6 +15,7 @@
  */
 SELECT
     pd.publication_id,
+    pd.display_order,
     doc.*
 FROM cds.publicationDocument pd
     LEFT JOIN document doc ON pd.document_id = doc.document_id

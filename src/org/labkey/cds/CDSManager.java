@@ -200,7 +200,6 @@ public class CDSManager
                     "import_assay",
                     "import_studyrelationshiporder",
                     "import_site",
-                    "import_publicationDocument",
                     "import_publication",
                     "import_personnel",
                     "import_document",

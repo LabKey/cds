@@ -170,6 +170,7 @@ Ext.define('Connector.app.store.Publication', {
             }, this).map(function(doc) {
                 return {
                     publication_id: doc.publication_id,
+                    display_order : doc.display_order || 0,
                     document_id: doc.document_id,
                     label: doc.label,
                     fileName: doc.filename,
@@ -190,6 +191,13 @@ Ext.define('Connector.app.store.Publication', {
                 publicationMap[doc.publication_id] = publicationMap[doc.publication_id] || [];
                 publicationMap[doc.publication_id].push(doc);
             }, this);
+
+            // sort the publication docs according to display order (ascending)
+            Ext.Object.each(publicationMap, function(key, publications){
+                publications.sort(function(a, b){
+                   return a.display_order - b.display_order;
+               });
+            });
 
             var savedReports = [];
             for (var i=0; i < this.publicationReportsData.length; i++) {

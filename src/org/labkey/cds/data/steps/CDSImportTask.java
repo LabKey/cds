@@ -69,7 +69,7 @@ public class CDSImportTask extends ImportTask
         new CDSImportCopyConfig("import_StudyDocument", "StudyDocument"),
         new CDSImportCopyConfig("import_AssayDocument", "AssayDocument"),
         new CDSImportCopyConfig("import_StudyPublication", "StudyPublication"),
-        new CDSImportCopyConfig("import_PublicationDocument", "PublicationDocument"),
+        new CDSImportCopyConfig("PublicationDocument", "PublicationDocument"),
         new CDSImportCopyConfig("import_StudyReport", "StudyReport"),
         new CDSImportCopyConfig("import_StudyCuratedGroup", "StudyCuratedGroup"),
         new CDSImportCopyConfig("import_PublicationReport", "PublicationReport"),

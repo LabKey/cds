@@ -724,13 +724,6 @@
             <column columnName="container"/>
         </columns>
     </table>
-    <table tableName="import_publicationDocument" tableDbType="TABLE">
-        <columns>
-            <column columnName="publication_id"/>
-            <column columnName="document_id"/>
-            <column columnName="container"/>
-        </columns>
-    </table>
     <table tableName="document" tableDbType="TABLE">
         <columns>
             <column columnName="document_id"/>
@@ -1423,6 +1416,7 @@
             <column columnName="publication_id"/>
             <column columnName="document_id"/>
             <column columnName="container"/>
+            <column columnName="display_order"/>
         </columns>
     </table>
     <table tableName="import_studyReport" tableDbType="TABLE">

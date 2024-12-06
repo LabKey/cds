@@ -815,7 +815,7 @@ Ext4.define('Connector.cube.Configuration', {
                         type: 'publicationnonintegrateddata',
                         staticData: {
                             title: 'Publication data',
-                            instructions: 'Download files'
+                            instructions: 'Download individual files'
                         }
                     },{
                         type: 'interactivereports',
