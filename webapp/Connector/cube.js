@@ -818,6 +818,11 @@ Ext4.define('Connector.cube.Configuration', {
                             instructions: 'Download individual files'
                         }
                     },{
+                        type: 'publicationresources',
+                        staticData: {
+                            title: 'Other publication resources'
+                        }
+                    },{
                         type: 'interactivereports',
                         staticData: {
                             title: 'Interactive reports'

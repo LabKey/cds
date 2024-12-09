@@ -29,6 +29,7 @@ Ext.define('Connector.app.store.Publication', {
         this.publicationDocuments = undefined;
         this.publicationReportsData = undefined;
         this.publicationCuratedGroupData = undefined;
+        this.external_links = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
@@ -71,6 +72,13 @@ Ext.define('Connector.app.store.Publication', {
             success: this.onLoadPublicationCuratedGroup,
             scope: this
         });
+
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_publicationExternalLinks',
+            success: this.onLoadExternalLinks,
+            scope: this
+        });
     },
 
     onLoadPublications: function (data) {
@@ -103,6 +111,11 @@ Ext.define('Connector.app.store.Publication', {
         this._onLoadComplete();
     },
 
+    onLoadExternalLinks : function(externalLinks) {
+        this.external_links = externalLinks.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete : function() {
         if (Ext.isDefined(this.publicationData)
                 && Ext.isDefined(this.studyData)
@@ -111,6 +124,7 @@ Ext.define('Connector.app.store.Publication', {
                 && Ext.isDefined(this.publicationDocuments)
                 && Ext.isDefined(this.publicationReportsData)
                 && Ext.isDefined(this.publicationCuratedGroupData)
+                && Ext.isDefined(this.external_links)
                 && this.isLoadComplete()) {
 
             this.publicationData.sort(function(row1, row2) {
@@ -199,6 +213,13 @@ Ext.define('Connector.app.store.Publication', {
                });
             });
 
+            // map any external links to each publication
+            var externalLinkMap = {};
+            Ext.each(this.external_links, function (link) {
+                externalLinkMap[link.protocol_id] = externalLinkMap[link.protocol_id] || [];
+                externalLinkMap[link.protocol_id].push(link);
+            }, this);
+
             var savedReports = [];
             for (var i=0; i < this.publicationReportsData.length; i++) {
                 var id = this.publicationReportsData[i].cds_report_id.toString();
@@ -250,6 +271,9 @@ Ext.define('Connector.app.store.Publication', {
                 publication.publication_data = publicationMap[publication.publication_id] || [];
                 publication.publication_data_count = publication.publication_data.length;
                 publication.data_availability = publication.publication_data.length > 0;
+
+                // external links
+                publication.external_links = externalLinkMap[publication.publication_id] || [];
 
                 //saved reports
                 var savedRep = savedReports.filter(function (value) {

@@ -200,6 +200,7 @@ public class CDSManager
                     "import_assay",
                     "import_studyrelationshiporder",
                     "import_site",
+                    "import_publicationDocument",
                     "import_publication",
                     "import_personnel",
                     "import_document",
@@ -233,7 +234,10 @@ public class CDSManager
                     "alignment_run",
                     "allele_sequence",
                     "antibody_class",
-                    "header_source"
+                    "header_source",
+
+                    "external_link_map",
+                    "external_link"
             })
             {
                 TableInfo t = dbSchema.getTable(s);

@@ -69,7 +69,7 @@ public class CDSImportTask extends ImportTask
         new CDSImportCopyConfig("import_StudyDocument", "StudyDocument"),
         new CDSImportCopyConfig("import_AssayDocument", "AssayDocument"),
         new CDSImportCopyConfig("import_StudyPublication", "StudyPublication"),
-        new CDSImportCopyConfig("PublicationDocument", "PublicationDocument"),
+        new CDSImportCopyConfig("import_PublicationDocument", "PublicationDocument"),
         new CDSImportCopyConfig("import_StudyReport", "StudyReport"),
         new CDSImportCopyConfig("import_StudyCuratedGroup", "StudyCuratedGroup"),
         new CDSImportCopyConfig("import_PublicationReport", "PublicationReport"),
@@ -98,6 +98,10 @@ public class CDSImportTask extends ImportTask
         new CDSImportCopyConfig("import_Virus_Metadata_All", "Virus_Metadata_All"),
         new CDSImportCopyConfig("import_Virus_Lab_Id", "Virus_Lab_Id"),
         new CDSImportCopyConfig("import_Virus_Synonym", "Virus_Synonym"),
+
+        // External repository links
+        new CDSImportCopyConfig("external_link"),
+        new CDSImportCopyConfig("external_link_map")
     };
 
     @Override

@@ -46,7 +46,12 @@ Ext.define('Connector.view.module.StudyResources', {
                     'View research <a href="http://www.specimenrepository.org/RepositorySite/search/replaySearch?study={specimen_repository_label}" target="_blank">specimens in repository <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
                 '</div>',
             '</tpl>',
-        '</tpl>'
+            '<tpl for="external_links">',
+                '<div class="item-row">',
+                    'Search for study data in <a href="{link_url}" target="_blank">{link_label:htmlEncode} <img src="' + LABKEY.contextPath + '/Connector/images/outsidelink.png' + '"/></a><br/>',
+                '</div>',
+            '</tpl>',
+            '</tpl>'
     ),
     initComponent : function() {
         var data = this.initialConfig.data.model.data;

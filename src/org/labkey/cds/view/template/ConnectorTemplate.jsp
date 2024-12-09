@@ -356,6 +356,7 @@
             srcPath + "/app/view/module/StudyResources.js",
             srcPath + "/app/view/module/MabDetails.js",
             srcPath + "/app/view/module/PublicationDetails.js",
+            srcPath + "/app/view/module/PublicationResources.js",
             srcPath + "/app/view/module/ProductHeader.js",
             srcPath + "/app/view/module/ProductOtherProducts.js",
             srcPath + "/app/view/module/StudyHeader.js",
