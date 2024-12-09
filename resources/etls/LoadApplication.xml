@@ -212,7 +212,8 @@
         <transform id="PopulatePublicationDocument" type="org.labkey.di.pipeline.TransformTask">
             <source schemaName="cds" queryName="import_publicationDocument" />
             <destination schemaName="cds" queryName="publicationDocument" targetOption="truncate" />
-        </transform>        <transform id="PopulateStudyPublication" type="TaskrefTransformStep">
+        </transform>
+        <transform id="PopulateStudyPublication" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.ContainerSensitivePopulateTask">
                 <settings>
                     <setting name="sourceSchema" value="cds"/>
