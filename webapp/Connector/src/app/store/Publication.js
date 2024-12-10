@@ -303,6 +303,7 @@ Ext.define('Connector.app.store.Publication', {
             this.publicationReportsData = undefined;
             this.savedReportsData = [];
             this.publicationCuratedGroupData = undefined;
+            this.external_links = [];
 
             this.loadRawData(publications);
             this.fireEvent('dataloaded');
