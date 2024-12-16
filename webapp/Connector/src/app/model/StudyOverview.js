@@ -123,6 +123,7 @@ Ext.define('Connector.app.model.StudyOverview', {
         {name: 'interactive_reports', convert : Connector.model.Filter.asArray},
         {name: 'curated_groups', convert : Connector.model.Filter.asArray},
         {name: 'data_types_available', convert : Connector.model.Filter.asArray},
-        {name: 'data_available'}
+        {name: 'data_available'},
+        {name: 'external_links', convert : Connector.model.Filter.asArray}
     ]
 });

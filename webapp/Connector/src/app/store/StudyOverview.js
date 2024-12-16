@@ -35,12 +35,16 @@ Ext.define('Connector.app.store.StudyOverview', {
         this.assayIdentifiers = undefined;
         this.studyReportsData = undefined;
         this.studyCuratedGroupData = undefined;
+        this.external_links = undefined;
 
         this.loadAccessibleStudies(this._onLoadComplete, this); // populate this.accessibleStudies
 
         LABKEY.Query.selectRows({
             schemaName: 'cds.metadata',
             queryName: 'study',
+            filterArray: [
+                LABKEY.Filter.create('study_name', id, LABKEY.Filter.Types.EQUALS)
+            ],
             success: this.onLoadStudies,
             scope: this
         });
@@ -135,6 +139,15 @@ Ext.define('Connector.app.store.StudyOverview', {
             success: this.onNILoadDocuments,
             scope: this
         });
+        LABKEY.Query.selectRows({
+            schemaName: 'cds',
+            queryName: 'learn_studyExternalLinks',
+            filterArray: [
+                LABKEY.Filter.create('protocol_id', id, LABKEY.Filter.Types.EQUALS)
+            ],
+            success: this.onLoadStudyExternalLinks,
+            scope: this
+        });
     },
 
     onLoadStudies : function(studyData) {
@@ -199,6 +212,11 @@ Ext.define('Connector.app.store.StudyOverview', {
         this._onLoadComplete();
     },
 
+    onLoadStudyExternalLinks : function(externalLinks) {
+        this.external_links = externalLinks.rows;
+        this._onLoadComplete();
+    },
+
     _onLoadComplete: function () {
         if (Ext.isDefined(this.studyData)
                 && Ext.isDefined(this.productData)
@@ -213,6 +231,7 @@ Ext.define('Connector.app.store.StudyOverview', {
                 && Ext.isDefined(this.assayIdentifiers)
                 && Ext.isDefined(this.studyReportsData)
                 && Ext.isDefined(this.studyCuratedGroupData)
+                && Ext.isDefined(this.external_links)
                 && this.isLoadComplete()) {
             var studies = [], products, productNames, productClasses;
             var relationshipOrderList = this.relationshipOrderData.map(function(relOrder) {
@@ -544,12 +563,10 @@ Ext.define('Connector.app.store.StudyOverview', {
                 study.data_types_available = this.getDataTypesAvailable(study);
                 study.data_available = (study.assays_added_count > 0 || study.ni_assays_added_count > 0 || study.pub_available_data_count > 0) ? 'Data added' : 'Data not added';
 
+                // additional data repositories
+                study.external_links = this.external_links;
                 studies.push(study);
             }, this);
-
-            studies.sort(function(studyA, studyB) {
-                return Connector.model.Filter.sorters.natural(studyA.label, studyB.label);
-            });
 
             this.studyData = undefined;
             this.assayData = undefined;
@@ -563,6 +580,7 @@ Ext.define('Connector.app.store.StudyOverview', {
             this.studyReportsData = undefined;
             this.savedReportsData = [];
             this.studyCuratedGroupData = undefined;
+            this.external_links = [];
 
             this.loadRawData(studies);
             this.dataLoaded = true;

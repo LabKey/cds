@@ -729,6 +729,7 @@
             <column columnName="publication_id"/>
             <column columnName="document_id"/>
             <column columnName="container"/>
+            <column columnName="display_order"/>
         </columns>
     </table>
     <table tableName="document" tableDbType="TABLE">
@@ -1423,6 +1424,7 @@
             <column columnName="publication_id"/>
             <column columnName="document_id"/>
             <column columnName="container"/>
+            <column columnName="display_order"/>
         </columns>
     </table>
     <table tableName="import_studyReport" tableDbType="TABLE">
@@ -2264,6 +2266,25 @@
         <columns>
             <column columnName="structure_id"/>
             <column columnName="mab_id"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="external_link" tableDbType="TABLE">
+        <columns>
+            <column columnName="cds_link_id"/>
+            <column columnName="link_label"/>
+            <column columnName="link_url"/>
+            <column columnName="link_type"/>
+            <column columnName="link_description"/>
+            <column columnName="container"/>
+        </columns>
+    </table>
+    <table tableName="external_link_map" tableDbType="TABLE">
+        <columns>
+            <column columnName="row_id"/>
+            <column columnName="cds_link_id"/>
+            <column columnName="protocol_id"/>
+            <column columnName="type"/>
             <column columnName="container"/>
         </columns>
     </table>

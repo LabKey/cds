@@ -234,7 +234,10 @@ public class CDSManager
                     "alignment_run",
                     "allele_sequence",
                     "antibody_class",
-                    "header_source"
+                    "header_source",
+
+                    "external_link_map",
+                    "external_link"
             })
             {
                 TableInfo t = dbSchema.getTable(s);
