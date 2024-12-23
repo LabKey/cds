@@ -131,6 +131,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String[] lockedParts, unlockedParts;
 
         LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        sleep(CDSHelper.CDS_WAIT_LEARN);
         returnedItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
         List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(learnGrid.getGrid());
 
