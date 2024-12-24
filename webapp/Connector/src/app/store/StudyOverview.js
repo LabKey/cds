@@ -42,9 +42,6 @@ Ext.define('Connector.app.store.StudyOverview', {
         LABKEY.Query.selectRows({
             schemaName: 'cds.metadata',
             queryName: 'study',
-            filterArray: [
-                LABKEY.Filter.create('study_name', id, LABKEY.Filter.Types.EQUALS)
-            ],
             success: this.onLoadStudies,
             scope: this
         });
@@ -406,6 +403,9 @@ Ext.define('Connector.app.store.StudyOverview', {
                     return Connector.model.Filter.sorters.natural(relA.rel_prot, relB.rel_prot);
                 });
 
+                var external_links = this.external_links.filter(function(link) {
+                    return link.protocol_id === study.study_name;
+                });
 
                 var mabs = this.mabMixData.filter(function(mab) {
                     return mab.prot === study.study_name;
@@ -564,7 +564,7 @@ Ext.define('Connector.app.store.StudyOverview', {
                 study.data_available = (study.assays_added_count > 0 || study.ni_assays_added_count > 0 || study.pub_available_data_count > 0) ? 'Data added' : 'Data not added';
 
                 // additional data repositories
-                study.external_links = this.external_links;
+                study.external_links = external_links;
                 studies.push(study);
             }, this);
 
