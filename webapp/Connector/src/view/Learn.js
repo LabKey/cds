@@ -514,6 +514,9 @@ Ext.define('Connector.view.Learn', {
             }
 
             if (id || !this.dimensionDataLoaded[dimensionName]) {
+                if (this.isQueryParamId(id))
+                    id = undefined;
+
                 store.on('load', function() {
                     this.dimensionDataLoaded[dimensionName] = true;
                     this.sortAndFilterStoreDelayed(store);
@@ -661,9 +664,15 @@ Ext.define('Connector.view.Learn', {
         }
     },
 
+    // returns if the id is a query parameter
+    isQueryParamId : function(id) {
+        let delimiter = Connector.getService('Learn').URL_DELIMITER;
+        return (Ext.isString(id) && id.indexOf(delimiter) !== -1);
+    },
+
     resolveModel : function(store, id) {
-        var delimiter = Connector.getService('Learn').URL_DELIMITER;
-        if (Ext.isString(id) && id.indexOf(delimiter) !== -1) {
+        if (this.isQueryParamId(id)) {
+            let delimiter = Connector.getService('Learn').URL_DELIMITER;
             var _id = id.split(delimiter),
                     prop = _id[0],
                     val = Ext.isNumber(parseInt(_id[1])) ? parseInt(_id[1]) : _id[1],
