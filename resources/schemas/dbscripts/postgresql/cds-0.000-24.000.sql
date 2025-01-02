@@ -2372,3 +2372,405 @@ ALTER TABLE cds.studyReport ADD COLUMN rowId SERIAL;
 ALTER TABLE cds.studyReport ADD CONSTRAINT PK_CDS_STUDY_REPORT PRIMARY KEY (rowId);
 
 ALTER TABLE cds.studyReport ADD CONSTRAINT UQ_CDS_STUDY_REPORT UNIQUE (prot, cds_report_id, container, cds_report_link, cds_report_label);
+
+CREATE TABLE cds.import_assay_combined_antigen_metadata
+(
+    antigen_cds_id VARCHAR(250) NOT NULL,
+    antigen_full_name VARCHAR(250),
+    antigen_short_name VARCHAR(250),
+    antigen_plot_label VARCHAR(250),
+    antigen_name_other VARCHAR(250),
+    antigen_dna_construct INTEGER,
+    antigen_category VARCHAR(250),
+    antigen_type_component VARCHAR(250),
+    antigen_type_region VARCHAR(250),
+    antigen_type_scaffold VARCHAR(250),
+    antigen_type_modifiers VARCHAR(250),
+    antigen_type_tags VARCHAR(250),
+    antigen_type_virus_type VARCHAR(250),
+    antigen_type_backbone VARCHAR(250),
+    antigen_type_reporter_molecule VARCHAR(250),
+    antigen_type_differentiate VARCHAR(250),
+    antigen_type_control VARCHAR(250),
+    isolate_name_component VARCHAR(250),
+    isolate_species VARCHAR(250),
+    isolate_donor_id VARCHAR(250),
+    isolate_differentiate VARCHAR(250),
+    isolate_clade VARCHAR(250),
+    isolate_clone VARCHAR(250),
+    isolate_mutations VARCHAR(250),
+    isolate_neut_tier VARCHAR(250),
+    isolate_clone_pi VARCHAR(250),
+    isolate_country_origin VARCHAR(250),
+    isolate_year_isolated INTEGER,
+    isolate_fiebig_stage VARCHAR(250),
+    antigen_accession_num INTEGER,
+    antigen_amino_acid_sequence VARCHAR(250),
+    production_component VARCHAR(250),
+    isolate_host_cell VARCHAR(250),
+    antigen_purification VARCHAR(250),
+    antigen_reagents VARCHAR(250),
+    antigen_manufacturer VARCHAR(250),
+    antigen_codon_optimize VARCHAR(250),
+    antigen_source VARCHAR(250),
+    isolate_transfection_method VARCHAR(250),
+    isolate_TF_status VARCHAR(250),
+    isolate_PV_backbone_system VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_import_assay_combined_antigen_metadata PRIMARY KEY (antigen_cds_id, container)
+);
+
+CREATE TABLE cds.assay_combined_antigen_metadata
+(
+    antigen_cds_id VARCHAR(250) NOT NULL,
+    antigen_full_name VARCHAR(250),
+    antigen_short_name VARCHAR(250),
+    antigen_plot_label VARCHAR(250),
+    antigen_name_other VARCHAR(250),
+    antigen_dna_construct INTEGER,
+    antigen_category VARCHAR(250),
+    antigen_type_component VARCHAR(250),
+    antigen_type_region VARCHAR(250),
+    antigen_type_scaffold VARCHAR(250),
+    antigen_type_modifiers VARCHAR(250),
+    antigen_type_tags VARCHAR(250),
+    antigen_type_virus_type VARCHAR(250),
+    antigen_type_backbone VARCHAR(250),
+    antigen_type_reporter_molecule VARCHAR(250),
+    antigen_type_differentiate VARCHAR(250),
+    antigen_type_control VARCHAR(250),
+    isolate_name_component VARCHAR(250),
+    isolate_species VARCHAR(250),
+    isolate_donor_id VARCHAR(250),
+    isolate_differentiate VARCHAR(250),
+    isolate_clade VARCHAR(250),
+    isolate_clone VARCHAR(250),
+    isolate_mutations VARCHAR(250),
+    isolate_neut_tier VARCHAR(250),
+    isolate_clone_pi VARCHAR(250),
+    isolate_country_origin VARCHAR(250),
+    isolate_year_isolated INTEGER,
+    isolate_fiebig_stage VARCHAR(250),
+    antigen_accession_num INTEGER,
+    antigen_amino_acid_sequence VARCHAR(250),
+    production_component VARCHAR(250),
+    isolate_host_cell VARCHAR(250),
+    antigen_purification VARCHAR(250),
+    antigen_reagents VARCHAR(250),
+    antigen_manufacturer VARCHAR(250),
+    antigen_codon_optimize VARCHAR(250),
+    antigen_source VARCHAR(250),
+    isolate_transfection_method VARCHAR(250),
+    isolate_TF_status VARCHAR(250),
+    isolate_PV_backbone_system VARCHAR(250),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_assay_combined_antigen_metadata PRIMARY KEY (antigen_cds_id, container)
+);
+
+CREATE TABLE cds.sequence
+(
+    sequence_id VARCHAR(100) NOT NULL,
+    sequence_nt VARCHAR(10000),
+    source VARCHAR(100),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_sequence PRIMARY KEY (sequence_id)
+);
+
+CREATE TABLE cds.run_log
+(
+    run_number VARCHAR(100) NOT NULL,
+    run_application VARCHAR(10),
+    run_information VARCHAR(10000),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_run_log PRIMARY KEY (run_number)
+);
+
+CREATE TABLE cds.allele_sequence
+(
+    allele VARCHAR(100) NOT NULL,
+    allele_sequence_nt VARCHAR(1000),
+    release_date TIMESTAMP,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_allele_sequence PRIMARY KEY (allele)
+);
+
+CREATE TABLE cds.sequence_headers
+(
+    sequence_header_id SERIAL,
+    header VARCHAR(1000),
+    sequence_id VARCHAR(100),
+    source VARCHAR(100),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_sequence_headers PRIMARY KEY (sequence_header_id),
+    CONSTRAINT FK_cds_sequence_headers_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id)
+);
+
+CREATE INDEX IX_cds_sequence_headers_sequence_id ON cds.sequence_headers(sequence_id);
+
+CREATE TABLE cds.sequence_germline
+(
+    sequence_germline_id SERIAL,
+    allele VARCHAR(100),
+    sequence_id VARCHAR(100),
+    percent_identity NUMERIC(15,4),
+    matches INT,
+    alignment_length INT,
+    score NUMERIC(15,4),
+    run_number VARCHAR(100),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_sequence_germline PRIMARY KEY (sequence_germline_id),
+    CONSTRAINT FK_cds_sequence_germline_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id)
+);
+
+CREATE INDEX IX_cds_sequence_germline_sequence_id ON cds.sequence_germline(sequence_id);
+
+CREATE TABLE cds.antibody_sequence
+(
+    mab_id VARCHAR(100) NOT NULL,
+    chain VARCHAR(10) NOT NULL,
+    sequence_id VARCHAR(100),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_antibody_sequence PRIMARY KEY (mab_id, chain),
+    CONSTRAINT FK_cds_antibody_sequence_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id)
+);
+
+CREATE INDEX IX_cds_antibody_sequence_sequence_id ON cds.antibody_sequence(sequence_id);
+
+CREATE TABLE cds.alignment
+(
+    alignment_id SERIAL,
+    sequence_id VARCHAR(100),
+    locus VARCHAR(10),
+    stop_codon VARCHAR(1),
+    vj_in_frame VARCHAR(1),
+    productive VARCHAR(1),
+    rev_comp VARCHAR(1),
+    complete_vdj VARCHAR(1),
+    v_call VARCHAR(25),
+    d_call VARCHAR(25),
+    j_call VARCHAR(25),
+    sequence_alignment VARCHAR(1000),
+    germline_alignment VARCHAR(1000),
+    sequence_alignment_aa VARCHAR(1000),
+    germline_alignment_aa VARCHAR(1000),
+    v_alignment_start INT,
+    v_alignment_end INT,
+    d_alignment_start INT,
+    d_alignment_end INT,
+    j_alignment_start INT,
+    j_alignment_end INT,
+    v_sequence_alignment VARCHAR(1000),
+    v_sequence_alignment_aa VARCHAR(1000),
+    v_germline_alignment VARCHAR(1000),
+    v_germline_alignment_aa VARCHAR(1000),
+    d_sequence_alignment VARCHAR(100),
+    d_sequence_alignment_aa VARCHAR(100),
+    d_germline_alignment VARCHAR(100),
+    d_germline_alignment_aa VARCHAR(100),
+    j_sequence_alignment VARCHAR(100),
+    j_sequence_alignment_aa VARCHAR(100),
+    j_germline_alignment VARCHAR(100),
+    j_germline_alignment_aa VARCHAR(100),
+    fwr1 VARCHAR(100),
+    fwr1_aa VARCHAR(100),
+    cdr1 VARCHAR(100),
+    cdr1_aa VARCHAR(100),
+    fwr2 VARCHAR(100),
+    fwr2_aa VARCHAR(100),
+    cdr2 VARCHAR(100),
+    cdr2_aa VARCHAR(100),
+    fwr3 VARCHAR(1000),
+    fwr3_aa VARCHAR(100),
+    fwr4 VARCHAR(100),
+    fwr4_aa VARCHAR(100),
+    cdr3 VARCHAR(100),
+    cdr3_aa VARCHAR(100),
+    junction VARCHAR(100),
+    junction_length INT,
+    junction_aa VARCHAR(100),
+    junction_aa_length INT,
+    v_score NUMERIC(15,4),
+    d_score NUMERIC(15,4),
+    j_score NUMERIC(15,4),
+    v_cigar VARCHAR(1000),
+    d_cigar VARCHAR(1000),
+    j_cigar VARCHAR(1000),
+    v_support NUMERIC(15,4),
+    d_support NUMERIC(15,4),
+    j_support NUMERIC(15,4),
+    v_identity NUMERIC(15,4),
+    d_identity NUMERIC(15,4),
+    j_identity NUMERIC(15,4),
+    v_sequence_start INT,
+    v_sequence_end INT,
+    v_germline_start INT,
+    v_germline_end INT,
+    d_sequence_start INT,
+    d_sequence_end INT,
+    d_germline_start INT,
+    d_germline_end INT,
+    j_sequence_start INT,
+    j_sequence_end INT,
+    j_germline_start INT,
+    j_germline_end INT,
+    fwr1_start INT,
+    fwr1_end INT,
+    cdr1_start INT,
+    cdr1_end INT,
+    fwr2_start INT,
+    fwr2_end INT,
+    cdr2_start INT,
+    cdr2_end INT,
+    fwr3_start INT,
+    fwr3_end INT,
+    fwr4_start INT,
+    fwr4_end INT,
+    cdr3_start INT,
+    cdr3_end INT,
+    np1 VARCHAR(100),
+    np1_length INT,
+    np2 VARCHAR(100),
+    np2_length INT,
+    run_number VARCHAR(100),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_alignment_alignment_id PRIMARY KEY (alignment_id),
+    CONSTRAINT FK_cds_alignment_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id)
+);
+
+CREATE INDEX IX_cds_alignment_sequence_id ON cds.alignment(sequence_id);
+
+ALTER TABLE cds.sequence_headers RENAME TO sequence_header;
+
+DROP TABLE cds.run_log;
+
+CREATE TABLE cds.run_log
+(
+    run_application VARCHAR(10) NOT NULL,
+    run_information VARCHAR(10000),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_run_log PRIMARY KEY (run_application)
+);
+
+ALTER TABLE cds.sequence DROP COLUMN source;
+
+ALTER TABLE cds.sequence_germline DROP COLUMN run_number;
+ALTER TABLE cds.alignment DROP COLUMN run_number;
+
+ALTER TABLE cds.sequence_germline ADD COLUMN run_application VARCHAR(10);
+ALTER TABLE cds.alignment ADD COLUMN run_application VARCHAR(10);
+
+CREATE TABLE cds.antibody_class
+(
+    mab_class_id VARCHAR(30) NOT NULL,
+    mab_class_name VARCHAR(50),
+    description TEXT,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_antibody_class PRIMARY KEY (mab_class_id)
+);
+
+ALTER TABLE cds.import_MAbMetadata ADD COLUMN mab_class_id VARCHAR(30);
+ALTER TABLE cds.MAbMetadata ADD COLUMN mab_class_id VARCHAR(30);
+
+ALTER TABLE cds.alignment
+    ALTER COLUMN cdr3 TYPE VARCHAR(200),
+    ALTER junction TYPE VARCHAR(200),
+    ALTER COLUMN np1 TYPE VARCHAR(200),
+    ALTER COLUMN np2 TYPE VARCHAR(200);
+
+CREATE TABLE cds.preferred_allele
+(
+    rowid SERIAL,
+    sequence_id VARCHAR(100),
+    allele VARCHAR(100),
+    status BOOLEAN,
+    note TEXT,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_preferred_allele PRIMARY KEY (rowid),
+    CONSTRAINT FK_cds_preferred_allele_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence(sequence_id),
+    CONSTRAINT FK_cds_preferred_allele FOREIGN KEY (allele) REFERENCES cds.allele_sequence(allele)
+);
+
+CREATE INDEX IX_cds_preferred_allele_sequence_id ON cds.preferred_allele(sequence_id);
+CREATE INDEX IX_cds_preferred_allele ON cds.preferred_allele(allele);
+
+ALTER TABLE cds.sequence_header RENAME COLUMN source TO source_id;
+ALTER TABLE cds.antibody_sequence ADD COLUMN lineage BOOLEAN;
+ALTER TABLE cds.antibody_sequence DROP CONSTRAINT PK_cds_antibody_sequence;
+ALTER TABLE cds.antibody_sequence ADD CONSTRAINT PK_cds_antibody_sequence PRIMARY KEY (mab_id, sequence_id);
+
+DROP TABLE cds.run_log;
+CREATE TABLE cds.alignment_run
+(
+    run_application VARCHAR(10) NOT NULL,
+    run_information VARCHAR(10000),
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_alignment_run PRIMARY KEY (run_application)
+);
+
+CREATE TABLE cds.header_source
+(
+    source_id VARCHAR(30),
+    source VARCHAR(1000),
+    notes TEXT,
+    container ENTITYID NOT NULL,
+
+    CONSTRAINT PK_cds_header_source_id PRIMARY KEY (source_id)
+);
+
+ALTER TABLE cds.antibody_sequence DROP COLUMN chain;
+ALTER TABLE cds.header_source RENAME COLUMN notes TO note;
+
+TRUNCATE TABLE cds.MAbMix CASCADE;
+TRUNCATE TABLE cds.mabmetadata CASCADE;
+TRUNCATE TABLE cds.sequence_germline CASCADE;
+TRUNCATE TABLE cds.allele_sequence CASCADE;
+TRUNCATE TABLE cds.alignment CASCADE;
+TRUNCATE TABLE cds.alignment_run CASCADE;
+TRUNCATE TABLE cds.sequence_header CASCADE;
+TRUNCATE TABLE cds.header_source CASCADE;
+TRUNCATE TABLE cds.antibody_sequence CASCADE;
+TRUNCATE TABLE cds.antibody_class CASCADE;
+TRUNCATE TABLE cds.sequence CASCADE;
+
+ALTER TABLE cds.sequence_germline ADD CONSTRAINT FK_cds_sequence_germline_allele FOREIGN KEY (allele) REFERENCES cds.allele_sequence (allele);
+CREATE INDEX IX_cds_sequence_germline_allele ON cds.sequence_germline (allele);
+
+ALTER TABLE cds.alignment ADD CONSTRAINT FK_cds_alignment_v_call FOREIGN KEY (v_call) REFERENCES cds.allele_sequence (allele);
+CREATE INDEX IX_cds_alignment_v_call ON cds.alignment (v_call);
+
+ALTER TABLE cds.alignment ADD CONSTRAINT FK_cds_alignment_d_call FOREIGN KEY (d_call) REFERENCES cds.allele_sequence (allele);
+CREATE INDEX IX_cds_alignment_d_call ON cds.alignment (d_call);
+
+ALTER TABLE cds.alignment ADD CONSTRAINT FK_cds_alignment_j_call FOREIGN KEY (j_call) REFERENCES cds.allele_sequence (allele);
+CREATE INDEX IX_cds_alignment_j_call ON cds.alignment (j_call);
+
+ALTER TABLE cds.sequence_germline ADD CONSTRAINT FK_cds_sequence_germline_run_application FOREIGN KEY (run_application) REFERENCES cds.alignment_run (run_application);
+CREATE INDEX IX_cds_sequence_germline_run_application ON cds.sequence_germline (run_application);
+
+ALTER TABLE cds.alignment ADD CONSTRAINT FK_cds_alignment_run_application FOREIGN KEY (run_application) REFERENCES cds.alignment_run (run_application);
+CREATE INDEX IX_cds_alignment_run_application ON cds.alignment (run_application);
+
+ALTER TABLE cds.sequence_header ADD CONSTRAINT FK_cds_sequence_header_source_id FOREIGN KEY (source_id) REFERENCES cds.header_source (source_id);
+CREATE INDEX IX_cds_sequence_header_source_id ON cds.sequence_header(source_id);
+
+ALTER TABLE cds.antibody_sequence ADD CONSTRAINT FK_cds_antibody_sequence_mab_id FOREIGN KEY (container, mab_id) REFERENCES cds.mabmetadata (container, mab_id);
+CREATE INDEX IX_cds_antibody_sequence_mab_id ON cds.antibody_sequence (container, mab_id);
+
+ALTER TABLE cds.mabmetadata ADD CONSTRAINT FK_cds_mabmetadata_mab_class_id FOREIGN KEY (mab_class_id) REFERENCES cds.antibody_class (mab_class_id);
+CREATE INDEX IX_cds_mabmetadata_mab_class_id ON cds.mabmetadata (mab_class_id);
+
+ALTER TABLE cds.import_MAbMix DROP CONSTRAINT import_MAbMix_mab_id_fkey;
+DROP TABLE cds.import_mabmetadata;
