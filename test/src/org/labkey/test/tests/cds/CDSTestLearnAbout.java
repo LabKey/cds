@@ -131,6 +131,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         String[] lockedParts, unlockedParts;
 
         LearnGrid learnGrid = cds.viewLearnAboutPage(LearnTab.STUDIES);
+        sleep(CDSHelper.CDS_WAIT_LEARN);
         returnedItems = XPATH_RESULT_ROW_TITLE.findElements(learnGrid.getGrid());
         List<WebElement> freeColItems = XPATH_RESULT_ROW_DATA.findElements(learnGrid.getGrid());
 
@@ -1992,7 +1993,7 @@ public class CDSTestLearnAbout extends CDSReadOnlyTest
         pdfFileName = pdfFileName.toLowerCase();
 
         cds.viewLearnAboutPage(LearnTab.STUDIES);
-
+        sleep(CDSHelper.CDS_WAIT_LEARN);
         log("Validate that study " + studyName + " has a grant document and is of type pdf.");
         goToDetail(studyName, false);
         waitForText(STUDY_INFO_TEXT_TRIGGER);
