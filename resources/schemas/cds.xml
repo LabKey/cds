@@ -2241,9 +2241,9 @@
             <column columnName="container"/>
         </columns>
     </table>
-    <table tableName="pab_sequence" tableDbType="TABLE">
+    <table tableName="bcr_sequence" tableDbType="TABLE">
         <columns>
-            <column columnName="pab_id"/>
+            <column columnName="bcr_study_seq_id"/>
             <column columnName="sequence_id"/>
             <column columnName="container"/>
         </columns>

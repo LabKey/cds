@@ -31,7 +31,7 @@ public class CDSImportTask extends ImportTask
         new CDSImportCopyConfig("sequence_germline"),
         new CDSImportCopyConfig("preferred_allele"),
         new CDSImportCopyConfig("antibody_class"),
-        new CDSImportCopyConfig("pab_sequence"),
+        new CDSImportCopyConfig("bcr_sequence"),
         new CDSImportCopyConfig("pab_sequence_study"),
 
             // Core Tables
