@@ -30,6 +30,7 @@ import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.LearnGrid.LearnTab;
 import org.labkey.test.util.ApiPermissionsHelper;
+import org.labkey.test.util.ArtifactCollector;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
 import org.labkey.test.util.LabKeyExpectedConditions;
@@ -2026,8 +2027,17 @@ public class CDSHelper
         _test.beginAt(queryUrl);
         if (!skipViewData)
         {
-            _test.waitForElement(Locator.linkWithText("view data"));
-            _test.click(Locator.linkWithText("view data"));
+            try
+            {
+                _test.waitForElement(Locator.linkWithText("view data"));
+                _test.clickAndWait(Locator.linkWithText("view data"));
+            }
+            catch (NoSuchElementException threadDump)
+            {
+                // TODO: remove after debugging
+                ArtifactCollector.dumpThreads();
+                throw threadDump;
+            }
         }
 
         // Check to see if the report already exists. If it does, then just ignore this test.
