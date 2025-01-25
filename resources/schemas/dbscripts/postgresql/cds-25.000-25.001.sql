@@ -10,3 +10,10 @@ ALTER TABLE cds.pab_sequence RENAME TO bcr_sequence;
 ALTER TABLE cds.bcr_sequence ADD CONSTRAINT PK_bcr_sequence PRIMARY KEY (bcr_study_seq_id, sequence_id, container);
 ALTER TABLE cds.bcr_sequence ADD CONSTRAINT FK_bcr_sequence_sequence_id FOREIGN KEY (sequence_id) REFERENCES cds.sequence (sequence_id);
 CREATE INDEX IX_bcr_sequence_sequence_id ON cds.bcr_sequence(sequence_id);
+
+-- rename cds.pab_sequence_study
+ALTER TABLE cds.pab_sequence_study DROP CONSTRAINT UQ_prot_subject_study_specimen_pab;
+ALTER TABLE cds.pab_sequence_study RENAME COLUMN pab_id TO bcr_study_seq_id;
+ALTER TABLE cds.pab_sequence_study ADD COLUMN plate VARCHAR(100);
+ALTER TABLE cds.pab_sequence_study ADD COLUMN well VARCHAR(100);
+ALTER TABLE cds.pab_sequence_study RENAME TO import_bcr_sequence_study;

@@ -2248,17 +2248,19 @@
             <column columnName="container"/>
         </columns>
     </table>
-    <table tableName="pab_sequence_study" tableDbType="TABLE">
+    <table tableName="import_bcr_sequence_study" tableDbType="TABLE">
         <columns>
             <column columnName="row_id"/>
             <column columnName="prot"/>
             <column columnName="subject_id"/>
             <column columnName="study_day"/>
             <column columnName="specimen_type"/>
-            <column columnName="pab_id"/>
+            <column columnName="bcr_study_seq_id"/>
             <column columnName="lab_code"/>
             <column columnName="seq_method"/>
             <column columnName="assay_identifier"/>
+            <column columnName="plate"/>
+            <column columnName="well"/>
             <column columnName="container"/>
         </columns>
     </table>

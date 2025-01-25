@@ -32,7 +32,6 @@ public class CDSImportTask extends ImportTask
         new CDSImportCopyConfig("preferred_allele"),
         new CDSImportCopyConfig("antibody_class"),
         new CDSImportCopyConfig("bcr_sequence"),
-        new CDSImportCopyConfig("pab_sequence_study"),
 
             // Core Tables
         new CDSImportCopyConfig("import_Study", "Study"),
@@ -93,6 +92,7 @@ public class CDSImportTask extends ImportTask
         new CDSImportCopyConfig("import_BAMA", "AssayBAMA"),
         new CDSImportCopyConfig("import_NABMAb", "AssayNABMAb"),
         new CDSImportCopyConfig("import_PKMAb", "AssayPKMAb"),
+        new CDSImportCopyConfig("import_bcr_sequence_study", "bcr_sequence_study"),
 
         // Virus data
         new CDSImportCopyConfig("import_Virus_Metadata_All", "Virus_Metadata_All"),
