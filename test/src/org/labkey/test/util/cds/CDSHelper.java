@@ -2027,7 +2027,7 @@ public class CDSHelper
         _test.beginAt(queryUrl);
         if (!skipViewData)
         {
-            _test.waitForElement(Locator.linkWithText("view data"));
+            _test.waitForElement(Locator.linkWithText("view data"), WebDriverWrapper.WAIT_FOR_PAGE);
             _test.click(Locator.linkWithText("view data"));
         }
 
