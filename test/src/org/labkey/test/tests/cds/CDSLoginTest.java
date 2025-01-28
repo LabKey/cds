@@ -44,7 +44,6 @@ import static org.junit.Assert.assertEquals;
 public class CDSLoginTest extends CDSReadOnlyTest
 {
     private static final String CDS_LOGIN_TESTUSER = "user_passwordtest@cds.test";
-    private final CDSHelper cds = new CDSHelper(this);
 
     @Before
     public void preTest()
@@ -154,6 +153,8 @@ public class CDSLoginTest extends CDSReadOnlyTest
         changePasswordDialog.setReEnterPassword(strongPwd);
         changePasswordDialog.submit();
         waitFor(() -> getCurrentUser().equals(CDS_LOGIN_TESTUSER), "login failed for " + CDS_LOGIN_TESTUSER, defaultWaitForPage);
+
+        goToHome(); // 'ensureSignedInAsPrimaryTestUser' can be interrupted by CDS session timeout page
     }
 
     @Override

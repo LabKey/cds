@@ -52,7 +52,7 @@ public class CDSReadOnlyTest extends BaseWebDriverTest implements ReadOnlyTest, 
     @BeforeClass
     public static void doSetup() throws Exception
     {
-        CDSReadOnlyTest initTest = (CDSReadOnlyTest)getCurrentTest();
+        CDSReadOnlyTest initTest = getCurrentTest();
         if (initTest.needsSetup())
         {
             CDSInitializer _initializer = new CDSInitializer(initTest);

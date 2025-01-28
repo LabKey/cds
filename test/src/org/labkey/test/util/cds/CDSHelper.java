@@ -29,6 +29,7 @@ import org.labkey.test.pages.cds.DataGrid;
 import org.labkey.test.pages.cds.GroupDetailsPage;
 import org.labkey.test.pages.cds.LearnGrid;
 import org.labkey.test.pages.cds.LearnGrid.LearnTab;
+import org.labkey.test.pages.reports.ScriptReportPage.StandardReportOption;
 import org.labkey.test.util.ApiPermissionsHelper;
 import org.labkey.test.util.DataRegionTable;
 import org.labkey.test.util.Ext4Helper;
@@ -2048,7 +2049,7 @@ public class CDSHelper
                 _test.setCodeEditorValue("script-report-editor", reportScript);
 
             if (shareReport)
-                rReportHelper.selectOption(RReportHelper.ReportOption.shareReport);
+                rReportHelper.selectOption(StandardReportOption.shareReport);
 
             _test.waitForElement(Locator.tagWithText("span", "Save"));
             rReportHelper.saveReport(reportName);
