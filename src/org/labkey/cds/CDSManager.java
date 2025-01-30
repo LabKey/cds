@@ -219,9 +219,9 @@ public class CDSManager
                     "import_virus_synonym",
                     "import_virus_metadata_all",
                     "import_assay_combined_antigen_metadata",
+                    "import_bcr_sequence_study",
 
-                    "pab_sequence",
-                    "pab_sequence_study",
+                    "bcr_sequence",
                     "antibody_structure",
                     "sequence_header",
                     "sequence_germline",

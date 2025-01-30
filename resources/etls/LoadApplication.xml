@@ -106,6 +106,15 @@
                 </settings>
             </taskref>
         </transform>
+        <transform id="PopulateBCRsequence" type="TaskrefTransformStep">
+            <taskref ref="org.labkey.cds.data.steps.PopulateDatasetTask">
+                <settings>
+                    <setting name="sourceSchema" value="cds"/>
+                    <setting name="sourceQuery" value="ds_bcr_sequence_study"/>
+                    <setting name="targetDataset" value="BCR_sequence" />
+                </settings>
+            </taskref>
+        </transform>
         <transform id="PopulateAssay" type="TaskrefTransformStep">
             <taskref ref="org.labkey.cds.data.steps.PopulateAssayTask">
             </taskref>
