@@ -16,6 +16,7 @@
 package org.labkey.test.util.cds;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.assertj.core.api.Assertions;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.junit.Assert;
@@ -1496,7 +1497,7 @@ public class CDSHelper
     {
         // Firefox removes the \n when returning the text, so going to go to lowest common denominator (Firefox).
         String shownText = getPlotTickText(svgIndex);
-        Assert.assertTrue("SVG did not look as expected. Patter expected: " + p.pattern() + " Actual string: " + shownText, p.matcher(shownText).matches());
+        Assertions.assertThat(shownText).as("SVG tick text").matches(p);
     }
 
     public void assertPlotTickText(String expectedTickText)

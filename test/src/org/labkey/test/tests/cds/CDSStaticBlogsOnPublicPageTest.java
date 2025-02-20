@@ -46,8 +46,13 @@ public class CDSStaticBlogsOnPublicPageTest extends CDSReadOnlyTest
         Assert.assertTrue("News section is missing", isElementPresent(Locator.tagWithText("h1", "News")));
         Assert.assertEquals("Incorrect number of thumbnails", 4,
                 Locator.tag("a").findElements(Locator.tagWithClass("tr", "thumbnail").findElement(getDriver())).size());
-        Assert.assertEquals("Incorrect blog publication dates", Arrays.asList("August 11, 2023", "July 25, 2023", "March 17, 2014", "January 28, 2014"),
-                getTexts(Locator.tag("td").findElements(Locator.tagWithClass("tr", "pub-date").findElement(getDriver()))));
+        boolean westOfServer = getRelativeTimeZoneOffset() < 0;
+        Assert.assertEquals("Incorrect blog publication dates", Arrays.asList(
+                "August %d, 2023".formatted(westOfServer ? 10 : 11),
+                "July %d, 2023".formatted(westOfServer ? 24 : 25),
+                "March %d, 2014".formatted(westOfServer ? 16 : 17),
+                "January %d, 2014".formatted(westOfServer ? 27 : 28)),
+            getTexts(Locator.tag("td").findElements(Locator.tagWithClass("tr", "pub-date").findElement(getDriver()))));
         Assert.assertEquals("Incorrect blog titles", Arrays.asList("Getting Started with Lab Inventory Tracking",
                         "What's New in LabKey 23.7", "Release: LabKey Server v14.1", "Article: MedCity covers the LabKey story: \"Open-sourced in Seattle\""),
                 getTexts(Locator.tag("td").findElements(Locator.tagWithClass("tr", "blog-title").findElement(getDriver()))));
