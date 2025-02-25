@@ -1,7 +1,0 @@
-cds_link_id	protocol_id	type
-cds_link_001	q2	study
-cds_link_002	q2	study
-cds_link_003	z117	study
-cds_link_001	136	publication
-cds_link_002	136	publication
-cds_link_003	80	publication

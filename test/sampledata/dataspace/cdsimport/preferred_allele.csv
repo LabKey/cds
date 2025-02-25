@@ -1,3 +1,0 @@
-sequence_id,allele,status,note
-cds_seq_1,GGGG7-16*01,false,"Is not a preferred allele; hence, false status"
-cds_seq_100,POPOK32*02,true,"Is a preferred allele; hence, true status"

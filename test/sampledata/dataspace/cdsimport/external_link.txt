@@ -1,4 +1,0 @@
-cds_link_id	link_label	link_url	link_type	link_description
-cds_link_001	Vivli Data Repository	http://vivli.com/data/CAVD725		
-cds_link_002	Test Data Repository	http://vivli.com/data/TEST	test link	not a real URL
-cds_link_003	GitHub	https://github.com/labkey		

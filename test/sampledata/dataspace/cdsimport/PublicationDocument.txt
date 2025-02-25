@@ -1,4 +1,0 @@
-publication_id	document_id	display_order
-80	301	2
-136	300	
-80	302	1

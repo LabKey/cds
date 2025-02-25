@@ -1,3 +1,0 @@
-publication_id	cds_saved_group_id
-2	190000
-170	190001
