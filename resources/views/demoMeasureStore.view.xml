@@ -1,9 +1,0 @@
-<view xmlns="http://labkey.org/data/xml/view" title="Demo Measure Store">
-    <dependencies>
-        <dependency path="internal/jQuery" />
-        <dependency path="Ext4" />
-        <dependency path="vis/vis" />
-        <dependency path="Connector/demoMeasureStore.js" />
-        <dependency path="Connector/src/utility/Query.js" />
-    </dependencies>
-</view>
